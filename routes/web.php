@@ -65,11 +65,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/export-employee-pdf', 'EmployeeController@ExportEmployeePdf')->name('employee.export-employee-pdf');
 				Route::match(array('GET'),'/get-fellowship-amount', 'EmployeeController@getFellowshipAmount')->name('employee.get-fellowship-amount');
 				Route::match(array('GET'),'/get-fellowship-by-experience', 'EmployeeController@getByExperience')->name('employee.get-fellowship-by-experience');
-
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 			});
 			Route::group(['prefix' => 'fellowship-rate'], function() { 
 				Route::match(array('GET','POST'),'/fellowship-rate', 'FelowshipRateController@FelowshipRate')->name('fellowship-rate.fellowship-rate');
@@ -493,18 +488,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('POST'),'/GetIndentConsumableData', 'IndentController@GetIndentConsumableData')->name('indent.GetIndentConsumableData');
 				Route::match(array('POST'),'/GetObjectHeadData', 'IndentController@GetObjectHeadData')->name('indent.GetObjectHeadData');
 				Route::match(array('GET','POST'),'/approved-indent-sanction-list', 'IndentController@SanctionApproval')->name('indent.approved-indent-sanction-list');
-<<<<<<< Updated upstream
 				Route::match(array('GET','POST'),'/sanction-doc-upload', 'IndentController@SanctionDocumentUpload')->name('indent.sanction-document-upload');
 				Route::match(array('GET','POST'),'/approved-indent-status', 'IndentController@IndentStatusUpdate')->name('indent.approved-indent-status');
 				Route::match(array('GET','POST'),'/DownloadFile', 'IndentController@DownloadFile')->name('indent.sanction-document-download');
 				Route::match(array('GET','POST'),'/sanction-SupportingDoc', 'IndentController@SancationSupportingDoc')->name('indent.sanction-SupportingDoc');
-
-=======
-				Route::match(array('GET','POST'),'/sanction-process', 'IndentController@SanctionProcessStatus')->name('indent.sanction-process');
-				Route::match(array('GET','POST'),'/approved-indent-status', 'IndentController@IndentStatusUpdate')->name('indent.approved-indent-status');
-				Route::match(array('GET','POST'),'/DownloadFile', 'IndentController@DownloadFile')->name('indent.sanction-document-download');
-				Route::match(array('GET','POST'),'/sanction-SupportingDoc', 'IndentController@SancationSupportingDoc')->name('indent.sanction-SupportingDoc');
->>>>>>> Stashed changes
 			});
 			Route::group(['prefix' => 'Vouchers'], function() { 
 				Route::match(array('GET','POST'),'/Vouchers', 'VouchersController@Vouchers')->name('Voucher.Vouchers');
