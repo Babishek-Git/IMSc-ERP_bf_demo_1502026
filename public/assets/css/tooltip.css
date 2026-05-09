@@ -1,0 +1,90 @@
+.tooltip{
+    display: inline;
+    position: relative;
+}
+.tooltip:hover:after{
+	background:#1E90FF;
+    border-radius: 5px;
+    bottom: 26px;
+    color: #fff;
+    content: attr(title);
+    left: 1%;
+    padding: 5px 15px;
+    position: absolute;
+    z-index: 98;
+    width: 120px;
+	font-weight:bold;
+	font-size:12px;
+}
+.tooltip:hover:before{
+    border: solid;
+    border-color: #333 transparent;
+    border-width: 6px 6px 0 6px;
+    bottom: 20px;
+    content: "";
+    left: 50%;
+    position: absolute;
+    z-index: 99;
+}
+
+
+.tooltipleft{
+    display: inline;
+    position: relative;
+}
+.tooltipleft:hover:after{
+	background:#1E90FF;
+    border-radius: 5px;
+    bottom: 26px;
+    color: #fff;
+    content: attr(title);
+    left: -90px;
+    padding: 5px 15px;
+    position: absolute;
+    z-index: 98;
+    width: 120px;
+	font-weight:bold;
+	font-size:12px;
+}
+.tooltipleft:hover:before{
+    border: solid;
+    border-color: #333 transparent;
+    border-width: 6px 6px 0 6px;
+    bottom: 20px;
+    content: "";
+    left: 50%;
+    position: absolute;
+    z-index: 99;
+}
+
+.tooltipwarning{
+    display: inline;
+    position: relative;
+}
+.tooltipwarning:hover:after{
+	background:#fff;
+    border-radius: 5px;
+    top: 80%;
+    color: #03527C;
+    content: attr(data-title);
+    left: 1%;
+    padding: 5px 15px;
+    position: absolute;
+    z-index: 98;
+    width: 100%;
+	font-weight:bold;
+	font-size:13px;
+	box-shadow:1px 20px 50px 20px #232425;
+	border:2px solid rgba(230,22,88,0.9);
+}
+.tooltipwarning:hover:before{
+    border: solid;
+    border-color: #333 transparent;
+    border-width: 6px 6px 0 6px;
+    bottom: 20px;
+    content: "";
+    left: 50%;
+    position: absolute;
+    z-index: 99;
+}
+

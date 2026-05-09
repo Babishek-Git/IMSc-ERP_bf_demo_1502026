@@ -1,0 +1,76 @@
+.radio-tabs {
+	display: flex;
+	flex-flow: row;
+}
+
+.radio-tabs .state {
+    position: absolute;
+    left: -10000px;
+}
+
+/* Tab button container */
+.tabs {
+	flex-flow: column;
+  	justify-content: space-around;
+  	flex: 10%;
+  	min-height: 520px;
+	box-shadow: 0 6px 6px -10px rgba(0,188,212,.56),0 4px 25px 0 rgba(0,0,0,.12),0 8px 10px -5px rgba(0,188,212,.2);
+}
+.panels{
+	min-height: 520px;
+	border:1px solid #D2D3D4;
+	border-left: none;
+}
+.formtab-panel{
+	padding:0px 20px 0px 20px;
+}
+
+/* Tab button */
+.radio-tabs .tab {
+    flex: none;
+    display: flex;
+    flex-flow: column;
+    padding: 1em;
+    background-color: #fff;
+    color: #000;
+    cursor: hand;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0, .1);
+    min-height: 25px;
+	/* font-family:verdana; */
+	font-size:14px;
+	margin-bottom:0px;
+	font-family: Montserrat, sans-serif !important;
+	
+}
+.tab-active{
+	border-bottom:0px solid #03BCD3  !important;
+	color:#fff !important;
+	box-shadow: 0 22px 20px -10px rgba(0,188,212,.56),0 14px 15px 0 rgba(0,0,0,.12),0 14px 10px -5px rgba(0,188,212,.2);
+	/* background-color: #; */
+  	opacity: 0.7;
+  	border-right: none !important;
+}
+
+.tab-label {
+  font-size: 15px;
+}
+
+.radio-tabs .panels {
+    padding: 0px 2px 4px 4px;
+	box-shadow: rgba(17, 79, 142, 0.96) 0px 2px 15px 0px;
+}
+.radio-tabs .panel {
+    display: none;
+    margin-left: 100px;
+}
+.formtab-check{
+	font-size:16px; 
+	color:#2EDB58; 
+	padding-top:4px;
+}
+.formtab-uncheck{
+	font-size:16px; 
+	color:#E1E4E2; 
+	padding-top:4px;
+}

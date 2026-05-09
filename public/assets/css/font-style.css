@@ -1,0 +1,14 @@
+.table-head-red
+{
+	font-weight:bold;
+	color:#CE0B1E;
+	font-size:18px;
+}
+.table-content-darkblue
+{
+	color:#013A56;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-weight:bold;
+	font-size:12px;
+	text-align:left;
+}

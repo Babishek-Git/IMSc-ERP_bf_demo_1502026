@@ -1,0 +1,67 @@
+.button-red {
+   /*border-top: 1px solid #035A85;*/
+   border:none;
+   background: #bf0d0d;
+   background: -webkit-gradient(linear, left top, left bottom, from(#d43f47), to(#bf0d0d));
+   background: -webkit-linear-gradient(top, #d43f47, #bf0d0d);
+   background: -moz-linear-gradient(top, #d43f47, #bf0d0d);
+   background: -ms-linear-gradient(top, #d43f47, #bf0d0d);
+   background: -o-linear-gradient(top, #d43f47, #bf0d0d);
+   padding: 9px 18px;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 13px;
+   font-family:Verdana, Arial, Helvetica, sans-serif;
+   text-decoration: none;
+   vertical-align: middle;
+   font-weight:bold;
+   }
+.button-red:hover {
+   border-top-color: #035A85;
+   background: #035A85;
+   color: #ccc;
+   }
+.button-red:active {
+   border-top-color: #035A85;
+   background: #035A85;
+   }
+   
+.button-DSGreen {
+   border-top: 1px solid #025976;
+   border:none;
+   background: #033140;
+   background: -webkit-gradient(linear, left top, left bottom, from(#025976), to(#033140));
+   background: -webkit-linear-gradient(top, #025976, #033140);
+   background: -moz-linear-gradient(top, #025976, #033140);
+   background: -ms-linear-gradient(top, #025976, #033140);
+   background: -o-linear-gradient(top, #025976, #033140);
+   padding: 9px 18px;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 13px;
+   font-family:Verdana, Arial, Helvetica, sans-serif;
+   text-decoration: none;
+   vertical-align: middle;
+   font-weight:bold;
+   }
+.button-DSGreen:hover {
+   border-top-color: #035a82;
+   background: #035a82;
+   color: #ccc;
+   }
+.button-DSGreen:active {
+   border-top-color: #850909;
+   background: #850909;
+   }

@@ -1,0 +1,373 @@
+@include('layouts.library.config')
+@include('layouts.library.functions')
+@include('layouts.library.binddata') 
+@include('layouts.library.common')
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Abstrack MBook</title>
+    <link rel="stylesheet" href="script/font.css" />
+</head>
+<script language="javascript" type="text/javascript" src="script/Date_Calendar.js"></script>
+<script language="javascript" type="text/javascript" src="script/validfn.js"></script>
+<link rel="stylesheet" href="css/button_style.css"></link>
+<link rel="stylesheet" href="js/jquery-ui.css">
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css">
+<link rel="stylesheet" href="Font style/font.css" />
+<link type='text/css' href='css/basic.css' rel='stylesheet' media='screen' />
+<script type='text/javascript' src='js/basic_model_jquery.js'></script>
+<script type='text/javascript' src='js/jquery.simplemodal.js'></script>
+<link rel="stylesheet" href="css/font-awesome.css" />
+<!--<script type='text/javascript' src='js/basic.js'></script>-->
+<script src="dist/sweetalert-dev.js"></script>
+<link rel="stylesheet" href="dist/sweetalert.css">		
+<body bgcolor="#444444" onload="setRowSpan();noBack();" onpageshow="if (event.persisted) noBack();" onUnload="" style="padding:0; margin:0;">
+<table width="1087px" height="56px" align="center" class='label' bgcolor="#035A85">
+	<tr bgcolor="#035A85" style="position:fixed;">
+		<td style="color:#FFFFFF; border:none;" width="1077px"  height="48px" class="" align="center">
+		<br/>
+		</td>
+	</tr>
+</table>
+<form name="form" method="post">
+<table width='1087px' cellpadding='3' style="" cellspacing='3' align='center' class='label table1' bgcolor="#FFFFFF" id="table1">
+<tr bgcolor="#fff" style="height:0px;"><td colspan="13"></td></tr>
+<input type="hidden" name="hid_item_str" id="hid_item_str" value="" />
+<tr border='1' bgcolor="">
+	<td  align='center' width='' class='labelsmall' style=" border-top:1px solid #0A9CC5; border-bottom:1px solid #0A9CC5;" id="td_popupbutton<?php //echo $table_group_row; ?>">
+		<input type="checkbox" name="check" id="ch_item" value=""  />
+	</td>
+	<td width="61px" align="center" style="border-top:1px solid #0A9CC5;" class="">
+	</td>
+	<td colspan="8" style="border-top:1px solid #0A9CC5;" align="justify">
+	</td>
+	<td style="border-top:1px solid #0A9CC5;" width="40px">&nbsp;</td>
+	<td style="border-top:1px solid #0A9CC5;" width="40px">&nbsp;</td>
+	<td style="border-top:1px solid #0A9CC5;" width="40px">&nbsp;</td>
+</tr>
+					<tr border='1' bgcolor="#FFFFFF">
+						<td  align='center' width='' 		class='' rowspan="">&nbsp;</td>
+						<td  align='right'   width='180px' 	class='' rowspan="">&nbsp;</td>
+						<td  align='right' 	width='' 		class='' rowspan=""></td>
+						<td  align='left' 	width='' 		class='' rowspan="">&nbsp;</td>
+						<td  align='left' 	width='' 		class='' rowspan="">&nbsp;</td>
+						<td  align='right' 	width='' 		class='' rowspan="">&nbsp;</td>
+						<td  align='right' 	width='' 		class='' rowspan=""></td>
+						<td  align='right' 	width='' 		class=''></td>
+						<td  align='right' 	width='' 		class=''></td>
+						<td  align='right' 	width='6%' 		class='' rowspan=""></td>
+						<td  align='right' 	width='3%' 		class='' rowspan="">
+						</td>
+						<td  align='center' width='40px' class='' rowspan="" style="font-size:9px;">
+						</td>
+					</tr>
+							<tr border='1' bgcolor="#FFFFFF">
+								<td  align='right' width='' class=''><?php //echo $DpmArrQuantityList[$key]; ?></td>
+								<td  align='right' width='' class=''>
+								</td>
+								<td  align='right' width='' class=''></td>
+								<td  align='right' width='' class=''>
+									
+								</td>
+								<td  align='center' width='40px' class='' rowspan="" style="font-size:9px;">
+									
+								</td>
+							</tr>
+					<tr border='1' bgcolor="#FFFFFF">
+						<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+						<td  align='right' 	width='' class='' rowspan="">&nbsp;</td>
+						<td  align='right' 	width='' class='' rowspan=""></td>
+						<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+						<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+						<td  align='right' 	width='' class='' rowspan="">&nbsp;</td>
+						<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+						<td  align='right' 	width='' class=''>
+						</td>
+						<td  align='right' width='' class=''>
+						</td>
+						<td  align='right' width='' class='' rowspan=""></td>
+						<td  align='right' width='' class='' rowspan="">
+							
+						</td>
+						<td  align='center' width='' class='' rowspan="" style="font-size:9px;">
+						</td>
+					</tr>	
+				<tr border='1' bgcolor="#FFFFFF">
+					<td  align='right' width='' class=''></td>
+					<td  align='right' width='' class=''>
+						
+					</td>
+					
+					<td  align='right' width='' class=''></td>
+					<td  align='right' width='' class=''>
+						
+					</td>
+					<td  align='center' width='' class='' rowspan="" style="font-size:9px;">
+						
+					</td>
+					
+				</tr>
+		<tr border='1' bgcolor="#FFFFFF">
+			<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='right' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='right' 	width='' class='' rowspan=""></td>
+			<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='right' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='left' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='right' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='right' 	width='' class='' rowspan="">&nbsp;</td>
+			<td  align='right' 	width='' class=''>
+				
+			</td>
+			<td  align='right' width='' class=''>
+				
+			</td>
+			<td  align='center' width='' class='' style="font-size:9px;">
+				
+			</td>
+		</tr>
+
+		<tr border='1' bgcolor="#FFFFFF">
+			<td  align='right' width='' class=''></td>
+			<td  align='right' width='' class=''></td>
+			<td  align='center' width='' class='' style="font-size:9px;"></td>
+		</tr>
+		<tr border='1' class="label" style="font-size:10px;">
+			<td colspan="12" align="left" bgcolor="#F5F5F5">Remarks &nbsp; :&nbsp;&nbsp;&nbsp; </td>
+		</tr>
+
+	<tr border='1' class="label totRow" bgcolor="#FFFFFF">
+		<td  align='left' width='' class='' style="border-bottom-color:#0A9CC5">&nbsp;</td>
+		<td  align='right' width='' class='label' style="border-bottom-color:#0A9CC5">TOTAL</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='left' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='left' width='' class='' style="border-bottom-color:#0A9CC5">&nbsp;</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">
+		
+		</td>
+		<td  align='right' width='' class='' style="border-bottom-color:#0A9CC5">&nbsp;</td>
+	</tr>
+	
+	<tr bgcolor="#fff" style="height:0px"><td colspan="13" style="border-top:1px solid #0A9CC5; border-bottom:1px solid #0A9CC5;"></td></tr>
+	
+	<input type="hidden" name="row_count" id="row_count<?php echo $table_group_row; ?>" value="" />
+	<tr class="label" style="border-top:2px solid #0A9CC5; border-left:2px solid #0A9CC5; border-right:2px solid #0A9CC5" bgcolor="">
+		<td colspan="3" align="right">Total Cost&nbsp;&nbsp; <i class='fa fa-inr' style=' width:4px; height:5px;'></i>&nbsp;&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr class="label" style=" border-left:2px solid #0A9CC5; border-right:2px solid #0A9CC5">
+		<td colspan="3" align="right">Less Over All Rebate : %&nbsp; <i class='fa fa-inr' style=' width:4px; height:5px;'></i>&nbsp;&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr class="label" style="border-bottom:2px solid #0A9CC5; border-left:2px solid #0A9CC5; border-right:2px solid #0A9CC5" bgcolor="">
+		<td colspan="3" align="right">Gross Amount&nbsp;&nbsp; <i class='fa fa-inr' style=' width:4px; height:5px;'></i>&nbsp;&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+		<td align="right"></td>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+<input type="hidden" name="table_group_count" id="table_group_count" value="" />
+<input type="hidden" name="txt_sheetid" id="txt_sheetid" value="" />
+
+<!--<div align="center" class="btn_outside_sect printbutton">
+	<div class="btn_inside_sect"><input type="Submit" name="Submit" value="Submit" id="Submit" /> </div>
+	<div class="btn_inside_sect"><input type="button" name="Back" value="Back" id="back" class="backbutton" onclick="goBack();" /> </div>
+</div> -->
+
+		<!-- modal content -->
+		<div id="basic-modal-content">
+			<div align="center" class="popuptitle gradientbg">Part Payment Work Sheet</div>
+			<div align="center" style="padding-top:10px;">
+			<table class="label table2" width="100%" cellpadding="3" cellspacing="3" id="table2">
+				<tr bgcolor="">
+					<td width="60px" align="left">Item No.</td>
+					<td width="">
+						<input type="text" readonly="" name="txt_item_no" id="txt_item_no" size="8" class="popuptextbox" />
+						<input type="hidden" name="txt_item_id" id="txt_item_id" size="8" class="popuptextbox" />
+					</td>
+					<td width="60px" align="center">RAB No.</td>
+					<td width="">
+						<input type="text" name="txt_rab_no" id="txt_rab_no" size="6" class="popuptextbox" value="" />
+					</td>
+					<td  align="left" colspan="4">Measurement Date - From &nbsp; :
+						<input type="text" name="txt_from_date" id="txt_from_date" size="12" class="popuptextbox" value="" />
+					To :
+						<input type="text" name="txt_to_date" id="txt_to_date" size="12" class="popuptextbox" value="" />
+					</td>
+				</tr>
+				<tr bgcolor="">
+				<td width="135px" align="left">Item Description</td>
+					<td width="700px" align="left" colspan="7">
+						<textarea name="txt_item_desc" id="txt_item_desc" class="popuptextbox" rows="2" style="text-align:left; width:820px; height:34px;"></textarea>
+					</td>
+				</tr>
+
+			</table>
+			</div>
+			<div style="padding-top:10px; height:325px;">
+				<div style="float:left; width:567px; height:320px; overflow-y: auto;">
+					<table class="label table2" cellpadding="3" cellspacing="3" width="94%" id="table3">
+					<tr bgcolor="#0A9CC5" style="color:#FFFFFF">
+						<td align="center" colspan="7" class="gradientbg">Deduct Previous Measurement</td>
+					</tr>
+					<tr>
+						<td align="left" colspan="7" bgcolor="#f2efef">
+						Deduct Previous Measurement Total Quantity&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;
+						<input type="text" name="txt_dpm_qty" id="txt_dpm_qty" size="17" class="popuptextbox" style="text-align:left; background-color:#f2efef" />
+						<input type="hidden" name="hid_dpm_qty" id="hid_dpm_qty" size="17" class="popuptextbox" style="text-align:left; background-color:#f2efef" />
+						</td>
+					</tr>
+					<tr id="dpmheadrow1">
+						<td width="10px" rowspan="2" align="center">RBN.</td>
+						<td width="61px" rowspan="2" align="center">Item Qty.</td>
+						<td width="63px" rowspan="2" align="center">Rate&nbsp; <i class='fa fa-inr' style=' width:4px; height:5px;'></i> </td>
+						<td colspan="2" align="center" bgcolor="#eaeae8">Paid Details</td>
+						<td colspan="2" align="center" bgcolor="#eaeae8">Payable Details</td>
+					</tr>
+					<tr id="dpmheadrow2">
+						
+						
+						
+						<td width="23px" align="center">(%)</td>
+						<td width="110px" align="center">Amount&nbsp; <i class='fa fa-inr' style=' width:4px; height:5px;'></i> </td>
+						<td width="23px" align="center">(%)</td>
+						<td style='width:110px' align="center">Amount <i class='fa fa-inr' style=' width:4px; height:5px;'></i> </td>
+					</tr>
+					<tr id="dpmtotalrow">
+						<td colspan="4" align="right">Total Amount <i class='fa fa-inr' style=' width:4px; height:5px;'></i>&nbsp;</td>
+						<!--<td colspan="6" align="right">Total Amount <i class='fa fa-inr' style=' width:4px; height:5px;'></i>&nbsp;</td>-->
+						<td align="left"><input type="text" name="txt_partpay_total_paidamt_dpm" id="txt_partpay_total_paidamt_dpm" class="dynamictextbox" style="text-align:right; width:100px;pointer-events: none;" /></td>
+						<td colspan=""></td>
+						<td colspan=""><input type="text" name="txt_partpay_total_payableamt_dpm" id="txt_partpay_total_payableamt_dpm" class="dynamictextbox" style="text-align:right; width:100px;pointer-events: none;" /></td>
+					</tr>
+					<tr id="dpmremarksrow">
+						<td colspan="7">Remarks:<br/><textarea name="txt_dpm_remarks" id="txt_dpm_remarks" class="fontcolor2" rows="3" style=" width:519px; border:1px solid #EAEAEA;"></textarea>
+						</td>
+					</tr>
+				</table>
+				</div>
+				<div style="float:right;  width:427px; height:320px; overflow-y: auto;">
+					<table class="label table2" cellpadding="3" cellspacing="3" width="93%" id="table4">
+						<tr bgcolor="#0A9CC5" style="color:#FFFFFF">
+							<td align="center" colspan="5" class="gradientbg">Since Last Measurement</td>
+						</tr>
+						<tr>
+							<td align="left" colspan="5" bgcolor="#f2efef">
+							Since Last Measurement Quantity&nbsp;:&nbsp;
+							<input type="text" name="txt_slm_qty" id="txt_slm_qty" size="13" class="popuptextbox" style="text-align:left; background-color:#f2efef" />
+							<input type="hidden" name="hid_slm_qty" id="hid_slm_qty" size="13" class="popuptextbox" style="text-align:left; background-color:#f2efef" />
+							</td>
+						</tr>
+						<tr id="slmheadrow">
+							<td width="61px" align="center">Item Qty.</td>
+							<td width="63px" align="center">Rate&nbsp;<i class='fa fa-inr' style=' width:4px; height:5px;'></i></td>
+							<td width="23px" align="center">(%)</td>
+							<td width="50px" align="center">Amount&nbsp;<i class='fa fa-inr' style=' width:4px; height:5px;'></i></td>
+							<td width="10px" align="center">&nbsp;</td>
+						</tr>
+						<tr id='rowid0'>
+							<td width="61px" align="center" class="dynamicrowcell">
+							<input type="text" name="txt_partpay_qty_slm[]" id="txt_partpay_qty_slm0" class="dynamictextbox" style="text-align:right; width:93px; border: 1px solid #2aade4;" onblur="ValidateSlm(); calculateAmount(this,0,'qty','slm');" />
+							</td>
+							<td width="63px" align="center" class="dynamicrowcell">
+							<input type="text" name="txt_item_rate_slm" id="txt_item_rate_slm0" class="dynamictextbox" style="text-align:right; width:80px;" onblur="calculateAmount(this,0,'rate','slm');" />
+							</td>
+							<td width="23px" align="center" class="dynamicrowcell">
+							<input type="text" name="txt_partpay_percent_slm" id="txt_partpay_percent_slm0" class="dynamictextbox" style="text-align:right; width:40px; border: 1px solid #2aade4;" onblur="ValidatePercent(this,'slm',0); calculateAmount(this,0,'percent','slm');" />
+							</td>
+							<td width="50px" align="center" class="dynamicrowcell">
+							<input type="text" name="txt_partpay_amt_slm[]" id="txt_partpay_amt_slm0" class="dynamictextbox" style="text-align:right; width:130px;pointer-events: none;" />
+							</td>
+							<td width="10px" align="center" class="dynamicrowcell" style="text-align:center;">
+							<input type="button" name="btn_add_row_slm" id="btn_add_row_slm" class="editbtnstyle" value=" + " style="width:32px; text-align:center; font-weight:bold; border-radius: 0px;" onclick="addRow();" />
+							<input type="hidden" name="hid_slm_result[]" id="hid_slm_result0" class="dynamictextbox" />
+							</td>
+						</tr>
+						<tr id="slmtotalrow">
+							<td width="147px" colspan="3" align="right">Total Amount&nbsp;<i class='fa fa-inr' style=' width:4px; height:5px;'></i>&nbsp;</td>
+							<td width="50px" align="right"  class="dynamicrowcell">
+							<input type="text" name="txt_partpay_total_amt_slm" id="txt_partpay_total_amt_slm" class="dynamictextbox" style="text-align:right; width:130px;pointer-events: none;" />
+							</td>
+							<td width="10px" align="center">&nbsp;</td>
+						</tr>
+						<tr id="slmremarksrow">
+							<td colspan="5">Remarks:<br/><textarea name="txt_slm_remarks" id="txt_slm_remarks" class="fontcolor2" rows="3" style="width:99%; border:1px solid #EAEAEA;"></textarea>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div align="right">
+				<table width="100%" height="65" class="label" cellpadding="3" cellspacing="3">
+					<tr>
+					<td align="right" width="440px">
+					<label style="background:#EAEAEA; padding:6px;">Over All Total Amount</label>&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class='fa fa-inr' style=' width:4px; height:5px;'></i>&nbsp;
+					<input type="text" name="txt_overall_total" id="txt_overall_total" size="20" class="dynamictextbox dynamictextbox2" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</td>
+					</tr>
+				</table>
+			</div>
+			<div class="bottomsection" align="center">
+				<div class="buttonsection" align="center"><input type="button" name="btn_save" id="btn_save" value=" Save " class="gradientbg buttonstyle" onclick="SaveData()" /></div>
+				<div class="buttonsection" align="center"><input type="button" name="btn_cancel" id="btn_cancel" value=" Cancel " class="gradientbg buttonstyle" onclick="CancelData()" /></div>
+			</div>
+		</div>
+		
+		<!-- preload the images -->
+		<div style='display:none'>
+			<img src='img/basic/x.png' alt='' />
+		</div> 
+		<br/> <br/>
+		<input type="Submit" name="Submit" value="Submit" id="Submit" class="BottomContent1" style="cursor:pointer;" />
+</form>
+</body>
+
+</html>
