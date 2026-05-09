@@ -91,12 +91,8 @@ class AemEmployee extends Model
         'emp_blood_group',
         'emp_height',
         'emp_identity_mark',
-<<<<<<< Updated upstream
-        'emp_pdf_name'
-=======
         'emp_pdf_name',
         'pfmr_id'
->>>>>>> Stashed changes
     ];
     public static function ShowEmployees($request,$EmpNo){
         $EmpQuery = DB::table('erp_employee AS t1')
