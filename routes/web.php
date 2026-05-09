@@ -65,11 +65,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/export-employee-pdf', 'EmployeeController@ExportEmployeePdf')->name('employee.export-employee-pdf');
 				Route::match(array('GET'),'/get-fellowship-amount', 'EmployeeController@getFellowshipAmount')->name('employee.get-fellowship-amount');
 				Route::match(array('GET'),'/get-fellowship-by-experience', 'EmployeeController@getByExperience')->name('employee.get-fellowship-by-experience');
-
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 			});
 			Route::group(['prefix' => 'fellowship-rate'], function() { 
 				Route::match(array('GET','POST'),'/fellowship-rate', 'FelowshipRateController@FelowshipRate')->name('fellowship-rate.fellowship-rate');
