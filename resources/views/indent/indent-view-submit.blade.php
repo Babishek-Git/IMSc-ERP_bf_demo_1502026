@@ -570,9 +570,9 @@ if(isset($BudgetFiledAcessData)){
 														$ProjFundStatus = false;
 													}
 													if ($OBHeadFundStatus == false && $ProjFundStatus == false) {
-														$FundStatus = false;
+														$FundStatus = 'NO';
 													} else {
-														$FundStatus = true;
+														$FundStatus = 'YES';
 													}
 													if($IndentProjName == ''){
 														$TableHeadTittel = 'Gia Name / (Object Head name)';

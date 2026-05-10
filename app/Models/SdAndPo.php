@@ -36,6 +36,8 @@ class SdAndPo extends Model
     public function CreateSdPo($SdpoArr){
         return self::create($SdpoArr);
     }
-
+    public static function ShowPgSdData($PoId){
+        return self::where('po_id',$PoId)->where('active',1)->get();
+    }
 }
         

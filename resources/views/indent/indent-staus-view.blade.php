@@ -433,7 +433,7 @@
 																			}else if(($WorkMoveDataValue->action_flag == NULL) && ($WorkMoveDataValue->status != "AP")){
 																				echo "Pulled Back";
 																			}else if($WorkMoveDataValue->status == "approved"){
-																				@endphp <div style="background-color:#7bd19f; border:1px solid #151e26"> @php echo "Approved"; @endphp </div> @php
+																				@endphp <div style="background-color:#66D42B; border:1px solid #151e26"> @php echo "Approved"; @endphp </div> @php
 																			}else{
 																				echo "";
 																			}
@@ -666,7 +666,9 @@ $(document).ready(function(){
 		DownloadFile(SuppDocId);
 	});
 	function DownloadFile(SuppDocId) {
-		window.open("{{ route('indent.sanction-document-download') }}?id=" + SuppDocId, "_blank");
+		var ModuleCode    = 'INDENT';
+        var ModuleSubCode = 'SUPDOC';
+		window.open("{{ route('indent.sanction-document-download') }}?id=" + SuppDocId + "&module_code=" + ModuleCode + "&module_sub_code=" + ModuleSubCode, "_blank");
 	}
 		$("body").on("click",".ViewHistory", function(event){
 			var IndentId = $(this).attr('data-id'); 

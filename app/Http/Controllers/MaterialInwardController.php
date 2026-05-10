@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 use App\Models\AemEmployee;
 use App\Models\Indent;
 use App\Models\IndentDetail;
@@ -15,6 +16,7 @@ use App\Models\MaterialUnit;
 use App\Models\LocationMaster;
 use App\Models\DocumentsType;
 use App\Models\FieldAccesMaster;
+use App\Models\SupportingDocument;
 use App\Models\Payment;
 
 
@@ -50,6 +52,7 @@ class MaterialInwardController extends Controller
         $this->DocumentsType          = new DocumentsType();
         $this->FieldAccesMaster       = new FieldAccesMaster();
         $this->PaymentMaster          = new Payment();
+        $this->SupportingDocMaster    = new SupportingDocument();
 
 
         $this->WorkFlowService = $WorkFlowService;
@@ -72,7 +75,6 @@ class MaterialInwardController extends Controller
                 $MaterialInwardDetailData  = $this->MaterialInwardDetails->showMaterialInwardDetailsData(NULL,$MatInwardId); 
                 $VendorData                = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
                 $UnitDataArray             = collect($ShowMaterialUnit)->pluck('uom_name', 'uom_id')->toArray();
-
                 $IndentMasterData          = $this->Indent->ShowIndentDetails($request);
                 return view('material-inward.material-inward-pending-payment-creation')->with('data',compact('IndentMasterData','UnitDataArray','Contractordata','ShowMaterialUnit','ShowMaterialInwardData','MaterialInwardDetailData','ShowPurchaseOrderData','VendorData','Empdata','MaxReceiptNo','ShowPoSoqData','ShowLoacationMasterData'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
@@ -140,7 +142,8 @@ class MaterialInwardController extends Controller
                         $WorkFlowActionData = $this->WorkFlowService->CheckForwardAndBackward('MAT_INWARD',$MatInwardId,$TargetRoles,$ApprAuthRole);
                     }
                 }
-                return view('material-inward.material-view-submit')->with('data',compact('MaterialInwardData','IndentCreateName','UnitDataArray','Empdata','showPurchaseOredrData','MaterialInwardDetailData','Contractordata','Empdata','WorkFlowActionData'));
+                $InvoicesDocData           = $this->SupportingDocMaster->GetSancationDocData($MatInwardId,'MAT_INWARD');
+                return view('material-inward.material-view-submit')->with('data',compact('MaterialInwardData','InvoicesDocData','IndentCreateName','UnitDataArray','Empdata','showPurchaseOredrData','MaterialInwardDetailData','Contractordata','Empdata','WorkFlowActionData'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt."; dd($e);
             }
@@ -167,7 +170,8 @@ class MaterialInwardController extends Controller
                 $GetMaterialId             = collect($ShowMaterialInwardData)->pluck('master_inward_id')->first();
                 $MaterialInwardDetailData  = $this->MaterialInwardDetails->showMaterialInwardDetailsData(NULL,$GetMaterialId); 
                 $IndentMasterData          = $this->Indent->ShowIndentDetails($request);
-                return view('material-inward.material-inward-creation')->with('data',compact('UnitDataArray','IndentMasterData','ShowMaterialInwardData','MaterialInwardDetailData','ShowPurchaseOrderData','Contractordata','Empdata','MaxReceiptNo','ShowPoSoqData','ShowLoacationMasterData'));
+                $InvoicesDocData           = $this->SupportingDocMaster->GetSancationDocData($GetMaterialId,'MAT_INWARD');
+                return view('material-inward.material-inward-creation')->with('data',compact('UnitDataArray','InvoicesDocData','IndentMasterData','ShowMaterialInwardData','MaterialInwardDetailData','ShowPurchaseOrderData','Contractordata','Empdata','MaxReceiptNo','ShowPoSoqData','ShowLoacationMasterData'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
             }
@@ -279,7 +283,8 @@ class MaterialInwardController extends Controller
                         $WorkFlowActionData = $this->WorkFlowService->CheckForwardAndBackward('MAT_INWARD',$MatInwardId,$TargetRoles,$ApprAuthRole);
                     }
                 }
-                return view('material-inward.material-view-submit')->with('data',compact('MaterialInwardData','showPurchaseOredrData','MaterialInwardDetailData','Contractordata','Empdata','FromPage','WorkFlowActionData'));
+                $InvoicesDocData           = $this->SupportingDocMaster->GetSancationDocData($MatInwardId,'MAT_INWARD');
+                return view('material-inward.material-view-submit')->with('data',compact('InvoicesDocData','MaterialInwardData','showPurchaseOredrData','MaterialInwardDetailData','Contractordata','Empdata','FromPage','WorkFlowActionData'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
             }
@@ -385,7 +390,10 @@ class MaterialInwardController extends Controller
                     $WorkFlowActionData = $this->WorkFlowService->CheckForwardAndBackward('MAT_INWARD',$MatInwardId,$TargetRoles,$ApprAuthRole);
                 }
             }
-            return view('material-inward.material-inward-payment-submit')->with('data',compact('SessionWiseFiledAcessData','ShowMatrialInwardSubmitData','UnitDataArray','FromPage','VendorData','MaterialInwardDetailData','WorkFlowActionData','ShowMaterialUnit','ShowLoacationMasterData'));
+            $InvoicesDocData           = $this->SupportingDocMaster->GetSancationDocData($MatInwardId,'MAT_INWARD');
+            $IndentEmpData             = $this->Indent->ShowIndent($request,NULL);
+            $IndentCreateEmpName       = collect($IndentEmpData)->pluck('emp_name_payslip','indent_id')->toArray();
+            return view('material-inward.material-inward-payment-submit')->with('data',compact('IndentCreateEmpName','InvoicesDocData','SessionWiseFiledAcessData','ShowMatrialInwardSubmitData','UnitDataArray','FromPage','VendorData','MaterialInwardDetailData','WorkFlowActionData','ShowMaterialUnit','ShowLoacationMasterData'));
         }
     }
     public  function MaterialInwardDetailsSave(Request $request){
@@ -423,92 +431,88 @@ class MaterialInwardController extends Controller
         $EmpNoArr          = $request->input('cmb_emp'); 
         DB::beginTransaction();
         try {
-            $IsUpload = NULL;
-            if($request->hasfile('file_invoce_upload')){
-                $IsUpload = $this->MaterialInvoiceUpload($request);
-            }
-            if($IsUpload >0){
-                foreach ($InvoiceNosArray as $InvoId ) {
-                    $FinalInvoiceArray[$InvoiceStr.$InvoiceCount] = $InvoId;
-                    $InvoiceCount ++;
-                }
-                $FinalINvoicesJsonData = json_encode($FinalInvoiceArray);
-                $GroupId    = session('WcmsEmpGroup') ?? NULL;
-                $DivisionId = session('EmpDivCode') ?? NULL;
-                $SectionId  = session('EmpSecCode') ?? NULL;
+            // foreach ($InvoiceNosArray as $InvoId ) {
+            //     $FinalInvoiceArray[$InvoiceStr.$InvoiceCount] = $InvoId;
+            //     $InvoiceCount ++;
+            // }
+            // $FinalINvoicesJsonData = json_encode($FinalInvoiceArray);
+            $GroupId    = session('WcmsEmpGroup') ?? NULL;
+            $DivisionId = session('EmpDivCode') ?? NULL;
+            $SectionId  = session('EmpSecCode') ?? NULL;
 
-                $SaveData['receiptno']            = $RecpNo;
-                $SaveData['receipt_date']         = Helper::DBDateFormat($RecpDate);
-                $SaveData['invoice_date']         = Helper::DBDateFormat($InvoiceDate);
-                $SaveData['invoice_no']           = $FinalINvoicesJsonData;
+            $SaveData['receiptno']            = $RecpNo;
+            $SaveData['receipt_date']         = Helper::DBDateFormat($RecpDate);
+            // $SaveData['invoice_date']         = Helper::DBDateFormat($InvoiceDate);
+            // $SaveData['invoice_no']           = $FinalINvoicesJsonData;
 
-                // $SaveData['grn_status']        = $ButtonValue;
-                $SaveData['sheet_id']             = $WorkOrderId;
-                $SaveData['po_id']                = $WorkOrderId;
-                $SaveData['active']               = 1;
-                if(filled($MaterialInwardId)){
-                    $SaveData['updated_at']           = NOW();
-                    $SaveData['updated_by']           = session('WcmsEmpNo');
-                    $SaveMaterial = $this->MaterialInwardMaster->CreateMaterialInwardDeatils(NULL,$SaveData,$MaterialInwardId);
-                }else{
-                    $SaveData['created_at']           = NOW();
-                    $SaveData['created_by']           = session('WcmsEmpNo'); //dd($SaveData);
-                    $SaveMaterial      = $this->MaterialInwardMaster->CreateMaterialInwardDeatils(NULL,$SaveData,NULL);
-                    $MaterialInwardId  = $SaveMaterial->master_inward_id;
-                }
-                if(filled($MaterialInwardId)){ 
-                    $DeleteIntentDetails = $this->MaterialInwardDetails->DeleteMaterialInwardDetails($MaterialInwardId);
-                }
-                if(filled($PoQtyArr)){
-                    foreach($PoQtyArr as $MatInwardDeatilsKey => $Povalue){
-                        $ItemNo              =  $ItemNoArr[$MatInwardDeatilsKey];
-                        $ItemDesc            =  $ItemDescArr[$MatInwardDeatilsKey];
-                        $ItemUnit            =  $ItemUnitArr[$MatInwardDeatilsKey];
-                        $ItemPoQty           =  $PoQtyArr[$MatInwardDeatilsKey];
-                        $ItemPrevRecQty      =  $PrevRecdQtyArr[$MatInwardDeatilsKey];
-                        $ItemRecQty          =  $RecdNowQtyArr[$MatInwardDeatilsKey];
-                        $ItemBalQty          =  $BalanceQtyArr[$MatInwardDeatilsKey];
-                        $ItemRatePerUnit     =  $RatePerUniArr[$MatInwardDeatilsKey];
-                        //$ItemGstPerc       =  $GstPercArr[$MatInwardDeatilsKey];
-                        $Certified           =  $ItemCheckCertiArr[$MatInwardDeatilsKey];
-                        $ItemTotalCost       =  $TotalCostArr[$MatInwardDeatilsKey];
-                        $LocationId          =  $LocationArr[$MatInwardDeatilsKey];
-                        $Remarks             =  $RemarksArr[$MatInwardDeatilsKey];
-                        $PayPerc             =  $PaypercArr[$MatInwardDeatilsKey];
-                        $PayAmout            =  $PayAMoutArr[$MatInwardDeatilsKey];
-                        $EmpNo               =  $EmpNoArr[$MatInwardDeatilsKey];
-
-                        $SaveDtData['master_inward_id']        = $MaterialInwardId;
-                        $SaveDtData['item_no']                 = $ItemNo;
-                        $SaveDtData['item_description']        = $ItemDesc;
-                        $SaveDtData['item_unit']               = $ItemUnit;
-                        $SaveDtData['po_quantity']             = $ItemPoQty;
-                        $SaveDtData['previously_received_qty'] = $ItemPrevRecQty;
-                        $SaveDtData['received_qty']            = $ItemRecQty;
-                        $SaveDtData['balance_qty']             = $ItemBalQty;
-                        $SaveDtData['unit_rate']               = $ItemRatePerUnit;
-                        // $SaveDtData['gst_perc']             = $ItemGstPerc;
-                        // $SaveDtData['gst_amt']              = $ItemGstAmt;
-                        $SaveDtData['qty_certified']           = $Certified;
-                        $SaveDtData['total_cost']              = $ItemTotalCost;
-                        $SaveDtData['location_id']             = $LocationId;
-                        $SaveDtData['payment_perc']            = $PayPerc;
-                        $SaveDtData['total_payment_amout']     = $PayAmout;
-                        $SaveDtData['emp_no']                  = $EmpNo;
-                        $SaveDtData['item_remarks']            = $Remarks;
-                        $SaveDtData['active']                  = 1;
-                        $SaveDtData['created_at']              = NOW();
-                        $SaveDtData['created_by']              = session('WcmsEmpNo'); //dd($SaveDtData);
-                        $SaveIndent = $this->MaterialInwardDetails->CreateIMaterialInwardDetails(NULL,$SaveDtData);
-                    }
-                }
-                DB::commit();
-                $message = "Material Inward Details updated Successfully";
-                Session::put('ALertMesage', $message);
-                return redirect()->route('material.material-inward-creation');
+            // $SaveData['grn_status']        = $ButtonValue;
+            $SaveData['sheet_id']             = $WorkOrderId;
+            $SaveData['po_id']                = $WorkOrderId;
+            $SaveData['active']               = 1;
+            if(filled($MaterialInwardId)){
+                $SaveData['updated_at']           = NOW();
+                $SaveData['updated_by']           = session('WcmsEmpNo');
+                $SaveMaterial = $this->MaterialInwardMaster->CreateMaterialInwardDeatils(NULL,$SaveData,$MaterialInwardId);
             }else{
-                $message = 'Error : Sorry transaction not fully completed';
+                $SaveData['created_at']           = NOW();
+                $SaveData['created_by']           = session('WcmsEmpNo'); //dd($SaveData);
+                $SaveMaterial      = $this->MaterialInwardMaster->CreateMaterialInwardDeatils(NULL,$SaveData,NULL);
+                $MaterialInwardId  = $SaveMaterial->master_inward_id;
             }
+            if(filled($MaterialInwardId)){ 
+                if($request->hasfile('file_upload')){
+                    $this->MaterialInvoiceUpload($request, $MaterialInwardId);
+                }   
+                $DeleteIntentDetails = $this->MaterialInwardDetails->DeleteMaterialInwardDetails($MaterialInwardId);
+            }
+            if(filled($PoQtyArr)){
+                foreach($PoQtyArr as $MatInwardDeatilsKey => $Povalue){
+                    $ItemNo              =  $ItemNoArr[$MatInwardDeatilsKey];
+                    $ItemDesc            =  $ItemDescArr[$MatInwardDeatilsKey];
+                    $ItemUnit            =  $ItemUnitArr[$MatInwardDeatilsKey];
+                    $ItemPoQty           =  $PoQtyArr[$MatInwardDeatilsKey];
+                    $ItemPrevRecQty      =  $PrevRecdQtyArr[$MatInwardDeatilsKey];
+                    $ItemRecQty          =  $RecdNowQtyArr[$MatInwardDeatilsKey];
+                    $ItemBalQty          =  $BalanceQtyArr[$MatInwardDeatilsKey];
+                    $ItemRatePerUnit     =  $RatePerUniArr[$MatInwardDeatilsKey];
+                    //$ItemGstPerc       =  $GstPercArr[$MatInwardDeatilsKey];
+                    $Certified           =  $ItemCheckCertiArr[$MatInwardDeatilsKey];
+                    $ItemTotalCost       =  $TotalCostArr[$MatInwardDeatilsKey];
+                    $LocationId          =  $LocationArr[$MatInwardDeatilsKey];
+                    $Remarks             =  $RemarksArr[$MatInwardDeatilsKey];
+                    $PayPerc             =  $PaypercArr[$MatInwardDeatilsKey];
+                    $PayAmout            =  $PayAMoutArr[$MatInwardDeatilsKey];
+                    $EmpNo               =  $EmpNoArr[$MatInwardDeatilsKey];
+
+                    $SaveDtData['master_inward_id']        = $MaterialInwardId;
+                    $SaveDtData['item_no']                 = $ItemNo;
+                    $SaveDtData['item_description']        = $ItemDesc;
+                    $SaveDtData['item_unit']               = $ItemUnit;
+                    $SaveDtData['po_quantity']             = $ItemPoQty;
+                    $SaveDtData['previously_received_qty'] = $ItemPrevRecQty;
+                    $SaveDtData['received_qty']            = $ItemRecQty;
+                    $SaveDtData['balance_qty']             = $ItemBalQty;
+                    $SaveDtData['unit_rate']               = $ItemRatePerUnit;
+                    // $SaveDtData['gst_perc']             = $ItemGstPerc;
+                    // $SaveDtData['gst_amt']              = $ItemGstAmt;
+                    $SaveDtData['qty_certified']           = $Certified;
+                    $SaveDtData['total_cost']              = $ItemTotalCost;
+                    $SaveDtData['location_id']             = $LocationId;
+                    $SaveDtData['payment_perc']            = $PayPerc;
+                    $SaveDtData['total_payment_amout']     = $PayAmout;
+                    $SaveDtData['emp_no']                  = $EmpNo;
+                    $SaveDtData['item_remarks']            = $Remarks;
+                    $SaveDtData['active']                  = 1;
+                    $SaveDtData['created_at']              = NOW();
+                    $SaveDtData['created_by']              = session('WcmsEmpNo'); //dd($SaveDtData);
+                    $SaveIndent = $this->MaterialInwardDetails->CreateIMaterialInwardDetails(NULL,$SaveDtData);
+                }
+            }
+            DB::commit();
+            $message = "Material Inward Details updated Successfully";
+            Session::put('ALertMesage', $message);
+            return redirect()->route('material.material-inward-creation');
+            
         }catch (\Exception $e) { dd($e);
             DB::rollback();
             $message = "Error : Sorry transaction not fully completed";
@@ -519,45 +523,67 @@ class MaterialInwardController extends Controller
             return redirect()->route('material.material-inward-creation');
         }
     }
-    public function MaterialInvoiceUpload (Request $request){
-        $InvoiceFile    = $request->file('file_invoce_upload');
+    public function MaterialInvoiceUpload($request, $MaterialInwardId){
+        $TransactionId  = $MaterialInwardId;
+        $DocSuppDescArr = $request->input('txt_supp_doc_desc');
+        $DocDateArr     = $request->input('txt_supp_doc_date');
+        $InvoiceFile    = $request->file('file_upload');
         $UploadExe      = 0;
         $validator = Validator::make(
             $request->all(),
             [
-                'file_invoce_upload' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',// max:2048 specifies the maximum size in kilobytes (2MB)
+                'file_upload' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',// max:2048 specifies the maximum size in kilobytes (2MB)
             ],
             [
-                'file_invoce_upload.required' => 'Error: Please select an invoice file to upload.',
-                'file_invoce_upload.file'     => 'Error: The upload must be a valid file.',
-                'file_invoce_upload.mimes'    => 'Error: Only JPG, PNG, and PDF files are allowed.',
-                'file_invoce_upload.max'      => 'Error: The invoice size must not exceed 2MB.',
+                'file_upload.required' => 'Error: Please select an invoice file to upload.',
+                'file_upload.file'     => 'Error: The upload must be a valid file.',
+                'file_upload.mimes'    => 'Error: Only JPG, PNG, and PDF files are allowed.',
+                'file_upload.max'      => 'Error: The invoice size must not exceed 2MB.',
             ]
         );
         if($validator->fails()) { 
             $message = $validator->errors()->first(); 
             Session::put('ALertMesage', $message); 
         }
-
-        $message     = NULL;
-        $OrgFileName = $InvoiceFile->getClientOriginalName();
-        $Extension   = $InvoiceFile->getClientOriginalExtension();
-
-        $UploadTimeStr = date("YmdHis");
-        $FileType = $InvoiceFile->getClientOriginalExtension();
-        $FileName = "Mat_invoice_doc_".$UploadTimeStr.".".$FileType; //dd($FileName);
-        $IsUpload = NULL;
+        DB::beginTransaction();
         try {
-            if($InvoiceFile) {
-                $IsUpload = Helper::UploadFile($InvoiceFile,$FileName,'MAT_INWARD','INVOICE');
-            }else{
-                $IsUpload = 'UE';
+            if($request->hasFile('file_upload')){
+                $InvoiceFiles = $request->file('file_upload');
+                foreach($InvoiceFiles as $FileKey => $InvoiceFile){
+                    $DocDesc       =  $DocSuppDescArr[$FileKey];
+                    $DocDate       =  $DocDateArr[$FileKey];
+                    $OrgFileName   = $InvoiceFile->getClientOriginalName();
+                    $Extension     = $InvoiceFile->getClientOriginalExtension();
+                    $FileType      = $InvoiceFile->getClientOriginalExtension();
+                    $UploadTimeStr = date("YmdHis").$FileKey;
+                    $FileName      = "Mat_invoice_doc_".$UploadTimeStr.".".$FileType;
+                    try {
+                        $IsUpload = Helper::UploadFile($InvoiceFile,$FileName,'MAT_INWARD','INVOICE');
+                    } catch (\Exception $e) {
+
+                        $IsUpload = 'UE';
+                    }
+                    if($IsUpload == "Y"){
+                        $SaveData['transaction_id']       = $TransactionId;
+                        $SaveData['module_code']          = 'MAT_INWARD';
+                        $SaveData['doc_desc']             = $DocDesc;
+                        $SaveData['doc_date']             = filled($DocDate) ? Carbon::createFromFormat('d/m/Y', $DocDate)->format('Y-m-d'): null;
+                        $SaveData['org_file_name']        = $OrgFileName;
+                        $SaveData['file_name']            = $FileName;
+                        $SaveData['active']               = 1;
+                        $SaveData['created_at']           = NOW();
+                        $SaveData['created_by']           = session('WcmsEmpNo');
+                        $this->SupportingDocMaster->SupportingDocCreate($SaveData);
+                        $UploadExe++;
+                    }
+                }
             }
-        }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-            $IsUpload = 'UE';
+            DB::commit();
         }
-        if($IsUpload == "Y"){
-            $UploadExe++;
+        catch (\Exception $e) { dd($e);
+            DB::rollback();
+            $message = "Error : Sorry transaction not fully completed";
+            Session::put('ALertMesage', $message);
         }
         return $UploadExe;
     }

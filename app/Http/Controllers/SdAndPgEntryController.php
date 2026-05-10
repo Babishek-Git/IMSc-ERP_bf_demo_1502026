@@ -130,5 +130,10 @@ class SdAndPgEntryController extends Controller
             'percentage' => $percentage
         ]);
     }
-
+    public function PoSDPGData(Request $request){
+        $POId                   = $request->POId;
+        $PurchaseOrderPgSdData  = $this->SdAndPo->ShowPgSdData($POId);
+        $OutputArr              = array('PGSDVALUES' => $PurchaseOrderPgSdData);
+        return $OutputArr;
+    }
 }

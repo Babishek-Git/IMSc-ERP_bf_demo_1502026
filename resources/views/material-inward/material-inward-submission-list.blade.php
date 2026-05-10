@@ -57,12 +57,13 @@
 										</tr>
 									</thead>
 									<tbody id="rm-tableBody">
+										@php $Sno = 1;@endphp
 										@if(isset($data['ShowMatrialInwardSubmitData']))
 											@foreach($data['ShowMatrialInwardSubmitData'] as $MatSubmitData)
 												@if($MatSubmitData->from_emp_no == '' || $MatSubmitData->to_emp_no == session('WcmsEmpNo') )
 													<tr data-status="{{ $MatSubmitData->active == 1 ? 'active' : 'inactive' }}">
 														<td></td>
-														<td>{{ $loop->iteration }}</td>
+														<td>{{ $Sno}}</td>
 														<td>{{ $MatSubmitData->work_order_no }}</td>
 														<td>{{ $MatSubmitData->work_name }}</td>
 														<td>{{ Helper::DisplayDateFormat($MatSubmitData->work_order_date) }}</td>
@@ -82,6 +83,7 @@
 														</td> -->
 														<!-- <td align="center"><label class="rm-toggle"><input type="checkbox" @if($MatSubmitData->active == 1) checked @endif><span class="rm-slider"></span></label></td> -->
 													</tr>
+													@php $Sno++;@endphp
 												@endif
 											@endforeach
 									</tbody>

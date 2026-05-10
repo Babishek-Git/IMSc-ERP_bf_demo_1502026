@@ -1068,14 +1068,16 @@ class IndentController extends Controller
         return $UploadExe;
     }
     public function DownloadFile(Request $request){
-        $FileName     = NULL;          		    
-        $DocSupId     = decrypt($request->id);
-        $ShowDocFiles = $this->SupportingDocMaster->GetSuppDocDownloadData($DocSupId,"INDENT");
+        $FileName       = NULL;          		    
+        $DocSupId       = decrypt($request->id);
+        $ModuleCode     = $request->module_code;
+        $ModuleSubCode  = $request->module_sub_code;
+        $ShowDocFiles = $this->SupportingDocMaster->GetSuppDocDownloadData($DocSupId,$ModuleCode);
         if(count($ShowDocFiles) > 0){
             $FileName = collect($ShowDocFiles)->pluck('file_name')->first();
         }
         if($FileName != NULL){
-            $IsDownload = Helper::DownloadFile($FileName,'INDENT','SUPDOC');
+            $IsDownload = Helper::DownloadFile($FileName,$ModuleCode,$ModuleSubCode);
         }
         if($IsDownload != "Y"){
             DB::rollback();

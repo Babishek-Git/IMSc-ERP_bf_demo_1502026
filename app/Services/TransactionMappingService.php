@@ -61,12 +61,9 @@ class TransactionMappingService
         $LedgerGroupId          = $LedgerObjHeadMapData->pluck('ledger_group_id')->first();
         $ObjectHeadId           = $LedgerObjHeadMapData->pluck('object_head_id')->first();
         $ObjectHeadSubCataId    = $LedgerObjHeadMapData->pluck('object_head_sub_cata_id')->first();
-<<<<<<< Updated upstream
-        $ProjectId              = $LedgerObjHeadMapData->pluck('project_id')->first();
-=======
         $ProjectId              = $LedgerObjHeadMapData->pluck('project_id')->first(); // Actually this is Project parent Id
         $ProjectParentId        = $ProjectId;
->>>>>>> Stashed changes
+
         $GiaId                  = $LedgerObjHeadMapData->pluck('gia_id')->first();
         $ObjectHeadGiaMappId    = $LedgerObjHeadMapData->pluck('oh_gia_mapp_id')->first();
         $RetData['ObjectHeadLedgerMapId'] = $ObjectHeadLedgerMapId;
@@ -96,15 +93,7 @@ class TransactionMappingService
         $RetData['ObjectHeadSubCataName']   = $ObjectHeadSubCataName;
 
         $CurrentFinYear = Helper::GetCurrentFinYear(NULL);
-<<<<<<< Updated upstream
-        $BudgetAllocationData = $this->ShowBudegetAllocationFinYear($CurrentFinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId); 
-        $BudgetSanctionedAmt = $BudgetAllocationData->pluck('sanctioned_amount')->first();
-        $BudgetAllocationId = $BudgetAllocationData->pluck('budget_allocation_id')->first();
-        $BudgetClaimAmount = $this->GetBudgetClaimAmountByAllocation($BudgetAllocationId);
-        $BudgetClaimData = $this->ShowBudegetClaimByAllocation($BudgetAllocationId);
-        $BudgetClaimIdList = $BudgetClaimData->pluck('budget_claimed_id')->toArray();
-        $BudgetReceivedAmount = $this->GetBudegetReceivedAmountByMultipleClaim($BudgetClaimIdList);
-=======
+
         $BudgetAllocationData = $this->ShowBudegetAllocationFinYear($CurrentFinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId); 
         $BudgetSanctionedAmt = $BudgetAllocationData->pluck('sanctioned_amount')->first();
         if(isset($BudgetSanctionedAmt)){
@@ -121,19 +110,13 @@ class TransactionMappingService
         if(isset($BudgetReceivedAmount)){
             $BudgetReceivedAmount = $BudgetReceivedAmount * 100000;
         }
->>>>>>> Stashed changes
         $RetData['BudgetSanctionedAmt'] = $BudgetSanctionedAmt;
         $RetData['BudgetClaimAmount'] = $BudgetClaimAmount;
         $RetData['BudgetReceivedAmount'] = $BudgetReceivedAmount;
         $UptoDateExpenditureAmt = $this->ShowBudegetActualExpenditure(NULL,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId);
         $RetData['UptoDtExpenditureAmt'] = $UptoDateExpenditureAmt;
-<<<<<<< Updated upstream
-=======
-        
->>>>>>> Stashed changes
 
         
-
 
         /*if(filled($LedgerGroupId)){ 
             $BudgetHeadData = $this->GetBudgetGroupId($LedgerGroupId); 
@@ -218,20 +201,15 @@ class TransactionMappingService
         ->when($ProjectId, fn($q) => $q->where('project_id', $ProjectId))
         ->sum('payment_oh_amount');  
     }
-<<<<<<< Updated upstream
-    public function ShowLedgerForObjectHead($ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId){
-=======
+
     public function ShowLedgerForObjectHead($ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId){
->>>>>>> Stashed changes
+
         return BudgetHeadLedgerGroupMapping::where('active',1)
         ->when($GiaId, fn($q) => $q->where('gia_id', $GiaId))
         ->when($ObjectHeadSubCataId, fn($q) => $q->where('object_head_sub_cata_id', $ObjectHeadSubCataId))
         ->when($ObjectHeadId, fn($q) => $q->where('object_head_id', $ObjectHeadId))
-<<<<<<< Updated upstream
-        ->when($ProjectId, fn($q) => $q->where('project_id', $ProjectId))
-=======
         ->when($ProjectParentId, fn($q) => $q->where('project_id', $ProjectParentId))
->>>>>>> Stashed changes
+
         ->get();  
     }
     public function ShowBudegetClaimByAllocation($BudgetAllocationId){
@@ -247,20 +225,14 @@ class TransactionMappingService
     public function GetBudegetReceivedAmountByMultipleClaim($BudgetClaimId){
         return BudgetAllocationReceived::where('active', 1)->whereIn('budget_claimed_id',$BudgetClaimId)->sum('received_amount');     
     }
-<<<<<<< Updated upstream
-    public function ShowBudegetAllocationFinYear($FinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId){
-=======
+
     public function ShowBudegetAllocationFinYear($FinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId){
->>>>>>> Stashed changes
+
         return BudgetAllocation::where('fin_year', $FinYear)->where('active',1)
         ->when($GiaId, fn($q) => $q->where('gia_id', $GiaId))
         ->when($ObjectHeadSubCataId, fn($q) => $q->where('oh_sub_cata_id', $ObjectHeadSubCataId))
         ->when($ObjectHeadId, fn($q) => $q->where('object_head_id', $ObjectHeadId))
-<<<<<<< Updated upstream
-        ->when($ProjectId, fn($q) => $q->where('project_parent_id', $ProjectId))
-=======
         ->when($ProjectParentId, fn($q) => $q->where('project_parent_id', $ProjectParentId))
->>>>>>> Stashed changes
         ->get();  
     }
 
@@ -268,21 +240,13 @@ class TransactionMappingService
         $BudgetData = BudgetSanctionExpenditureMaster::where('active', 1)->where('transaction_id',$TransactionId)->where('module_code',$ModuleCode)->where('current_stage','PO')->get(); 
         //$ObjectHeadLedgerMapId  = $BudgetData->pluck('ohl_mapping_id')->first();
         //$LedgerGroupId          = $BudgetData->pluck('ledger_group_id')->first();
-<<<<<<< Updated upstream
-        $ObjectHeadId           = $BudgetData->pluck('object_head_id')->first();
-=======
         $ObjectHeadId           = $BudgetData->pluck('object_head_id')->first(); 
->>>>>>> Stashed changes
         $ObjectHeadSubCataId    = $BudgetData->pluck('oh_sub_cata_id')->first();
         $ProjectId              = $BudgetData->pluck('project_id')->first();
         $GiaId                  = $BudgetData->pluck('gia_id')->first();
         $BudgetAllocationId     = $BudgetData->pluck('budget_allocation_id')->first();
-<<<<<<< Updated upstream
-        $CurrentSanctionAmt     = $BudgetData->pluck('current_sanction_amt')->first();
-=======
         $CurrentSanctionAmt     = $BudgetData->pluck('current_utilized_amt')->first();
         $ProjectParentId        = $BudgetData->pluck('project_parent_id')->first();
->>>>>>> Stashed changes
         $RetData['CurrentSanctionAmt']        = $CurrentSanctionAmt;
         $RetData['BudgetAllocationId']        = $BudgetAllocationId;
         //$ObjectHeadGiaMappId    = $BudgetData->pluck('oh_gia_mapp_id')->first();
@@ -313,15 +277,6 @@ class TransactionMappingService
         $RetData['ObjectHeadSubCataName']   = $ObjectHeadSubCataName;
 
         $CurrentFinYear = Helper::GetCurrentFinYear(NULL);
-<<<<<<< Updated upstream
-        $BudgetAllocationData = $this->ShowBudegetAllocationFinYear($CurrentFinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId); 
-        $BudgetSanctionedAmt = $BudgetAllocationData->pluck('sanctioned_amount')->first();
-        $BudgetAllocationId = $BudgetAllocationData->pluck('budget_allocation_id')->first();
-        $BudgetClaimAmount = $this->GetBudgetClaimAmountByAllocation($BudgetAllocationId);
-        $BudgetClaimData = $this->ShowBudegetClaimByAllocation($BudgetAllocationId);
-        $BudgetClaimIdList = $BudgetClaimData->pluck('budget_claimed_id')->toArray();
-        $BudgetReceivedAmount = $this->GetBudegetReceivedAmountByMultipleClaim($BudgetClaimIdList);
-=======
         $BudgetAllocationData = $this->ShowBudegetAllocationFinYear($CurrentFinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId);  
         $BudgetSanctionedAmt = $BudgetAllocationData->pluck('sanctioned_amount')->first();
         if(isset($BudgetSanctionedAmt)){
@@ -338,18 +293,14 @@ class TransactionMappingService
         if(isset($BudgetReceivedAmount)){
             $BudgetReceivedAmount = $BudgetReceivedAmount * 100000;
         }
->>>>>>> Stashed changes
         $RetData['BudgetSanctionedAmt'] = $BudgetSanctionedAmt;
         $RetData['BudgetClaimAmount'] = $BudgetClaimAmount;
         $RetData['BudgetReceivedAmount'] = $BudgetReceivedAmount;
         $UptoDateExpenditureAmt = $this->ShowBudegetActualExpenditure($PaymentId,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId);
         $RetData['UptoDtExpenditureAmt'] = $UptoDateExpenditureAmt;
 
-<<<<<<< Updated upstream
-        $LedgerData = $this->ShowLedgerForObjectHead($ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId);
-=======
+
         $LedgerData = $this->ShowLedgerForObjectHead($ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId); 
->>>>>>> Stashed changes
         if(filled($LedgerData)){
             $LedgerIdList = $LedgerData->pluck('ledger_id')->toArray();
         }else{

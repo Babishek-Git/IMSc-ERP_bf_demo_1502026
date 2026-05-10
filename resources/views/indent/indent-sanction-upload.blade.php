@@ -480,7 +480,9 @@ $BackUrl ='indent.sanction-document-upload';
 		DownloadFile(SuppDocId);
 	});
 	function DownloadFile(SuppDocId) {
-		window.open("{{ route('indent.sanction-document-download') }}?id=" + SuppDocId, "_blank");
+		var ModuleCode    = 'INDENT';
+        var ModuleSubCode = 'SUPDOC';
+		window.open("{{ route('indent.sanction-document-download') }}?id=" + SuppDocId + "&module_code=" + ModuleCode + "&module_sub_code=" + ModuleSubCode, "_blank");
 	}
 	var KillEvent = 0;
 	$("body").on("click","#SaveDraft", function(event){

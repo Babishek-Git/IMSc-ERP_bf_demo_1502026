@@ -189,11 +189,7 @@ class BillPaymentController extends Controller
         }*/
         $LedgerIdList = [];
         if($PoId != NULL){
-<<<<<<< Updated upstream
             $PoAmcBudgetData = $this->TransactionMappService->GetBudgetDetailsForAmcPo($PoId,$ProcessMode,$ApplicationId);
-=======
-            $PoAmcBudgetData = $this->TransactionMappService->GetBudgetDetailsForAmcPo($PoId,$ProcessMode,$ApplicationId); 
->>>>>>> Stashed changes
             if(filled($PoAmcBudgetData)){
                 if(isset($PoAmcBudgetData['LedgerIdList'])){
                     $LedgerIdList = $PoAmcBudgetData['LedgerIdList'];
@@ -209,11 +205,8 @@ class BillPaymentController extends Controller
         $RecoveryData = $this->Recovery->ShowRecovery();
         
         $Ledger  = $this->Ledger->ShowOtherThanDeductionLedger(); 
-<<<<<<< Updated upstream
-        if(filled($LedgerIdList)){
-=======
         if(filled($LedgerIdList)){ 
->>>>>>> Stashed changes
+
             $Ledger = $Ledger->whereIn('ledger_id',$LedgerIdList);
         }
 
