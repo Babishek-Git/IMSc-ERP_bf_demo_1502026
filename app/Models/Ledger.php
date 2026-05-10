@@ -37,10 +37,6 @@ class Ledger extends Model
         return self::whereIn('ledger_id',$LedgerIdArr)->get();
     }
     public function ShowOtherThanDeductionLedger() {
-<<<<<<< Updated upstream
-        return self::join('erp_ledger_group','erp_ledger_group.ledger_group_id', '=', 'erp_ledger.ledger_group_id')
-                   ->leftjoin('erp_tax_rate','erp_tax_rate.tax_id', '=', 'erp_ledger.tax_id')->where('erp_ledger.active',1)->where('erp_ledger.debit_credit','!=','Deduction')->get() ;
-=======
         return self::join('erp_ledger_group', 'erp_ledger_group.ledger_group_id', '=', 'erp_ledger.ledger_group_id')
                 ->leftJoin('erp_tax_rate', 'erp_tax_rate.tax_id', '=', 'erp_ledger.tax_id')
                 ->where('erp_ledger.active', 1)
@@ -49,7 +45,6 @@ class Ledger extends Model
                         ->orWhereNull('erp_ledger.debit_credit');
                 })
                 ->get();
->>>>>>> Stashed changes
     } 
     public function ShowDeductionLedger() {
         return self::join('erp_ledger_group','erp_ledger_group.ledger_group_id', '=', 'erp_ledger.ledger_group_id')

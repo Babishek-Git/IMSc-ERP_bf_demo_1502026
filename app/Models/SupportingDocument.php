@@ -17,6 +17,7 @@ class SupportingDocument extends Model
         'doc_desc',
         'org_file_name',
         'file_name',
+        'doc_date',
         'active',
         'created_at',
         'created_by',
@@ -29,9 +30,10 @@ class SupportingDocument extends Model
     public static function GetSancationDocData($TransId,$ModuleCode){
         if($TransId != '' && $ModuleCode !== ''){
             return self::where('transaction_id',$TransId)->where('module_code',$ModuleCode)->where('active',1)->get();
-        }else{
-            return self::where('module_code',$ModuleCode)->where('active',1)->get();
         }
+    }
+    public static function GetSancationDocUploadData($ModuleCode){
+        return self::where('module_code',$ModuleCode)->where('active',1)->get();
     }
     public static function GetSuppDocDownloadData($SupDocId,$ModuleCode){
         if($SupDocId != '' && $ModuleCode !== ''){

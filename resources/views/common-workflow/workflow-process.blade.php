@@ -3,12 +3,12 @@
 		var KillEvent = 0;
 		$(document).ready(function(){
 			//INDENT FUND AVALABE HIDE THE FORWARD BUTTON/////
-			var BudgetVerfi = $('#hidd_buget_apr').val();
-			var FundAvable  = $('#hidd_fund_avable').val();
+			var BudgetVerfi   = $('#hidd_buget_apr').val();
+			var ISFundAvable  = $('#hidd_fund_avable').val();
 			$('.WorkFlowAction').each(function () {
 				var BtnValue = $(this).val();
 				var DataFlag = $(this).data('flag');
-				if (BudgetVerfi == 'Y' && !FundAvable && BtnValue == 'FORWARD' && DataFlag == 'FW'){
+				if (BudgetVerfi == 'Y' && ISFundAvable =='NO' && BtnValue == 'FORWARD' && DataFlag == 'FW'){
 					$(this).hide();
 				}
 			});
@@ -79,7 +79,6 @@
 			});
 			$("body").on("click",".WorkFlowAction", function(event){ 
 				if(KillEvent == 0){
-					
 					var ActionRem   = $('#txt_action_remarks').val();
 					let ActionFlag = $(this).attr("data-flag");
 					if((ActionFlag == 'RJ')){

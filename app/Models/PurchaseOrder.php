@@ -69,7 +69,12 @@ class PurchaseOrder extends Model
         'bill_pay_mode',
         'work_duration_mode',
         'sd_received',
-        'pg_received'
+        'pg_received',
+        'gst_perc',
+        'cost_tax',
+        'is_gem_portal',
+        'tax_with_po_amt',
+        'gem_po_no',
     ];
     public function showPurchaseOredrData($request,$PurchaseId){
         $ReturnData = NULL;

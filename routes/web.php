@@ -330,6 +330,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/sd-entry', 'SdAndPgEntryController@SDentyForm')->name('sdpo-entry.sd-entry');
 				Route::match(array('GET','POST'),'/pg-entry', 'SdAndPgEntryController@POentyForm')->name('sdpo-entry.pg-entry');
 				Route::match(array('GET','POST'),'/get-sd-percentage', 'SdAndPgEntryController@getSdPercentage');
+				Route::match(array('GET','POST'),'/po-sd-pg', 'SdAndPgEntryController@PoSDPGData')->name('sdpo.po-sd-pg');
 			});
 			
 			Route::group(['prefix' => 'change-request'], function() {

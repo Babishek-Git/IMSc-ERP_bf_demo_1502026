@@ -58,6 +58,7 @@ if($RecptMaxSufNo == '' || $RecptMaxSufNo ==  NULL){
 $FinYear          = Helper::GetCurrentFinYear(NULL);
 $NewReceiptNo     = "IMS/P&S/" . $FinYear . "/" . $SuffixNo . "";
 $BackUrl          = 'material.material-inward-creation';
+$InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
 @endphp
 <style>
     .invoice-tag-strip {
@@ -143,52 +144,65 @@ $BackUrl          = 'material.material-inward-creation';
 													</div>
 												@endif
 											</div>
+                                            
                                             <div class="form-step active"> 
                                                 <fieldset class="fieldbox">
-                                                    <legend class="fieldbox-legend">Purchase order</legend>
+                                                    <legend class="fieldbox-legend">Purchase order / Receipt Details</legend>
                                                     <div class="fieldbox-div">
-                                                        <div class="div3"><div class="lboxlabel ">Purchase order No.</div><input type="text" name="txt_purchase_order_no" id="txt_purchase_order_no" class="tboxsmclass " readonly value="{{ $PurchaseOrderNo }}" ></div>
-                                                        <div class="div3"><div class="lboxlabel ">Purchase order Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="{{ Helper::DisplayDateFormat($PurchaseOrderDate) }}" ></div>
-                                                        <div class="div3"><div class="lboxlabel ">Indent Created By</div><input type="text" name="txt_indent_created_by" id="txt_indent_created_by" class="tboxsmclass " readonly value="{{$IndentCreateName}}" ></div>
-                                                        <div class="div3"><div class="lboxlabel ">Vendor Name</div><input type="text" name="txt_vendor_name" id="txt_vendor_name" class="tboxsmclass " readonly value="{{$VendorName}}" ></div>
-                                                        <div class="row smclearrow"></div>
-                                                        <div class="row smclearrow"></div>
-                                                        <div class="row smclearrow"></div>
-                                                    </div>
-                                                </fieldset>
-                                                <fieldset class="fieldbox">
-                                                    <legend class="fieldbox-legend">Receipt Details</legend>
-                                                    <div class="fieldbox-div">
+                                                        <div class="div3"><div class="lboxlabel">Purchase order No.</div><input type="text" name="txt_purchase_order_no" id="txt_purchase_order_no" class="tboxsmclass " readonly value="{{ $PurchaseOrderNo }}" ></div>
+                                                        <div class="div3"><div class="lboxlabel">Purchase order Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="{{ Helper::DisplayDateFormat($PurchaseOrderDate) }}" ></div>
+                                                        <div class="div3"><div class="lboxlabel">Indent Created By</div><input type="text" name="txt_indent_created_by" id="txt_indent_created_by" class="tboxsmclass " readonly value="{{$IndentCreateName}}" ></div>
+                                                        <div class="div3"><div class="lboxlabel">Vendor Name</div><input type="text" name="txt_vendor_name" id="txt_vendor_name" class="tboxsmclass " readonly value="{{$VendorName}}" ></div>
                                                         <div class="div3"><div class="lboxlabel ">Receipt No. / GRN No.</div><input type="text" name="txt_receipt_no" id="txt_receipt_no" class="tboxsmclass" readonly value="{{ $ReceiptNo ?? $NewReceiptNo ?? '' }}"></div>
                                                         <div class="div2"><div class="lboxlabel ">Receipt Date</div><input type="text" name="txt_receipt_date" id="txt_receipt_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($ReceiptDate ?? $ReceiptDate ?? '') }}" ></div>
-                                                        <!-- <div class="div3"><div class="lboxlabel ">Challan No. </div><input type="text" name="txt_emp_icno" id="txt_emp_icno" class="tboxsmclass" value="" ></div>
-                                                        <div class="div3"><div class="lboxlabel ">Challan Date</div><input type="text" name="txt_emp_icno" id="txt_emp_icno" class="tboxsmclass" value="" ></div>
-                                                        <div class="div6"><div class="lboxlabel ">Invoice No.</div><input type="text" name="txt_emp_icno" id="txt_emp_icno" class="tboxsmclass" value="" ></div> -->
-                                                        <div class="div3">
-                                                            <div class="lboxlabel">Invoice No.</div>
-                                                            <div style="display:flex; align-items:center; gap:6px;"><input type="text" name="txt_invoice_input" id="txt_invoice_input" class="tboxsmclass" placeholder="Enter invoice number" value="">
-                                                                <i class="fa fa-plus-square sqadd ptr inp" id="btn_add_invoice"  style="font-size:24px; color:#029339; cursor:pointer;"></i>
-                                                            </div>
-                                                            <div id="invoice_tag_strip" class="invoice-tag-strip"></div>
-                                                            <div id="invoice_hidden_inputs"></div>
-                                                        </div>
-                                                        <div class="div2"><div class="lboxlabel">Invoice Date</div> <input type="text" name="txt_invoice_date" id="txt_invoice_date" class="tboxsmclass datepicker"  value="{{ Helper::DisplayDateFormat($InvoiceDate ?? $InvoiceDate ?? '') }}"></div>
-                                                        <div class="div2"><div class="lboxlabel">Invoice Upload</div><input type="file" id="file_invoce_upload" name="file_invoce_upload" class="step-btn"></div>
                                                         <div class="row smclearrow"></div>
-                                                        <!-- <div class="div3">
-                                                            <div class="lboxlabel">Invoice No.</div>
-                                                            <div style="display:flex; align-items:center; gap:6px;"><input type="text" name="txt_invoice_input" id="txt_invoice_input" class="tboxsmclass" placeholder="Enter invoice number" value="">
-                                                                <i class="fa fa-plus-square sqadd ptr inp" id="btn_add_invoice"  style="font-size:24px; color:#029339; cursor:pointer;"></i>
-                                                            </div>
-                                                            <div id="invoice_tag_strip" class="invoice-tag-strip"></div>
-                                                            <div id="invoice_hidden_inputs"></div>
-                                                        </div>
-                                                        <div class="div2"><div class="lboxlabel">Invoice Date</div> <input type="text" name="txt_invoice_date" id="txt_invoice_date" class="tboxsmclass datepicker"  value=""></div>
-                                                        <div class="div2"><div class="lboxlabel">Invoice Upload</div><input type="file" id="file_invoce_upload" name="file_invoce_upload" class="step-btn"></div>
-                                                        <div class="row smclearrow"></div> -->
                                                     </div>
                                                 </fieldset>
-                                                	<fieldset class="fieldbox">
+											    <div class="row smclearrow"></div>
+											    <div class="row smclearrow"></div>
+											    <div class="row smclearrow"></div>
+                                                {{-- ── MATERILA INWARD  SUPPORTING DOCUMENTS TABLE  ── --}}
+                                                <div class="table-container">
+                                                    <div class="table-wrapper">
+                                                        <div class="section-header">
+                                                            <span>Invoice / Delivery  Documents Details</span>
+                                                            <button align="right" type="button" id='btn_add_new' class="rm-new-emp-btn" >+ Add New Row</button>
+                                                        </div>
+                                                        <table class="formtable" disabled width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="text-align:center; width:60%">Invoice / Delivery Challan Description</th>  
+                                                                    <th style="text-align:center; width:30%">Date</th>  
+                                                                    <th style="text-align:center; width:30%">Upload</th>  
+                                                                    <th style="text-align:center; width:10%"> Action</th>  
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="supp_doc_tbody">	
+                                                                @if(isset($InvoicesDocArr))
+                                                                    @foreach($InvoicesDocArr as $DocValue)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input type="text"  style="width:100%" name="txt_supp_doc_desc[]" id="txt_sno" class="tboxsmclass"  value="{{$DocValue->doc_desc ?? ''}}">
+                                                                        </td>
+                                                                        <td><input type="text" name="txt_supp_doc_date[]" id="txt_supp_doc_date" class="tboxsmclass datepicker"  value="{{ Helper::DisplayDateFormat($DocValue->doc_date ?? $DocValue->doc_date ?? '') }}"></td>
+                                                                        <td class="labelcenter" style="text-align:center;">
+                                                                            <button type="button"  id="btn_download" data-fileid="{{ encrypt($DocValue->sup_doc_id) }}" class="btn btn-default tuploadbtn" title="Click here to Download the File" style="cursor: pointer;"><i class="fa fa-download"></i> Download File</button>
+                                                                        </td>
+                                                                        <td align='center'><i class='fa fa-times-circle sqdel ptr disable DeleteRow' id='DelIndentDetails' style='font-size:24px'></i></td>
+                                                                    </tr>
+                                                                    @endforeach
+                                                                @endif	
+                                                                <tr>
+                                                                    <td><input type="text"  style="width:100%" name="txt_supp_doc_desc[]" id="txt_sno" class="tboxsmclass  "  value=""></td>
+                                                                    <td><input type="text" name="txt_supp_doc_date[]" id="txt_supp_doc_date" class="tboxsmclass datepicker"  value="{{ Helper::DisplayDateFormat($InvoiceDate ?? $InvoiceDate ?? '') }}"></td>
+                                                                    <td><input type="file" id="file_upload" name="file_upload[]" class="step-btn"></td>
+                                                                    <td align='center'><i class='fa fa-times-circle sqdel ptr disable DeleteRow' id='DelIndentDetails' style='font-size:24px'></i></i></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <fieldset class="fieldbox">
 												<legend class="fieldbox-legend">Item Details of Required Items </legend>
 												<div class="fieldbox-div">
 													<div class="row smclearrow"></div>
@@ -255,7 +269,7 @@ $BackUrl          = 'material.material-inward-creation';
                                                                                 @if(isset($data['Empdata']))
                                                                                     @foreach($data['Empdata'] as $EmpData)
                                                                                         <option value="{{ $EmpData->emp_no }}"
-                                                                                            {{ $EmpData->location_id == $MatInwardData->location_id ? 'selected' : '' }}>
+                                                                                            {{ $EmpData->emp_no == $MatInwardData->location_id ? 'selected' : '' }}>
                                                                                             {{ $EmpData->emp_first_name }}
                                                                                         </option>
                                                                                     @endforeach
@@ -372,7 +386,6 @@ $BackUrl          = 'material.material-inward-creation';
 <script type="text/javascript" language="javascript">
 	$('[name="cmb_location"]').chosen();
     $('.ChosenInput').chosen();
-    
 $('document').ready(function(){
     $(".decimalnum").on("input", function () {
         let value = this.value.replace(/[^0-9]/g, ''); // allow only digits
@@ -383,6 +396,36 @@ $('document').ready(function(){
         }
         this.value = value;
     });
+    $("body").on("click","#btn_add_new", function(event){
+		var NewRow = '';
+		NewRow += '<tr>';
+		NewRow += '<td>';
+		NewRow += '<input type="text"  style="width:100%" name="txt_supp_doc_desc[]" id="txt_sno" class="tboxsmclass  "  value="">';
+		NewRow += '</td>';
+        NewRow += '<td>';
+		NewRow += '<input type="text" name="txt_supp_doc_date[]" id="txt_supp_doc_date" class="tboxsmclass datepicker"  value="">';
+		NewRow += '</td>';
+		NewRow += '<td>';
+		NewRow += '<input type="file" id="file_upload" name="file_upload[]" class="step-btn">';
+		NewRow += '</td>';
+		NewRow += "<td align='center'><i class='fa fa-times-circle sqdel ptr disable DeleteRow' id='DelIndentDetails' style='font-size:24px'></i></i></td>";
+		NewRow += '</tr>';
+		// $("#supp_doc_tbody").append(NewRow);
+		$("#supp_doc_tbody").prepend(NewRow);
+        $('.datepicker').datepicker();
+	});
+	$(document).on('click','.DeleteRow',function(){
+		$(this).closest("tr").remove();
+	}); 
+    $(document).on("click", "#btn_download", function(event) {
+		var SuppDocId = $(this).attr("data-fileid");
+		DownloadFile(SuppDocId);
+	});
+	function DownloadFile(SuppDocId) {
+        var ModuleCode    = 'MAT_INWARD';
+        var ModuleSubCode = 'INVOICE';
+		window.open("{{ route('indent.sanction-document-download') }}?id=" + SuppDocId + "&module_code=" + ModuleCode + "&module_sub_code=" + ModuleSubCode, "_blank");
+	}
     $('body').on('keyup', '.percvalue', function(event) {
         var Index         = $(this).data('index');
         var TotalCost     = Number($('#txt_total_cost_'+ Index).val()) || 0;

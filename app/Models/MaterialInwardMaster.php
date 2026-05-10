@@ -96,6 +96,7 @@ class MaterialInwardMaster extends Model
                 'po.work_name', 
                 'po.po_issued',
                 'po.work_order_no',
+                'po.indent_id',
                 'po.work_order_date',
                 'po.contid'
             )
@@ -118,6 +119,7 @@ class MaterialInwardMaster extends Model
             ->where('mi.active', '1') 
             ->where('po.po_issued', 'true')
             ->where('mi.mat_inward_submit', 'true')
+            ->orderby('master_inward_id','DESC')
             ->get();
         }
        

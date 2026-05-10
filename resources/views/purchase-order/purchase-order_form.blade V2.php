@@ -20,11 +20,6 @@ if(isset($data['ShowPurchaseEditData'])){
 	$QUDate             = collect($PurchaseEditData)->pluck('quotation_date')->first();
 	$ProjectMode        = collect($PurchaseEditData)->pluck('work_duration_mode')->first();
 	$BillPayMode        = collect($PurchaseEditData)->pluck('bill_pay_mode')->first();
-	$GstPerc            = collect($PurchaseEditData)->pluck('gst_perc')->first();
-	$PoTaxType          = collect($PurchaseEditData)->pluck('cost_tax')->first();
-	$IsGemPortal        = collect($PurchaseEditData)->pluck('is_gem_portal')->first();
-	$GemPoNo            = collect($PurchaseEditData)->pluck('gem_po_no')->first();
-	$PoTotalAmt         = collect($PurchaseEditData)->pluck('tax_with_po_amt')->first();
 }
 if(isset($data['POIndentData'])){
 	$ShowPOIndentData  = $data['POIndentData'];
@@ -114,46 +109,31 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 															<div class="div2"><textarea name="txt_indent_created_by" id="txt_indent_created_by" class="tboxsmclass" rows="2" style="resize:none;" readonly>{{$IndentEmpTittle ?? ''}}</textarea></div>
 															<div class="row smclearrow"></div>
 														</div>
-													</fieldset>
+													</fieldset>   
 													<fieldset class="fieldbox">
 														<legend class="fieldbox-legend">Purchase Order  Details</legend>
 														<div class="fieldbox-div">
 															<div class="row smclearrow"></div>
-															<div class="div4"><div class="lboxlabel ">Whether the indent is processed through the GeM Portal<span class="reqindi">*</span></div>
-																<div class="div6 no-margin" >  
-																	<div class="inputGroup paddlr2">
-																		<input id="rad_yes" name="rad_Basis" type="radio" value="YES" {{ isset($IsGemPortal) && $IsGemPortal == 'YES' ? 'checked' : '' }}/>
-																		<label for="rad_yes" style="padding:3px 0px; width:100%" > &nbsp;Yes</label>
-																	</div>
-																</div>
-																<div class="div6 no-margin">
-																	<div class="inputGroup paddlr2">
-																		<input id="rad_no" name="rad_Basis" type="radio" value="NO" {{ isset($IsGemPortal) && $IsGemPortal == 'NO' ? 'checked' : '' }}/>
-																		<label for="rad_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
-																	</div>
-																</div>
-															</div>
-															<div class="div3"><div class="lboxlabel ">PO. No. / WO. No.<span class="reqindi">*</span></div><input type="text" name="txt_pur_order_no" id="txt_pur_order_no" class="tboxsmclass " value="@if(isset($NewPONo)){{$NewPONo}}@endif" readonly></div>
+															<div class="div2"><div class="lboxlabel ">PO. No. / WO. No.<span class="reqindi">*</span></div><input type="text" name="txt_pur_order_no" id="txt_pur_order_no" class="tboxsmclass " value="@if(isset($NewPONo)){{$NewPONo}}@endif" readonly></div>
 															<div class="div4"><div class="lboxlabel ">PO. Name<span class="reqindi">*</span></div><textarea name="txt_pur_order_name" id="txt_pur_order_name" class="tboxsmclass" rows="1" value ='{{$PurchaseName ?? ""}}'>{{$PurchaseName ?? ''}}</textarea></div>
 															<div class="div1"><div class="lboxlabel ">PO. Date<span class="reqindi">*</span></div><input type="text" name="txt_pur_order_date" id="txt_pur_order_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($PoDate ?? null) }}"></div>
-															<div class="row smclearrow"></div>
-															<div class="div2"><div class="lboxlabel ">PO. Amount<span class="reqindi">*</span></div><input type="text" name="txt_pur_amt" id="txt_pur_amt" class="tboxsmclass passorderamt" value="{{$PoCost ?? ''}}"></div>
-															<div class="div2"><div class="lboxlabel ">GST %<span class="reqindi">*</span></div><input type="text" name="txt_po_gst" id="txt_po_gst" class="tboxsmclass" value="{{$GstPerc ?? ''}} "></div>
-															<div class="div3"><div class="lboxlabel ">Tax on Cost<span class="reqindi">*</span></div>
-																<div class="div6 no-margin">
-																	<div class="inputGroup paddlr2">
-																		<input id="rad_inc" name="rad_tax_inc" type="radio" value="INC" {{isset($PoTaxType) && $PoTaxType == 'INC' ? 'checked' : ''}}/>
-																		<label for="rad_inc" style="padding:3px 0px; width:100%"> &nbsp;Including</label>
-																	</div>
-																</div>
-																<div class="div6 no-margin">
-																	<div class="inputGroup paddlr2">
-																		<input id="rad_exc" name="rad_tax_inc" type="radio" value="EXC" {{isset($PoTaxType) && $PoTaxType == 'EXC' ? 'checked' : ''}}/>
-																		<label for="rad_exc" style="padding:3px 0px; width:100%"> &nbsp;Excluding</label>
-																	</div>
-																</div>
+															<div class="div1"><div class="lboxlabel ">PO. Amount<span class="reqindi">*</span></div><input type="text" name="txt_pur_amt" id="txt_pur_amt" class="tboxsmclass passorderamt" value="{{$PoCost ?? ''}}"></div>
+															@if(!empty($TrNO))
+																<div class="div3 editpage"><div class="lboxlabel tenderlabel">Tender No.<span class="reqindi">*</span></div><input type="text" name="txt_tender_no" id="txt_tender_no" class="tboxsmclass tenderlabel" value="{{$TrNO ?? ''}}"></div> 
+															@elseif(!empty($QUDate))
+																<div class="div1 editpage"><div class="lboxlabel quotationlable">Quotation Date<span class="reqindi">*</span></div><input type="text" name="txt_quotation_date" id="txt_quotation_date" class="tboxsmclass datepicker quotationlable" value="{{ Helper::DisplayDateFormat($QUDate ?? null) }}"></div>
+															@endif
+															<!-- <div class="div3"><div class="lboxlabel tenderlabel ">Tender No.<span class="reqindi">*</span></div><input type="text" name="txt_tender_no" id="txt_tender_no" class="tboxsmclass tenderlabel" value="{{$TrNO ?? ''}}"></div>
+															<div class="div1"><div class="lboxlabel quotationlable ">Quotation Date<span class="reqindi">*</span></div><input type="text" name="txt_quotation_date" id="txt_quotation_date" class="tboxsmclass datepicker quotationlable" value="{{ Helper::DisplayDateFormat($QUDate ?? null) }}"></div>
+															<div class="div3"><div class="lboxlabel label pocmlable">PCOM1/PCOM2<span class="reqindi">*</span></div>
+															<div class="div9  label pocmlable">
+																<input type="radio" name="rad_pcom" id="pcom_1" value="YES" {{ isset($PComValue) && $PComValue == "YES" ? 'checked' : '' }}>&emsp;PCOM1 &emsp;
+																<input type="radio" name="rad_pcom" id="pcom_2" value="NO" {{ isset($PComValue) && $PComValue == 'NO' ? 'checked' : '' }}> &emsp;PCOM2
+																<input type="hidden" name = 'hidd_pocm' id ='hidd_pocm' value =''>
+															</div> -->
 															</div>
-															<div class="div2"><div class="lboxlabel">Po.cost With GST  &#8377;<span class="reqindi">*</span></div><input type="text" name="hidden_total_po_amt" id="hidden_total_po_amt" class="tboxsmclass"readonly value="{{$PoTotalAmt ?? ''}}"></div>
+															<div id="dynamic_section"></div>
+															<div class="row smclearrow"></div>
 															<div class="div3"><div class="lboxlabel ">Vendor Name<span class="reqindi">*</span></div>
 																<div style="display:flex; align-items:center; gap:8px;">
 																	<select name="cmb_vendor_name" id="cmb_vendor_name" class="tboxsmclass ChosenInput">
@@ -170,6 +150,38 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																	<i class="fa fa-plus-square sqadd  " id="AddNewVend"  style="font-size:24px; cursor:pointer; color:#10478A;"></i>
 																</div>
 															</div>
+															<div class="div1"><div class="lboxlabel ">GST %<span class="reqindi">*</span></div><input type="text" name="txt_po_gst" id="txt_po_gst" class="tboxsmclass " value="{{$AMCGstPerc ?? ''}} "></div>
+															<div class="div2"><div class="lboxlabel ">Tax on Cost<span class="reqindi">*</span></div>
+																<div class="div6 no-margin">
+																	<div class="inputGroup paddlr2">
+																		<input id="rad_inc" name="rad_tax_inc" type="radio" value="INC" {{isset($AMCTaxType) && $AMCTaxType == 'INC' ? 'checked' : ''}}/>
+																		<label for="rad_inc" style="padding:3px 0px; width:100%"> &nbsp;Including</label>
+																	</div>
+																</div>
+																<div class="div6 no-margin">
+																	<div class="inputGroup paddlr2">
+																		<input id="rad_exc" name="rad_tax_inc" type="radio" value="EXC" {{isset($AMCTaxType) && $AMCTaxType == 'EXC' ? 'checked' : ''}}/>
+																		<label for="rad_exc" style="padding:3px 0px; width:100%"> &nbsp;Excluding</label>
+																	</div>
+																</div>
+															</div>
+															<div class="div2"><div class="lboxlabel">Total Po Cost &#8377;<span class="reqindi">*</span></div><input type="text" name="hidden_total_po_amt" id="hidden_total_po_amt" class="tboxsmclass"readonly value="{{$AMCPoTotalAmt ?? ''}}"></div>
+															<input type='hidden' id='hidden_total_po_amt'  value =''>
+															<div class="div2"><div class="lboxlabel ">GeM portal<span class="reqindi">*</span></div>
+																<div class="div5 no-margin" style="margin-right: 10px;">  
+																	<div class="inputGroup paddlr2">
+																		<input id="rad_yes" name="rad_Basis" type="radio" value="yes"/>
+																		<label for="rad_yes" style="padding:3px 0px; width:100%"> &nbsp;Yes</label>
+																	</div>
+																</div>
+																<div class="div5 no-margin">
+																	<div class="inputGroup paddlr2">
+																		<input id="rad_no" name="rad_Basis" type="radio" value="No" />
+																		<label for="rad_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
+																	</div>
+																</div>
+															</div>
+															<div class="div2 gemport"><div class="lboxlabel ">GeM No.<span class="reqindi">*</span></div><input type="text" name="txt_gem_no" id="txt_gem_no" class="tboxsmclass " value="" ></div>
 															<div class="row smclearrow"></div>
 															<div class="div2">
 																<div class="lboxlabel">Work Duration<span class="reqindi">*</span></div>
@@ -184,7 +196,7 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																</div>
 															</div>
 															<div class="div2"><div class="lboxlabel ">Work Starting Date<span class="reqindi">*</span></div><input type="text" name="txt_start_date" id="txt_start_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($WrkStartDate ?? null) }}"></div>
-															<div class="div3"><div class="lboxlabel ">Work Completion Date<span class="reqindi">*</span></div><input type="text" name="txt_end_date" id="txt_end_date" class="tboxsmclass " value="{{Helper::DisplayDateFormat($DateOfComp ?? null) }}" readonly></div>
+															<div class="div2"><div class="lboxlabel ">Work Completion Date<span class="reqindi">*</span></div><input type="text" name="txt_end_date" id="txt_end_date" class="tboxsmclass " value="{{Helper::DisplayDateFormat($DateOfComp ?? null) }}" readonly></div>
 															<div class="div2"><div class="lboxlabel ">Payment Mode<span class="reqindi">*</span></div>
 																<select name="cmb_bill_pay_mode" id="cmb_bill_pay_mode" class="tboxsmclass ChosenInput">
 																	<option value="">---------- Select ----------</option>
@@ -195,14 +207,8 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																	@endif
 																</select>
 															</div>
-															@if(!empty($TrNO))
-																<div class="div3 editpage"><div class="lboxlabel tenderlabel">Tender No.<span class="reqindi">*</span></div><input type="text" name="txt_tender_no" id="txt_tender_no" class="tboxsmclass tenderlabel" value="{{$TrNO ?? ''}}"></div> 
-															@elseif(!empty($QUDate))
-																<div class="div1 editpage"><div class="lboxlabel quotationlable">Quotation Date<span class="reqindi">*</span></div><input type="text" name="txt_quotation_date" id="txt_quotation_date" class="tboxsmclass datepicker quotationlable" value="{{ Helper::DisplayDateFormat($QUDate ?? null) }}"></div>
-															@endif
-															<div id="dynamic_section"></div>
 															<div class="row smclearrow"></div>
-															<div class="div1 label">Material Cert. By<span class="reqindi">*</span></div>
+															<div class="div2 label">Material Cert. By<span class="reqindi">*</span></div>
 															<div class="div4 label">
 																@if(isset($data['MaterialCertifySecData']))
 																	@foreach($data['MaterialCertifySecData'] as $MaterialCertifySec)
@@ -211,10 +217,8 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																	@endforeach
 																@endif
 															</div> 
-															<div class="div4 gemport"><div class="lboxlabel">GeM Po.No.<span class="reqindi">*</span></div><input type="text" name="txt_gem_po_no" id="txt_gem_po_no" class="tboxsmclass " value="{{$GemPoNo ?? ''}}" ></div>
-															<div class="row smclearrow"></div>
 														</div>
-													</fieldset>    
+													</fieldset>                                                        											
 												</div>
 												<fieldset class="fieldbox" >
 													<legend class="fieldbox-legend">Item Details of Required Items </legend>
@@ -230,9 +234,9 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																	<th  style="width: 80px;">Qty</th>
 																	<th style="width: 80px;">Unit</th>
 																	<th style="width: 100px;">Unit <br>Price <br> Rs.</th>
-																	<!-- <th style="width: 80px;">GST %</th> -->
+																	<th style="width: 80px;">GST %</th>
 																	<th style="width: 80px;">Amount <br> Rs.</th>
-																	<!-- <th style="width: 100px;">Tax Type</th> -->
+																	<th style="width: 100px;">Tax Type</th>
 																	<th style="width: 120px;">Total cost <br> with tax (Approx.) <br> Rs.</th>
 																</tr>
 															</thead>
@@ -258,13 +262,13 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																			</select>
 																		</td>
 																		<td><input type='text'style='width:100%' name='txt_item_estimate_no[]'data-index='{{ $Index }}' id='txt_item_estimate_no_{{ $Index }}' class='tboxsmclass decimalnum unitprice' value='{{$PoValue->estimated_unit_price ?? ""}}'></td>
-																		<!-- <td><input type='text'style='width:100%' name='txt_item_gst_perc[]'data-index='{{ $Index }}' id='txt_item_gst_perc_{{ $Index }}' class='tboxsmclass decimalnum unitprice' value=''></td> -->
+																		<td><input type='text'style='width:100%' name='txt_item_gst_perc[]'data-index='{{ $Index }}' id='txt_item_gst_perc_{{ $Index }}' class='tboxsmclass decimalnum unitprice' value=''></td>
 																		<td><input type='text'style='width:100%' name='txt_item_amout[]' data-index='{{ $Index }}'id='txt_item_amout_{{ $Index }}' class='tboxsmclass decimalnum itemamout'readonly value='{{$PoValue->total_cost ?? ""}}' readonly></td>
-																		<!-- <td>
+																		<td>
 																			<select name='cmb_tax_type[]' id='cmb_tax_type_{{ $Index }}' data-index='{{ $Index }}' class='tboxsmclass taxtype '>
 																			<option value="">----Select ---</option>
 																			<option value="INC" {{ ($PoValue->tax_type ?? '') == "INC" ? 'selected' : '' }}>Inclusive</option>
-																			<option value="EXCL" {{ ($PoValue->tax_type ?? '') == "EXCL" ? 'selected' : '' }}>Exclusive</option> -->
+																			<option value="EXCL" {{ ($PoValue->tax_type ?? '') == "EXCL" ? 'selected' : '' }}>Exclusive</option>
 																		<td><input type='text'style='width:100%;text-align: Right' name='txt_item_total_cost[]'data-index='{{ $Index }}' id='txt_item_total_cost_{{ $Index }}' class='tboxsmclass decimalnum' value='{{$PoValue->item_amount ?? ""}}'readonly></td>
 																		<input type='hidden' name='hidden_indent_det_id[]'data-index='{{ $Index }}' id='hidden_indent_det_id_{{ $Index }}'  value='{{$PoValue->indent_det_id ?? ""}}'>
 																	</tr>
@@ -272,7 +276,7 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																@endforeach
 																<tr>
 																	<input type="hidden" name="hidden_indent_total_det_index" id="hidden_indent_total_det_index" value ='{{$Index ?? "" }}'>
-																	<td colspan='6' align='right'>Total Po. Cost </td>
+																	<td colspan='8' align='right'>Total Po. Cost </td>
 																	<td align='right' id ='txt_grant_total' name ='txt_grant_total' value='{{$Grandtotal ?? ""}}'>{{$Grandtotal ?? ''}}</td>
 																</tr>
 															</tbody>
@@ -304,15 +308,9 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 <script type="text/javascript" language="javascript">
 $(document).ready(function(){
     $('.gemport').hide();
-	var IsGemPortal = $('input[name="rad_Basis"]:checked').val();
-	if (IsGemPortal == 'YES') {
-        $('.gemport').show();
-    } else {
-        $('.gemport').hide();
-    }
 	$('.paddlr2 input[type=radio][name="rad_Basis"]').on('change', function () {
 		$('.gemport').val('');
-        if ($(this).val() === 'YES') {
+        if ($(this).val() === 'yes') {
             $('.gemport').show();
         } else {
             $('.gemport').hide();
@@ -342,13 +340,13 @@ $(document).ready(function(){
 			pocmHtml += '</div>';
 		} else {
 			$("#pcom_1").prop("checked", true).trigger("change");
-			pocmHtml += '<div class="div3">';
+			pocmHtml += '<div class="div1">';
 			pocmHtml += '<div class="lboxlabel quotationlable">Quotation Date<span class="reqindi">*</span></div>';
 			pocmHtml += '<input type="text" name="txt_quotation_date" class="tboxsmclass datepicker quotationlable" value="">';
 			pocmHtml += '</div>';
 		}
 		$('#dynamic_section').html(pocmHtml);
-		$('.datepicker').datepicker();
+		$('#dynamic_section .datepicker').datepicker();
 	});
 	// $("#txt_pur_amt").on("keyup change", function() {
 	// 	var PassOrderAmount = parseFloat($(this).val()) || 0;
@@ -381,37 +379,20 @@ $(document).ready(function(){
 	// 		$('.tenderlabel').hide();
 	// 	}
 	// });
-	// $('body').on('change', 'input[name="rad_tax_inc"]', function () {
-	// 	var TaxPercent       = $("#txt_po_gst").val();
-    // 	var TaxType          = $('input[name="rad_tax_inc"]:checked').val();
-	// 	var AmcTotalCost     = parseFloat($('#txt_pur_amt').val()) || 0;
-	// 	var PoTaxValue       = 0;
-    // 	var TotalPoAmt       = 0;
-	// 	if(TaxType =='EXC'){
-	// 		PoTaxValue  = (AmcTotalCost * TaxPercent) / (100);
-    //     	TotalPoAmt  = AmcTotalCost + PoTaxValue;
-	// 	}else{
-	// 		var TotalPoAmt = AmcTotalCost ;
-	// 	}
-    // 	$('#hidden_total_po_amt').val(TotalPoAmt);
-	// });
-	$('body').on('change', '#rad_inc,#rad_exc,#txt_po_gst,#txt_pur_amt', function() {
-		CalculateTotalPoAmount();
-	});
-	function CalculateTotalPoAmount(){
-		var TaxPercent   = parseFloat($("#txt_po_gst").val()) || 0;
-		var TaxType      = $('input[name="rad_tax_inc"]:checked').val();
-		var AmcTotalCost = parseFloat($('#txt_pur_amt').val()) || 0;
-		var PoTaxValue   = 0;
-		var TotalPoAmt   = 0;
-		if (TaxType == 'EXC') {
-			PoTaxValue = (AmcTotalCost * TaxPercent) / 100;
-			TotalPoAmt = AmcTotalCost + PoTaxValue;
-		} else {
-			TotalPoAmt = AmcTotalCost;
+	$('body').on('change', 'input[name="rad_tax_inc"]', function () {
+		var TaxPercent       = $("#txt_po_gst").val();
+    	var TaxType          = $('input[name="rad_tax_inc"]:checked').val();
+		var AmcTotalCost     = parseFloat($('#txt_pur_amt').val()) || 0;
+		var PoTaxValue       = 0;
+    	var TotalPoAmt       = 0;
+		if(TaxType =='INC'){
+			PoTaxValue  = (AmcTotalCost * TaxPercent) / (100);
+        	TotalPoAmt  = AmcTotalCost + PoTaxValue;
+		}else{
+			var TotalPoAmt = AmcTotalCost ;
 		}
-		$('#hidden_total_po_amt').val(TotalPoAmt);
-	}
+    	$('#hidden_total_po_amt').val(TotalPoAmt);
+	});
 	$('body').on('input change', '.pocmlable', function(event) {
 		var PcomValue = $('input[name="rad_pcom"]:checked').val();
 		if(PcomValue == 'YES'){
@@ -480,16 +461,16 @@ $(document).ready(function(){
 								tablestr += "</select>";
 							tablestr += "</td>";
 							tablestr += "<td><input type='text'style='width:100%' name='txt_item_estimate_no[]'data-index='" + RelIndex + "' id='txt_item_estimate_no_"+RelIndex+"' class='tboxsmclass decimalnum unitprice' value='"+ItemPrice+"'></td>";
-							// tablestr += "<td><input type='text'style='width:100%' name='txt_item_gst_perc[]'data-index='" + RelIndex + "' id='txt_item_gst_perc_"+RelIndex+"' class='tboxsmclass decimalnum unitprice' value=''></td>";
+							tablestr += "<td><input type='text'style='width:100%' name='txt_item_gst_perc[]'data-index='" + RelIndex + "' id='txt_item_gst_perc_"+RelIndex+"' class='tboxsmclass decimalnum unitprice' value=''></td>";
 							tablestr += "<td><input type='text'style='width:100%' name='txt_item_amout[]' data-index='" + RelIndex + "'id='txt_item_amout_"+RelIndex+"' class='tboxsmclass decimalnum itemamout'readonly value='"+Amt+"' readonly></td>";
-							// tablestr += "<td>";
-							// 	tablestr +=  "<select name='cmb_tax_type[]' id='cmb_tax_type_"+RelIndex+"' data-index='" + RelIndex + "' class='tboxsmclass taxtype '>";
-							// 		tablestr += "<option value=''>----Select ---</option>";
-							// 		tablestr += '<option value="INC" ' + (TaxValue == "INC" ? "selected" : "") + '>Inclusive</option>';
-							// 		tablestr += '<option value="EXCL" ' + (TaxValue == "EXCL" ? "selected" : "") + '>Exclusive</option>';
-							// 	tablestr += "</select>";
-							// tablestr += "</td>";
-							// var isReadOnly = (TaxValue == 'INC') ? 'readonly' : '';
+							tablestr += "<td>";
+								tablestr +=  "<select name='cmb_tax_type[]' id='cmb_tax_type_"+RelIndex+"' data-index='" + RelIndex + "' class='tboxsmclass taxtype '>";
+									tablestr += "<option value=''>----Select ---</option>";
+									tablestr += '<option value="INC" ' + (TaxValue == "INC" ? "selected" : "") + '>Inclusive</option>';
+									tablestr += '<option value="EXCL" ' + (TaxValue == "EXCL" ? "selected" : "") + '>Exclusive</option>';
+								tablestr += "</select>";
+							tablestr += "</td>";
+							var isReadOnly = (TaxValue == 'INC') ? 'readonly' : '';
 							tablestr += "<td><input type='text'style='width:100%;text-align: Right' name='txt_item_total_cost[]'data-index='" + RelIndex + "' id='txt_item_total_cost_"+RelIndex+"' class='tboxsmclass decimalnum' value='"+Amt+"'readonly></td>";
 							tablestr += "<input type='hidden' name='hidden_indent_det_id[]'data-index='" + RelIndex + "' id='hidden_indent_det_id_"+RelIndex+"' class='tboxsmclass decimalnum unitprice' value='"+item.indent_dt_id+"'>";
 							tablestr += "<input type='hidden' name='hidden_indent_det_id[]'data-index='" + RelIndex + "' id='hidden_indent_total_det_index' class='tboxsmclass decimalnum unitprice' value='"+RelIndex+"'>";
@@ -499,7 +480,7 @@ $(document).ready(function(){
 							RelIndex++;
 						});
 						tablestr += "<tr>";
-						tablestr += "<td colspan='6' align='right'>Total Po. Cost</td>";
+						tablestr += "<td colspan='8' align='right'>Total Po. Cost</td>";
 						tablestr += "<td align='right' id ='txt_grant_total' name ='txt_grant_total' value ='" + GrandTotal.toFixed(2) + "'>" + GrandTotal.toFixed(2) + "</td>";
 						tablestr += "</tr>";
 						$("#RelationshipTable").append(tablestr);

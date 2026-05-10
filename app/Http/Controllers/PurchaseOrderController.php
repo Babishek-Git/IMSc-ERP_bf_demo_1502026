@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class PurchaseOrderController extends Controller
         $BillpaymodeData         =   $this->Billpaymode->ShowBillpaymode();
         $IndetCreateIcNo         = collect($Indentdata)->pluck('created_by')->first();
         $Empdata                 = $this->Employee->ShowEmployees(NULL,$IndetCreateIcNo); 
-        $GetSancationProcessData = $this ->SupportingDocMaster->GetSancationDocData(NULL,'INDENT');
+        $GetSancationProcessData = $this ->SupportingDocMaster->GetSancationDocUploadData('INDENT');
         $GetSancationIndentIds   = collect($GetSancationProcessData)->pluck('transaction_id')->toArray();
         return view('purchase-order.purchase-order_form')->with('data',compact('Indentdata','GetSancationIndentIds','Contractordata','MaterialCertifySecData','MaxPOSuffixNo','BillpaymodeData','Empdata'));
     }
@@ -115,15 +116,15 @@ class PurchaseOrderController extends Controller
                 $Empdata                = $this->Employee->ShowEmployees($request,NULL);
                 $MaterialCertifySecData = $this->MaterialCertifySection->ShowMaterialCertifySection();
                 $BillpaymodeData        = $this->Billpaymode->ShowBillpaymode();
+                 $GetIndentId           = collect($PuchaseApplicationData)->pluck('indent_id')->first();
+                $POIndentData           = $this->Indent->ShowIndent(NULL,$GetIndentId);
+                $IndetCreateIcNo        = collect($POIndentData)->pluck('emp_no')->first();
+                $IndentEmpdata          = $this->Employee->ShowEmployees(NULL,$IndetCreateIcNo);
                 if($FromPage == 'EDIT'){
-                    $GetIndentId        = collect($PuchaseApplicationData)->pluck('indent_id')->first();
-                    $POIndentData       = $this->Indent->ShowIndent(NULL,$GetIndentId);
-                    $IndetCreateIcNo    = collect($POIndentData)->pluck('emp_no')->first();
-                    $IndentEmpdata      = $this->Employee->ShowEmployees(NULL,$IndetCreateIcNo);
                     return view('purchase-order.purchase-order_form')->with('data',compact('Contractordata','MaterialCertifySecData','BillpaymodeData','POIndentData','IndentEmpdata','FromPage','ShowMaterialUnit','ShowPoItemDetailsData','ShowPurchaseEditData'));
                 }else{
                     $ContractorDetails  = collect($Contractordata)->pluck('name_contractor','contid')->toArray();
-                    return view('purchase-order.purchase-order-view-submit')->with('data',compact('ContractorDetails','ShowPoItemDetailsData','ShowMaterialUnit','Indentdata','OfficeDetails','ShowPurchaseEditData','FromPage','WorkFlowActionData'));
+                    return view('purchase-order.purchase-order-view-submit')->with('data',compact('IndentEmpdata','ContractorDetails','ShowPoItemDetailsData','ShowMaterialUnit','Indentdata','OfficeDetails','ShowPurchaseEditData','FromPage','WorkFlowActionData'));
                 }
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
@@ -170,7 +171,6 @@ class PurchaseOrderController extends Controller
 
     }
     public function SavePurchaseOrderDetails(Request $request){
-        $PoEditId           =  NULL;
         $IndentId           =  $request->cmb_indent_no_date;
         $IndentTitle        =  $request->txt_indent_title;
         $MateCertifyId      =  $request->rad_mat_cert_by;
@@ -189,7 +189,12 @@ class PurchaseOrderController extends Controller
         $WorkDuration       =  $request->txt_work_duration;
         $WrkDurMode         =  $request->cmb_work_duration;
         $PaymentMode        =  $request->cmb_bill_pay_mode;
-        $PoEditId           =  $request->hidd_po_id;
+        $PoTaxType          =  $request->rad_tax_inc;
+        $PoGstPerc          =  $request->txt_po_gst;
+        $IsGemPort          =  $request->rad_Basis;
+        $GemPoNO            =  $request->txt_gem_po_no;
+        $TaxWithPoAmount    =  $request->hidden_total_po_amt;
+        $PoEditId           =  $request->hidd_po_id ?? NULL;
         DB::beginTransaction();
         try {
             // if($PcomStatus == 'YES' || $PcomStatus == 'NO' ){
@@ -197,9 +202,9 @@ class PurchaseOrderController extends Controller
             // }else if(filled($QuotationDate) || $QuotationDate != NULL){
             //     $PcomStatus = NULL;
             // }
-            if($QuotationDate == NULL){
-                $QuotationDate = null;
-            }
+            // if($QuotationDate == NULL){
+            //     $QuotationDate = null;
+            // }
             $SaveData['indent_id']          = $IndentId;
             $SaveData['mat_cert_sect_id']   = $MateCertifyId;
             $SaveData['work_order_no']      = $PurchaseOrderNo;
@@ -210,12 +215,17 @@ class PurchaseOrderController extends Controller
             $SaveData['work_duration']      = $WorkDuration;
             $SaveData['date_of_completion'] = $EndDate;
             $SaveData['contid']             = $VendorId;
-            $SaveData['quotation_date']     = $QuotationDate;
+            $SaveData['quotation_date']     = filled($QuotationDate) ? Carbon::createFromFormat('d/m/Y', $QuotationDate)->format('Y-m-d'): null;
             $SaveData['pcom_status']        = $PcomStatus;
             $SaveData['tr_no']              = $TrNo;
             $SaveData['po_suffix_no']       = $PoSuffixNo;
             $SaveData['work_duration_mode'] = $WrkDurMode;
             $SaveData['bill_pay_mode']      = $PaymentMode;
+            $SaveData['cost_tax']           = $PoTaxType;
+            $SaveData['gst_perc']           = $PoGstPerc;
+            $SaveData['is_gem_portal']      = $IsGemPort;
+            $SaveData['gem_po_no']          = $GemPoNO;
+            $SaveData['tax_with_po_amt']    = $TaxWithPoAmount;
             $SaveData['active']             = 1;//dd($SaveData);
             if(filled($PoEditId)){
                 $SaveData['updated_at']         = NOW();
@@ -235,7 +245,7 @@ class PurchaseOrderController extends Controller
             $ItemUnitIdArr         = $request->input('txt_unit');
             $EstimatedPriceArr     = $request->input('txt_item_estimate_no');
             $ItemAmoutArr          = $request->input('txt_item_amout');
-            $ItemTaxTypeArr        = $request->input('cmb_tax_type');
+            // $ItemTaxTypeArr        = $request->input('cmb_tax_type');
             $TotalCostArr          = $request->input('txt_item_total_cost');
             $IndentDetailsArr      = $request->input('hidden_indent_det_id');
              if(filled($QuantityArr)){
@@ -246,7 +256,7 @@ class PurchaseOrderController extends Controller
                     $EstimatedPrice      =  $EstimatedPriceArr[$QtyKey];
                     $TotalCost           =  $TotalCostArr[$QtyKey];
                     $ItemUnitId          =  $ItemUnitIdArr[$QtyKey];
-                    $ItemTaxType         =  $ItemTaxTypeArr[$QtyKey];
+                    // $ItemTaxType         =  $ItemTaxTypeArr[$QtyKey];
                     $ItemAmout           =  $ItemAmoutArr[$QtyKey];
                     $IndentDetId         =  $IndentDetailsArr[$QtyKey];
                     $SaveDtData['po_id']                = $Po_Wo_Id;
@@ -255,7 +265,7 @@ class PurchaseOrderController extends Controller
                     $SaveDtData['quantity']             = $Quanitity;
                     $SaveDtData['estimated_unit_price'] = $EstimatedPrice;
                     $SaveDtData['item_no']              = $ItemNo;
-                    $SaveDtData['tax_type']             = $ItemTaxType;
+                    // $SaveDtData['tax_type']             = $ItemTaxType;
                     $SaveDtData['unit_id']              = $ItemUnitId;
                     $SaveDtData['item_amount']          = $ItemAmout;
                     $SaveDtData['gst_price']            = null;
