@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ReceiptNoSequence extends Model
+class  DeliveryChallanDetails extends Model
 {
-     use HasFactory;
-    protected $table = 'erp_receipt_no_seq';
-    public $timestamps = false;
+    use HasFactory;
+    protected $table      = 'erp_delivery_challan_qty_details';
+    public $timestamps    = false;
     protected $primaryKey = 'receiptno_id';
-    protected $fillable = [
+    protected $fillable   = [
         'receiptno',
         'group_code',
         'division_code',
@@ -25,9 +25,20 @@ class ReceiptNoSequence extends Model
         'starts_on',
         'closed_on',
         'action',
+        'po_order_soq_id',
+        'quantity',
+        'delivery_challan_id'
     ];
     public static function ReceiptNoSeq($request){
-        return ReceiptNoSequence::where('active','1')->where('status','ACTIVE')->get();
+        return DeliveryChallanDetails::where('active','1')->where('status','ACTIVE')->get();
 
     } 
+    public static function CreateDeliveryChallanDetails($DelChallanId,$SaveDtData){
+        if($DelChallanId != ''){
+            return self::create($SaveDtData);
+        }else{
+            return self::where('delivery_challan_id',$DelChallanId)->update($SaveDtData);
+
+        }
+    }
 }

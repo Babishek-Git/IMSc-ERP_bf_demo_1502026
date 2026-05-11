@@ -14,7 +14,8 @@ if(isset($data['Contractordata'])){
 		$VendorArr[$Contvalue->contid] = $Contvalue->name_contractor;
 	}
 }
-$Page = $data['Page'] ?? NULL;
+$ChallanDetailsByPoIdsArr = $data['DeliveryChallanDetaisByPoIds'] ?? [];
+$Page                     = $data['Page'] ?? NULL;
 @endphp
 <form action="" method="post" enctype="multipart/form-data" name="form"> 
 	<div class="content">
@@ -55,7 +56,6 @@ $Page = $data['Page'] ?? NULL;
 								<table id="rm-empTable">
 									<thead>
 										<tr>
-										<th style="width:40px">#</th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">S.No. <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Purchase Order No.<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Purchase Order Name <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
@@ -67,51 +67,47 @@ $Page = $data['Page'] ?? NULL;
 										</tr>
 									</thead>
 									<tbody id="rm-tableBody">
-										@if(isset($data['showPurchaseOredrData']))
-										    @if(count($data['showPurchaseOredrData'])>0)
-												@foreach($data['showPurchaseOredrData'] as $purchadeData)
-													@php
-														$MatInwardData = collect($data['ShowMaterialInwardData'] ?? [])->firstWhere('po_id', $purchadeData->work_order_id);
-													@endphp
-													@if($purchadeData->po_issued == 'true' && (!$MatInwardData || $MatInwardData->mat_inward_submit != 'true') )
-														@if($SessionEmpSectionId == $purchadeData->mat_cert_sect_id)
-															<tr>
-																<td></td>
-																<td>{{ $loop->iteration }}</td>
-																<td>{{ $purchadeData->work_order_no }}</td>
-																<td>{{ $purchadeData->work_name }}</td>
-																<td>{{ Helper::DisplayDateFormat($purchadeData->work_order_date) }}</td>
-																<td>{{ $VendorArr[$purchadeData->contid] }}</td>
-
-																<td align="center">
-																	<button type="button" class="btn btn-default tuploadbtn"
-																		onclick="window.location='{{ route('material.material-inward-creation', ['ViewId' => encrypt($purchadeData->work_order_id)]) }}'">
-																		<i class='fa fa-edit'></i> View Details
-																	</button>
-																	@if(!empty($MatInwardData) && filled($MatInwardData->master_inward_id))
-																		<button type="button" class="xlbtndownload m-btm1"
-																			onclick="window.location='{{ route('material.material-inward-creation', ['SubmitId' => encrypt($MatInwardData->master_inward_id)]) }}'">
-																			<i class='fa fa-check'></i> View & Submit
-																		</button>
-																	@endif
-																</td>
-																<!-- <td align="center">
-																	<button type="button" class="btn btn-default tdelbtn Delete"><i class="fa fa-trash-o pt2"></i></button>
-																</td>
-																<td align="center">
-																	<label class="rm-toggle"><input type="checkbox" @if($purchadeData->active == 1) checked @endif><span class="rm-slider"></span></label>
-																</td> -->
-															</tr>
+										@if(count($data['showPurchaseOredrData'])>0)
+										@foreach($data['showPurchaseOredrData'] as $purchadeData)
+											@php
+												$MatInwardData  = collect($data['ShowMaterialInwardData'] ?? [])->firstWhere('po_id', $purchadeData->work_order_id);
+												$IsPoIssued     = $purchadeData->po_issued == 'true';
+												$IsNotSubmitted = !$MatInwardData || $MatInwardData->mat_inward_submit != 'true';
+												$IsSameSection  = $SessionEmpSectionId == $purchadeData->mat_cert_sect_id;
+												$HasChallan     = in_array($purchadeData->work_order_id,$ChallanDetailsByPoIdsArr);
+												$Sno            = 1;
+											@endphp
+											@if($IsPoIssued && $IsNotSubmitted && $IsSameSection && $HasChallan)
+												<tr>
+													<td>{{ $Sno }}</td>
+													<td>{{ $purchadeData->work_order_no }}</td>
+													<td>{{ $purchadeData->work_name }}</td>
+													<td>{{ Helper::DisplayDateFormat($purchadeData->work_order_date) }}</td>
+													<td>{{ $VendorArr[$purchadeData->contid] }}</td>
+													<td align="center">
+														<button type="button" class="btn btn-default tuploadbtn"
+															onclick="window.location='{{ route('material.material-inward-creation', ['ViewId' => encrypt($purchadeData->work_order_id)]) }}'">
+															<i class='fa fa-edit'></i> View Details
+														</button>
+														@if(!empty($MatInwardData) && filled($MatInwardData->master_inward_id))
+															<button type="button" class="xlbtndownload m-btm1"
+																onclick="window.location='{{ route('material.material-inward-creation', ['SubmitId' => encrypt($MatInwardData->master_inward_id)]) }}'">
+																<i class='fa fa-check'></i> View & Submit
+															</button>
 														@endif
-													@endif
-												@endforeach
+													</td>
+												</tr>
+												@php $Sno++; @endphp
+											@endif	
+										@endforeach
+										@else
+											<th>
+												<td colsapn='5' align="center">No records found.</td>
+											</th>
 										@endif
-									</tbody>
-								</table>
-								@else
-									<div class="rm-empty" id="rm-emptyMsg" style="display:none">No records found.</div>
-								@endif
-							</div>
+										</tbody>
+									</table>
+								</div>
 							<div class="rm-pagination">
 								<span class="rm-info" id="rm-pageInfo"></span>
 								<div class="rm-pages" id="rm-pagesContainer"></div>

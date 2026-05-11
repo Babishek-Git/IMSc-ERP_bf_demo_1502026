@@ -8,7 +8,6 @@ use App\Models\Indent;
 use App\Models\IndentDetail;
 use App\Models\PurchaseOrder;
 use App\Models\Contractor;
-use App\Models\ReceiptNoSequence;
 use App\Models\MaterialInwardMaster;
 use App\Models\MaterialInwardDetails;
 use App\Models\PurchaseOrderSoq;
@@ -18,6 +17,8 @@ use App\Models\DocumentsType;
 use App\Models\FieldAccesMaster;
 use App\Models\SupportingDocument;
 use App\Models\Payment;
+use App\Models\DeliveryChallanQtyMaster;
+use App\Models\DeliveryChallanDetails;
 
 
 
@@ -44,7 +45,6 @@ class MaterialInwardController extends Controller
         $this->PurchaseOrder = new PurchaseOrder();
         $this->Contractor    = new Contractor();
         $this->UnitMaster    = new MaterialUnit();
-        $this->ReceiptNoSequence      = new ReceiptNoSequence();
         $this->MaterialInwardMaster   = new MaterialInwardMaster();
         $this->MaterialInwardDetails  = new MaterialInwardDetails();
         $this->PurchaseOrderSoqDetails= new PurchaseOrderSoq();
@@ -53,9 +53,18 @@ class MaterialInwardController extends Controller
         $this->FieldAccesMaster       = new FieldAccesMaster();
         $this->PaymentMaster          = new Payment();
         $this->SupportingDocMaster    = new SupportingDocument();
+        $this->DeliveryChallanMaster  = new DeliveryChallanQtyMaster();
+        $this->DeliveryChallanDetails = new DeliveryChallanDetails();
 
 
         $this->WorkFlowService = $WorkFlowService;
+    }
+    public function MaterialInwardDeliveryChallanQty(Request $request){
+        $DeliveryChallanId      = $request->DeliveryChallanId;
+        $DeliveryChallanQtyData = $this->DeliveryChallanMaster->DeliveryChallanQtyDetails($DeliveryChallanId);
+        $DeliveryChallanDocData = $this->SupportingDocMaster->GetDocDetailsBySubModuleCode($DeliveryChallanId,'MAT_INWARD','DEL_CHALLAN');
+        $OutputArr              = array('DeliveryChallanQtyData'=>$DeliveryChallanQtyData,'DeliveryChallanDoc'=>$DeliveryChallanDocData);
+        return $OutputArr;
     }
     public function MaterialInwardPendingPaymentList(Request $request){
         if(isset($request->EditId)){
@@ -170,8 +179,9 @@ class MaterialInwardController extends Controller
                 $GetMaterialId             = collect($ShowMaterialInwardData)->pluck('master_inward_id')->first();
                 $MaterialInwardDetailData  = $this->MaterialInwardDetails->showMaterialInwardDetailsData(NULL,$GetMaterialId); 
                 $IndentMasterData          = $this->Indent->ShowIndentDetails($request);
-                $InvoicesDocData           = $this->SupportingDocMaster->GetSancationDocData($GetMaterialId,'MAT_INWARD');
-                return view('material-inward.material-inward-creation')->with('data',compact('UnitDataArray','InvoicesDocData','IndentMasterData','ShowMaterialInwardData','MaterialInwardDetailData','ShowPurchaseOrderData','Contractordata','Empdata','MaxReceiptNo','ShowPoSoqData','ShowLoacationMasterData'));
+                $InvoicesDocData              = $this->SupportingDocMaster->GetSancationDocData($GetMaterialId,'MAT_INWARD');
+                $GetDeliveryChallanMasterData = $this->DeliveryChallanMaster->GetDeliveryChallanDataByPoId($PurchaseId);
+                return view('material-inward.material-inward-creation')->with('data',compact('UnitDataArray','InvoicesDocData','GetDeliveryChallanMasterData','IndentMasterData','ShowMaterialInwardData','MaterialInwardDetailData','ShowPurchaseOrderData','Contractordata','Empdata','MaxReceiptNo','ShowPoSoqData','ShowLoacationMasterData'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
             }
@@ -180,13 +190,16 @@ class MaterialInwardController extends Controller
                 return redirect()->route('material.material-inward-creation');
             }
         }
-        $Contractordata           = $this->Contractor->ShowContractor();
-        // $showPurchaseOredrData = $this->PurchaseOrder->showPurchaseOredrData($request,NULL);
-        $showPurchaseOredrData    = $this->PurchaseOrder->showPurchaseOredrIssuedData($request,NULL);
-        $ShowSessionEmpdata       = $this->Employee->ShowEmployeeBySessionEmpNo(); 
-        $SessionEmpSectionId      = collect($ShowSessionEmpdata)->pluck('section_id')->first();
-        $ShowMaterialInwardData   = $this->MaterialInwardMaster->showMaterialInwardData($request,NULL);
-        return view('material-inward.material-inward-list')->with('data',compact('showPurchaseOredrData','Contractordata' ,'SessionEmpSectionId','ShowMaterialInwardData'));
+        $Contractordata               = $this->Contractor->ShowContractor();
+        // $showPurchaseOredrData     = $this->PurchaseOrder->showPurchaseOredrData($request,NULL);
+        $showPurchaseOredrData        = $this->PurchaseOrder->showPurchaseOredrIssuedData($request,NULL);
+        $ShowSessionEmpdata           = $this->Employee->ShowEmployeeBySessionEmpNo(); 
+        $SessionEmpSectionId          = collect($ShowSessionEmpdata)->pluck('section_id')->first();
+        $ShowMaterialInwardData       = $this->MaterialInwardMaster->showMaterialInwardData($request,NULL);
+        $GetDeliveryChallanDetaisData = $this->DeliveryChallanDetails->GetDeliveryChallanDetailData(NULL);
+        $GetDeliveryChallanMasterData = $this->DeliveryChallanMaster->GetDeliveryChallanDataByPoId(NULL);
+        $DeliveryChallanDetaisByPoIds = collect($GetDeliveryChallanMasterData)->pluck('po_id')->toArray();
+        return view('material-inward.material-inward-list')->with('data',compact('showPurchaseOredrData','Contractordata','DeliveryChallanDetaisByPoIds','SessionEmpSectionId','ShowMaterialInwardData'));
     }
     public function MaterialInwardSubmission (Request $request){
         if(isset($request->EditId)){
@@ -298,7 +311,7 @@ class MaterialInwardController extends Controller
         $showPurchaseOredrData       = $this->PurchaseOrder->showPurchaseOredrData($request,NULL);
         $showMaterialInwardData      = $this->MaterialInwardMaster->showMaterialInwardData($request,NULL);
         $VendorArr                   = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
-        $ShowMatrialInwardSubmitData = $this->MaterialInwardMaster->GetMatInwardSubmitData($request,NULL);
+        $ShowMatrialInwardSubmitData  = $this->MaterialInwardMaster->GetMatInwardSubmitData($request,NULL);
         return view('material-inward.material-inward-submission-list')->with('data',compact('showPurchaseOredrData','VendorArr','ShowMatrialInwardSubmitData'));
     }
     public function MaterialInwardPaymentSubmission (Request $request){
@@ -396,6 +409,44 @@ class MaterialInwardController extends Controller
             return view('material-inward.material-inward-payment-submit')->with('data',compact('IndentCreateEmpName','InvoicesDocData','SessionWiseFiledAcessData','ShowMatrialInwardSubmitData','UnitDataArray','FromPage','VendorData','MaterialInwardDetailData','WorkFlowActionData','ShowMaterialUnit','ShowLoacationMasterData'));
         }
     }
+    public function MaterialInwardDeliveryChallanUpload(Request $request){
+        if(isset($request->EditId)){
+            if(isset($request->SubmitApplication)){
+               $this->MaterialInwardDeliveryChallanDetailsSave($request);
+            }
+            try {            
+                $POId = decrypt($request->EditId);
+            }catch (\Illuminate\Contracts\Encryption\DecryptException $e) { dd($e);
+                $message = "Error : Sorry Invalid Attempt";
+                Session::put('ALertMesage', $message);
+                return redirect()->route('material.material-inward-submission');
+            }
+            $showPurchaseOredrData         = $this->PurchaseOrder->showPurchaseOredrIssuedData(NULL,$POId);
+            $Contractordata                = $this->Contractor->ShowContractor();
+            $VendorData                    = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
+            $ShowMaterialUnit              = $this->UnitMaster->ShowMaterialUnit(NULL);
+            $UnitData                      = collect($ShowMaterialUnit)->pluck('uom_name', 'uom_id')->toArray();
+            $Empdata                       = $this->Employee->ShowEmployees($request,NULL); 
+            $EmpDetails                    = collect($Empdata)->pluck('emp_name_payslip', 'emp_no')->toArray();
+            $ShowPoSoqData                 = $this->PurchaseOrderSoqDetails->showPurchaseOredrSoqData(NULL,$POId);
+            $MaxReceiptNo                  = $this->DeliveryChallanMaster->ShowMaxReceipNo($request);
+            $GetIndentId                   = collect($showPurchaseOredrData)->pluck('indent_id')->first();
+            $GetIndentData                 = $this->Indent->ShowIndent(NULL,$GetIndentId);
+            $IndentCreateName              = collect($GetIndentData)->pluck('emp_name_payslip')->first();
+            $GetDeliveryChallanMastData    = $this->DeliveryChallanMaster->GetDeliveryChallanDataByPoId($POId);
+            $DeliveryChallanId             = collect($GetDeliveryChallanMastData)->pluck('delivery_challan_id')->first();
+            $GetDeliveryChallanDetaisData  = $this->DeliveryChallanDetails->GetDeliveryChallanDetailData($DeliveryChallanId);
+            $DeliveryChallanDocData        = $this->SupportingDocMaster->GetDocDetailsBySubModuleCode($DeliveryChallanId,'MAT_INWARD','DEL_CHALLAN');
+            $DeliveryChallanQtyBySoqId     = collect($GetDeliveryChallanDetaisData)->pluck('quantity','po_order_soq_id')->toArray();
+            return view('material-inward.material-inward-delivery-challan-upload')->with('data',compact('DeliveryChallanDocData','GetDeliveryChallanMastData','DeliveryChallanQtyBySoqId','VendorData','IndentCreateName','MaxReceiptNo','ShowPoSoqData','UnitData','showPurchaseOredrData','EmpDetails'));
+        }
+        $Contractordata              = $this->Contractor->ShowContractor();
+        $showPurchaseOredrData       = $this->PurchaseOrder->showPurchaseOredrIssuedData($request,NULL);
+        $showMaterialInwardData      = $this->MaterialInwardMaster->showMaterialInwardData($request,NULL);
+        $VendorArr                   = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
+        $ShowMatrialInwardSubmitData = $this->MaterialInwardMaster->GetMatInwardSubmitData($request,NULL);
+        return view('material-inward.material-inward-delivery-challan-upload-list')->with('data',compact('showPurchaseOredrData','VendorArr','ShowMatrialInwardSubmitData'));
+    }
     public  function MaterialInwardDetailsSave(Request $request){
         $ButtonValue      = $request->input('btn_save');
         $MaterialInwardId = $request->input('hid_master_inward_id'); 
@@ -461,7 +512,7 @@ class MaterialInwardController extends Controller
             }
             if(filled($MaterialInwardId)){ 
                 if($request->hasfile('file_upload')){
-                    $this->MaterialInvoiceUpload($request, $MaterialInwardId);
+                    $this->MaterialInvoiceUpload($request,$MaterialInwardId,'MAT_INWARD','INVOICE');
                 }   
                 $DeleteIntentDetails = $this->MaterialInwardDetails->DeleteMaterialInwardDetails($MaterialInwardId);
             }
@@ -512,7 +563,6 @@ class MaterialInwardController extends Controller
             $message = "Material Inward Details updated Successfully";
             Session::put('ALertMesage', $message);
             return redirect()->route('material.material-inward-creation');
-            
         }catch (\Exception $e) { dd($e);
             DB::rollback();
             $message = "Error : Sorry transaction not fully completed";
@@ -523,7 +573,7 @@ class MaterialInwardController extends Controller
             return redirect()->route('material.material-inward-creation');
         }
     }
-    public function MaterialInvoiceUpload($request, $MaterialInwardId){
+    public function MaterialInvoiceUpload($request,$MaterialInwardId,$ModuleCode,$ModuleSubCode){
         $TransactionId  = $MaterialInwardId;
         $DocSuppDescArr = $request->input('txt_supp_doc_desc');
         $DocDateArr     = $request->input('txt_supp_doc_date');
@@ -548,35 +598,65 @@ class MaterialInwardController extends Controller
         DB::beginTransaction();
         try {
             if($request->hasFile('file_upload')){
-                $InvoiceFiles = $request->file('file_upload');
-                foreach($InvoiceFiles as $FileKey => $InvoiceFile){
-                    $DocDesc       =  $DocSuppDescArr[$FileKey];
-                    $DocDate       =  $DocDateArr[$FileKey];
+                $InvoiceFile       = $request->file('file_upload');
+                if($ModuleSubCode == 'DEL_CHALLAN'){
+                    $RecpNo        = $request->input('txt_receipt_no');
+                    $RecpDate      = $request->input('txt_receipt_date');
                     $OrgFileName   = $InvoiceFile->getClientOriginalName();
                     $Extension     = $InvoiceFile->getClientOriginalExtension();
                     $FileType      = $InvoiceFile->getClientOriginalExtension();
-                    $UploadTimeStr = date("YmdHis").$FileKey;
-                    $FileName      = "Mat_invoice_doc_".$UploadTimeStr.".".$FileType;
+                    $UploadTimeStr = date("YmdHis");
+                    $FileName      = "Mat_delivery_challan_doc_".$UploadTimeStr.".".$FileType;
                     try {
-                        $IsUpload = Helper::UploadFile($InvoiceFile,$FileName,'MAT_INWARD','INVOICE');
+                        $IsUpload = Helper::UploadFile($InvoiceFile,$FileName,$ModuleCode,$ModuleSubCode);
                     } catch (\Exception $e) {
-
                         $IsUpload = 'UE';
                     }
                     if($IsUpload == "Y"){
                         $SaveData['transaction_id']       = $TransactionId;
-                        $SaveData['module_code']          = 'MAT_INWARD';
-                        $SaveData['doc_desc']             = $DocDesc;
-                        $SaveData['doc_date']             = filled($DocDate) ? Carbon::createFromFormat('d/m/Y', $DocDate)->format('Y-m-d'): null;
+                        $SaveData['module_code']          = $ModuleCode;
+                        $SaveData['doc_desc']             = $RecpNo;
+                        $SaveData['doc_date']             = filled($RecpDate) ? Carbon::createFromFormat('d/m/Y', $RecpDate)->format('Y-m-d'): null;
                         $SaveData['org_file_name']        = $OrgFileName;
                         $SaveData['file_name']            = $FileName;
+                        $SaveData['module_sub_code']      = $ModuleSubCode;
                         $SaveData['active']               = 1;
                         $SaveData['created_at']           = NOW();
                         $SaveData['created_by']           = session('WcmsEmpNo');
-                        $this->SupportingDocMaster->SupportingDocCreate($SaveData);
+                        $this->SupportingDocMaster->SupportingDocCreate($SaveData); //dd($SaveData);
                         $UploadExe++;
                     }
-                }
+                }else{
+                    foreach($InvoiceFiles as $FileKey => $InvoiceFile){
+                        $DocDesc       =  $DocSuppDescArr[$FileKey];
+                        $DocDate       =  $DocDateArr[$FileKey];
+                        $OrgFileName   = $InvoiceFile->getClientOriginalName();
+                        $Extension     = $InvoiceFile->getClientOriginalExtension();
+                        $FileType      = $InvoiceFile->getClientOriginalExtension();
+                        $UploadTimeStr = date("YmdHis").$FileKey;
+                        $FileName      = "Mat_invoice_doc_".$UploadTimeStr.".".$FileType;
+                        try {
+                            $IsUpload = Helper::UploadFile($InvoiceFile,$FileName,$ModuleCode,$ModuleSubCode);
+                        } catch (\Exception $e) {
+
+                            $IsUpload = 'UE';
+                        }
+                        if($IsUpload == "Y"){
+                            $SaveData['transaction_id']       = $TransactionId;
+                            $SaveData['module_code']          = $ModuleCode;
+                            $SaveData['doc_desc']             = $DocDesc;
+                            $SaveData['doc_date']             = filled($DocDate) ? Carbon::createFromFormat('d/m/Y', $DocDate)->format('Y-m-d'): null;
+                            $SaveData['org_file_name']        = $OrgFileName;
+                            $SaveData['file_name']            = $FileName;
+                            $SaveData['module_sub_code']      = $ModuleSubCode;
+                            $SaveData['active']               = 1;
+                            $SaveData['created_at']           = NOW();
+                            $SaveData['created_by']           = session('WcmsEmpNo');
+                            $this->SupportingDocMaster->SupportingDocCreate($SaveData);
+                            $UploadExe++;
+                        }
+                    }
+                }    
             }
             DB::commit();
         }
@@ -664,6 +744,67 @@ class MaterialInwardController extends Controller
             }
             DB::commit();
             return true;
+        }catch (\Exception $e) { dd($e);
+            DB::rollback();
+            $message = "Error : Sorry transaction not fully completed";
+            Session::put('ALertMesage', $message);
+        }
+    }
+    public function MaterialInwardDeliveryChallanDetailsSave(Request $request){
+        $RecpNo           = $request->input('txt_receipt_no');
+        $RecpDate         = $request->input('txt_receipt_date');
+        $ReciptSuffixNo   = $request->input('hid_recipt_suffix_id');
+        $PoId             = $request->input('hid_work_order_id');
+        $DelChallanId     = $request->input('hid_mat_inward_id') ?? ''; 
+        //-------MATERIAL INWARD RECIPT QTY ENTERY-----------------//
+        $ItemNoArr        = $request->input('txt_item_no'); 
+        $ItemDescArr      = $request->input('txt_item_desc'); 
+        $ItemUnitArr      = $request->input('txt_unit'); 
+        $PoQtyArr         = $request->input('txt_po_qty'); 
+        $RecdNowQtyArr    = $request->input('txt_recd_now_qty'); 
+        $BalanceQtyArr    = $request->input('txt_balan_qty'); 
+        $RatePerUniArr     = $request->input('txt_rate_per_unit'); 
+        $TotalCostArr      = $request->input('txt_total_cost'); 
+        $PoSoqIdsArr       = $request->input('txt_po_soq_id'); 
+        DB::beginTransaction();
+        try {
+            $SaveData['receipt_no']            = $RecpNo;
+            $SaveData['receipt_date']         = Helper::DBDateFormat($RecpDate);
+            $SaveData['po_id']                = $PoId;
+            $SaveData['receipt_suffix_no']    = $ReciptSuffixNo;
+            $SaveData['active']               = 1;
+            if(filled($DelChallanId)){
+                $SaveData['updated_at']           = NOW();
+                $SaveData['updated_by']           = session('WcmsEmpNo');
+                $SaveMaterial = $this->DeliveryChallanMaster->CreateDeliveryChallanData(NULL,$SaveData,$DelChallanId);
+            }else{
+                $SaveData['created_at']           = NOW();
+                $SaveData['created_by']           = session('WcmsEmpNo'); //dd($SaveData);
+                $SaveMaterial      = $this->DeliveryChallanMaster->CreateDeliveryChallanData(NULL,$SaveData,NULL);
+                $DelChallanId      = $SaveMaterial->delivery_challan_id;
+            }
+            if(filled($DelChallanId)){ 
+                if($request->hasfile('file_upload')){
+                    $this->MaterialInvoiceUpload($request, $DelChallanId,'MAT_INWARD','DEL_CHALLAN');
+                }   
+            }
+            if(filled($PoSoqIdsArr)){
+                foreach($PoSoqIdsArr as $PoDeatilsKey => $Povalue){
+                    $ItemRecQty          =  $RecdNowQtyArr[$PoDeatilsKey];
+                    $PoSoqId             =  $PoSoqIdsArr[$PoDeatilsKey];
+
+                    $SaveDtData['delivery_challan_id']     = $DelChallanId;
+                    $SaveDtData['quantity']                = $ItemRecQty;
+                    $SaveDtData['po_order_soq_id']         = $PoSoqId;
+                    $SaveDtData['active']                  = 1;
+                    $SaveDtData['created_at']              = NOW();
+                    $SaveDtData['created_by']              = session('WcmsEmpNo'); //dd($SaveDtData);
+                    $SaveIndent = $this->DeliveryChallanDetails->CreateDeliveryChallanDetails($SaveDtData);
+                }
+            }
+            DB::commit();
+            $message = "Delivery Challan Details Saved Successfully.";
+            return redirect()->route('material.material-inward-delivery-Challan-upload')->with('ALertMesage', $message);
         }catch (\Exception $e) { dd($e);
             DB::rollback();
             $message = "Error : Sorry transaction not fully completed";

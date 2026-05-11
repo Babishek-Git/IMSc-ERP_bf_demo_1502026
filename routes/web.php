@@ -560,6 +560,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/MaterialInwardSubmission', 'MaterialInwardController@MaterialInwardSubmission')->name('material.material-inward-submission');
 				Route::match(array('GET','POST'),'/MaterialInwardPaymentSubmission', 'MaterialInwardController@MaterialInwardPaymentSubmission')->name('material.material-inward-payment-submission');
                 Route::match(array('GET','POST'),'/MaterialInwardPendingPaymentList', 'MaterialInwardController@MaterialInwardPendingPaymentList')->name('material.material-inward-pending-payment');
+                Route::match(array('GET','POST'),'/MaterialInwardDeliveryChallanUpload', 'MaterialInwardController@MaterialInwardDeliveryChallanUpload')->name('material.material-inward-delivery-Challan-upload');
+                Route::match(array('GET','POST'),'/MaterialInwardDeliveryChallanQty', 'MaterialInwardController@MaterialInwardDeliveryChallanQty')->name('material.material-inward-delivery-Challan-qty');
 			});
 			Route::group(['prefix' => 'register'], function() {
 				Route::match(array('GET','POST'),'/registerlibrary', 'AMCLibraryRegisterController@AMCLibraryRegister')->name('register.amc-library-register');

@@ -138,7 +138,7 @@ $BackUrl  = 'purchase-order.purchase-order_view';
 													<div class="div2"><div class="lboxlabel ">Work Starting Date</div><input type="text" style="width:100px" name="txt_start_date" id="txt_start_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($WrkStartDate ?? null) }}"readonly></div>
 													<div class="div3"><div class="lboxlabel ">Work Completion Date</div><input type="text" name="txt_end_date" style="width:250px" id="txt_end_date" class="tboxsmclass " value="{{Helper::DisplayDateFormat($DateOfComp ?? null) }}" readonly></div>
 													<div class="div3"><div class="lboxlabel ">Payment Mode</div>
-														<input type="text" style="width:250px" class="tboxsmclass" style="width:250px" value="@if(isset($ContName)){{$ContName}}@endif" readonly>
+														<input type="text" style="width:250px" class="tboxsmclass" style="width:250px" value="@if(isset($MatCertBy)){{$MatCertBy}}@endif" readonly>
 													</div>
 													@if(!empty($TrNO))
 														<div class="div2 editpage"><div class="lboxlabel tenderlabel" >Tender No.</div><input type="text" name="txt_tender_no"style="width:200px" id="txt_tender_no" class="tboxsmclass tenderlabel" value="{{$TrNO ?? ''}}"></div> 
@@ -149,7 +149,9 @@ $BackUrl  = 'purchase-order.purchase-order_view';
 													<div class="div4"><div class="lboxlabel" >Material Cert. By</div>
 														<input type="text" name="txt_intent_no" id="txt_indent_no" class="tboxsmclass" style="width:330px"value="{{$MatCertBy}}" readonly>
 													</div>
-													<div class="div5 gemport"><div class="lboxlabel">GeM Po.No.</div><input type="text" name="txt_gem_po_no" style="width:250px" id="txt_gem_po_no" class="tboxsmclass " value="{{$GemPoNo ?? ''}}" ></div>
+													@if(!empty($GemPoNo))
+														<div class="div5 gemport"><div class="lboxlabel">GeM Po.No.</div><input type="text" name="txt_gem_po_no" style="width:250px" id="txt_gem_po_no" class="tboxsmclass " value="{{$GemPoNo ?? ''}}" ></div>
+													@endif
 													<div class="row smclearrow"></div>
 												</div>
 											</fieldset> 
