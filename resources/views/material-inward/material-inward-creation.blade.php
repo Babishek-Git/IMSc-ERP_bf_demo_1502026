@@ -55,10 +55,11 @@ if($RecptMaxSufNo == '' || $RecptMaxSufNo ==  NULL){
 	$NextValue = $RecptMaxSufNo + 1;
 	$SuffixNo  = str_pad($NextValue, 4, '0', STR_PAD_LEFT);
 }
-$FinYear          = Helper::GetCurrentFinYear(NULL);
-$NewReceiptNo     = "IMS/P&S/" . $FinYear . "/" . $SuffixNo . "";
-$BackUrl          = 'material.material-inward-creation';
-$InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
+$FinYear            = Helper::GetCurrentFinYear(NULL);
+$NewReceiptNo       = "IMS/P&S/" . $FinYear . "/" . $SuffixNo . "";
+$BackUrl            = 'material.material-inward-creation';
+$InvoicesDocArr     = $data['InvoicesDocData'] ?? [];
+$DeliveryChallanArr = $data['GetDeliveryChallanMasterData'] ?? [];
 @endphp
 <style>
     .invoice-tag-strip {
@@ -147,14 +148,14 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
                                             
                                             <div class="form-step active"> 
                                                 <fieldset class="fieldbox">
-                                                    <legend class="fieldbox-legend">Purchase order / Receipt Details</legend>
+                                                    <legend class="fieldbox-legend">Purchase order </legend>
                                                     <div class="fieldbox-div">
                                                         <div class="div3"><div class="lboxlabel">Purchase order No.</div><input type="text" name="txt_purchase_order_no" id="txt_purchase_order_no" class="tboxsmclass " readonly value="{{ $PurchaseOrderNo }}" ></div>
                                                         <div class="div3"><div class="lboxlabel">Purchase order Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="{{ Helper::DisplayDateFormat($PurchaseOrderDate) }}" ></div>
                                                         <div class="div3"><div class="lboxlabel">Indent Created By</div><input type="text" name="txt_indent_created_by" id="txt_indent_created_by" class="tboxsmclass " readonly value="{{$IndentCreateName}}" ></div>
                                                         <div class="div3"><div class="lboxlabel">Vendor Name</div><input type="text" name="txt_vendor_name" id="txt_vendor_name" class="tboxsmclass " readonly value="{{$VendorName}}" ></div>
-                                                        <div class="div3"><div class="lboxlabel ">Receipt No. / GRN No.</div><input type="text" name="txt_receipt_no" id="txt_receipt_no" class="tboxsmclass" readonly value="{{ $ReceiptNo ?? $NewReceiptNo ?? '' }}"></div>
-                                                        <div class="div2"><div class="lboxlabel ">Receipt Date</div><input type="text" name="txt_receipt_date" id="txt_receipt_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($ReceiptDate ?? $ReceiptDate ?? '') }}" ></div>
+                                                        <!-- <div class="div3"><div class="lboxlabel ">Receipt No. / GRN No.</div><input type="text" name="txt_receipt_no" id="txt_receipt_no" class="tboxsmclass" readonly value="{{ $ReceiptNo ?? $NewReceiptNo ?? '' }}"></div> -->
+                                                        <!-- <div class="div2"><div class="lboxlabel ">Receipt Date</div><input type="text" name="txt_receipt_date" id="txt_receipt_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($ReceiptDate ?? $ReceiptDate ?? '') }}" ></div> -->
                                                         <div class="row smclearrow"></div>
                                                     </div>
                                                 </fieldset>
@@ -165,13 +166,48 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
                                                 <div class="table-container">
                                                     <div class="table-wrapper">
                                                         <div class="section-header">
-                                                            <span>Invoice / Delivery  Documents Details</span>
+                                                            <span>Receipt Details</span>
+                                                        </div>
+                                                        <table class="formtable" disabled width="100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style="text-align:center; width:60%">Receipt No. / GRN No.</th>  
+                                                                    <th style="text-align:center; width:30%">Receipt Date</th>  
+                                                                    <th style="text-align:center; width:30%">Download</th>  
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="supp_doc_tbody">	
+                                                                <tr>
+                                                                    <td>
+                                                                        <select  style="width:100%" name="cmb_receipt_no" id="cmb_receipt_no" class="tboxsmclass" >
+                                                                            <option value=""> ----Select ---</option>
+                                                                               @if(isset($DeliveryChallanArr))
+                                                                                    @foreach($DeliveryChallanArr as $DeliVeryChallValue)
+                                                                                        <option value="{{$DeliVeryChallValue->delivery_challan_id}}">{{$DeliVeryChallValue->receipt_no}}</option>
+                                                                                    @endforeach
+                                                                                @endif
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input type="text" name="txt_supp_doc_date[]" id="txt_receipt_date" class="tboxsmclass datepicker"  value=""></td>
+                                                                    <td class="labelcenter" style="text-align:center;">
+                                                                        <button type="button"  id="btn_receipt_download" data-fileid="" class="btn btn-default tuploadbtn" title="Click here to Download the File" style="cursor: pointer;"><i class="fa fa-download"></i> Download File</button>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                {{-- ── MATERILA INWARD  SUPPORTING DOCUMENTS TABLE  ── --}}
+                                                <div class="table-container">
+                                                    <div class="table-wrapper">
+                                                        <div class="section-header">
+                                                            <span>Invoice  Documents Details</span>
                                                             <button align="right" type="button" id='btn_add_new' class="rm-new-emp-btn" >+ Add New Row</button>
                                                         </div>
                                                         <table class="formtable" disabled width="100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th style="text-align:center; width:60%">Invoice / Delivery Challan Description</th>  
+                                                                    <th style="text-align:center; width:60%">Invoice  Description</th>  
                                                                     <th style="text-align:center; width:30%">Date</th>  
                                                                     <th style="text-align:center; width:30%">Upload</th>  
                                                                     <th style="text-align:center; width:10%"> Action</th>  
@@ -242,7 +278,7 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
                                                                         <input type="hidden" name="txt_unit[]" id="txt_unit_{{$Index}}" class="tboxsmclass" data-index ='{{$Index}}' style="width:100%;" readonly value ='{{ $MatInwardData->item_unit}}'>
                                                                         <td><input type="text" name="txt_po_qty[]" id="txt_po_qty_{{$Index}}" class="tboxsmclass"data-index ='{{$Index}}' style="width:100%;" readonly value ='{{ $MatInwardData->po_quantity}}'></td>
                                                                         <td><input type="text" name="txt_prev_recd_qty[]" id="txt_prev_recd_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass" style="width:100%;" readonly value ='{{ $MatInwardData->previously_received_qty}}'></td>
-                                                                        <td><input type="text" name="txt_recd_now_qty[]" id="txt_recd_now_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass  receivedqty " style="width:100%;" value ='{{ $MatInwardData->received_qty}}'></td>
+                                                                        <td><input type="text" name="txt_recd_now_qty[]" id="txt_recd_now_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass  receivedqty"readonly style="width:100%;" value ='{{ $MatInwardData->received_qty}}'></td>
                                                                         <td><input type="text" name="txt_balan_qty[]" id="txt_balan_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass" style="width:100%;" readonly value ='{{ $MatInwardData->balance_qty}}'></td>
                                                                         <td><input type="text" name="txt_rate_per_unit[]" id="txt_rate_per_unit_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass" style="width:100%; text-align:right;" readonly value="{{ $MatInwardData->unit_rate }}"></td>
                                                                         <td><input type="text" name="txt_total_cost[]" id="txt_total_cost_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass totalcost" style="width:100%; text-align:right;" readonly value ='{{ $MatInwardData->total_cost }}'></td>
@@ -301,7 +337,7 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
                                                                             <input type="hidden" name="txt_unit[]" id="txt_unit_{{$Index}}" class="tboxsmclass" data-index ='{{$Index}}' style="width:100%;" readonly value ='{{ $purchadeData->unit_id}}'>
                                                                             <td><input type="text" name="txt_po_qty[]" id="txt_po_qty_{{$Index}}" class="tboxsmclass"data-index ='{{$Index}}' style="width:100%;" readonly value ='{{ $purchadeData->quantity}}'></td>
                                                                             <td><input type="text" name="txt_prev_recd_qty[]" id="txt_prev_recd_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass" style="width:100%;" readonly value ='0'></td>
-                                                                            <td><input type="text" name="txt_recd_now_qty[]" id="txt_recd_now_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass  receivedqty " style="width:100%;" value =''></td>
+                                                                            <td><input type="text" name="txt_recd_now_qty[]" id="txt_recd_now_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass  receivedqty" readonly style="width:100%;" value =''></td>
                                                                             <td><input type="text" name="txt_balan_qty[]" id="txt_balan_qty_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass" style="width:100%;" readonly value =''></td>
                                                                             <td><input type="text" name="txt_rate_per_unit[]" id="txt_rate_per_unit_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass" style="width:100%; text-align:right;" readonly value="{{ $purchadeData->estimated_unit_price }}"></td>
                                                                             <td><input type="text" name="txt_total_cost[]" id="txt_total_cost_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass totalcost" style="width:100%; text-align:right;" readonly value =''></td>
@@ -332,6 +368,7 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
                                                                                 </select>
                                                                             </td>
                                                                             <td><input type="text" name="txt_remarks[]" id="txt_remarks_{{$Index}}"data-index ='{{$Index}}'  class="tboxsmclass" style="width:100%;" value =''></td>
+                                                                            <input type="hidden" name="po_soq_id" id="txt_po_soq_id_{{$Index}}" data-index ='{{$Index}}' class="tboxsmclass" style="width:100%; text-align:right;" readonly value ='{{$purchadeData->po_order_soq_id}}'>
                                                                         </tr>
                                                                         @php $Index++ ;@endphp
                                                                     @endforeach
@@ -384,9 +421,9 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
 </body>	
 @include('common-workflow.workflow-process')
 <script type="text/javascript" language="javascript">
-	$('[name="cmb_location"]').chosen();
-    $('.ChosenInput').chosen();
 $('document').ready(function(){
+    $('[name="cmb_location"]').chosen();
+    $('.ChosenInput').chosen();
     $(".decimalnum").on("input", function () {
         let value = this.value.replace(/[^0-9]/g, ''); // allow only digits
         if (value !== '') {
@@ -395,6 +432,58 @@ $('document').ready(function(){
             if (value < 1) value = '';
         }
         this.value = value;
+    });
+    // $("body").on("change","#cmb_receipt_no", function(event){
+    //     var DeliveryChallanId = $(this).val();
+    //     alert(1);
+    //     alert(DeliveryChallanId);
+	// 	$.ajax({
+	// 		type: 'POST',
+	// 		url: '{{ route("material.material-inward-delivery-Challan-qty") }}',
+	// 		data: {"_token": "{{ csrf_token() }}",DeliveryChallanId: DeliveryChallanId},
+	// 		success: function (data) {
+	// 			var DeliveryQtyData    = data.DeliveryChallanQtyData ?? [];
+	// 			var DeliveryChallanDoc = data.DeliveryChallanDoc ?? [];
+    //             console.log(DeliveryQtyData);
+                
+	// 		}
+	// 	});
+	// });
+    $("body").on("change", "#cmb_receipt_no", function () {
+        var DeliveryChallanId = $(this).val();
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("material.material-inward-delivery-Challan-qty") }}',
+            data: {"_token": "{{ csrf_token() }}",DeliveryChallanId: DeliveryChallanId},
+            success: function (data) {
+                var DeliveryQtyData    = data.DeliveryChallanQtyData ?? [];
+                var DeliveryChallanDoc = data.DeliveryChallanDoc ?? [];
+                $('.receivedqty').val('');
+                $('.totalcost').val('');
+                $.each(DeliveryQtyData, function (Key, Value) {
+                    var AjaxPoSoqId = Value.po_order_soq_id;
+                    var AjaxQty     = Value.quantity;
+                    $('input[name="po_soq_id"]').each(function () {
+                        var Index = $(this).data('index');
+                        var CurrentPoSoqId = $(this).val();
+                        if (CurrentPoSoqId == AjaxPoSoqId) {
+                            $('#txt_recd_now_qty_' + Index).val(AjaxQty);
+                            var PoQty        = Number($('#txt_po_qty_' + Index).val()) || 0;
+                            var PoRate       = Number($('#txt_rate_per_unit_' + Index).val()) || 0;
+                            var BalanceQty   = PoQty - AjaxQty;
+                            var ItemToalCost = PoQty * PoRate;
+                            $('#txt_balan_qty_' + Index).val(BalanceQty);
+                            $('#txt_total_cost_' + Index).val(ItemToalCost);
+                        }
+                    });
+                });
+                if (DeliveryChallanDoc.length > 0) {
+                    var DocData = DeliveryChallanDoc[0];
+                    $('#txt_receipt_date').val(DocData.doc_date ?? '');
+                    $('#btn_receipt_download').attr('data-fileid', DocData.sup_doc_id ?? '');
+                }
+            }
+        });
     });
     $("body").on("click","#btn_add_new", function(event){
 		var NewRow = '';
@@ -417,13 +506,27 @@ $('document').ready(function(){
 	$(document).on('click','.DeleteRow',function(){
 		$(this).closest("tr").remove();
 	}); 
-    $(document).on("click", "#btn_download", function(event) {
-		var SuppDocId = $(this).attr("data-fileid");
-		DownloadFile(SuppDocId);
-	});
-	function DownloadFile(SuppDocId) {
+      $(document).on("click", "#btn_receipt_download", function(event) {
+		var SuppDocId     = $(this).attr("data-fileid");
         var ModuleCode    = 'MAT_INWARD';
-        var ModuleSubCode = 'INVOICE';
+        var ModuleSubCode = 'DEL_CHALLAN'; 
+        if(SuppDocId == ''){
+            BootstrapDialog.alert("Select the Receipt No. / GRN No...!!");
+            event.preventDefault();
+            event.returnValue = false;  
+        }else{
+		    DownloadFile(SuppDocId,ModuleCode,ModuleSubCode);
+            console.log(SuppDocId);
+            
+        }
+	});
+    $(document).on("click", "#btn_download", function(event) {
+		var SuppDocId     = $(this).attr("data-fileid");
+        var ModuleCode    = 'MAT_INWARD';
+        var ModuleSubCode = 'INVOICE'; 
+		DownloadFile(SuppDocId,ModuleCode,ModuleSubCode);
+	});
+	function DownloadFile(SuppDocId,ModuleCode,ModuleSubCode) {
 		window.open("{{ route('indent.sanction-document-download') }}?id=" + SuppDocId + "&module_code=" + ModuleCode + "&module_sub_code=" + ModuleSubCode, "_blank");
 	}
     $('body').on('keyup', '.percvalue', function(event) {

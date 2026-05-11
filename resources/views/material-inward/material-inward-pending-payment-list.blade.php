@@ -93,7 +93,9 @@ $Page = $data['Page'] ?? NULL;
 												@endif
 											@endforeach
 										@else
-											<div class="rm-empty" id="rm-emptyMsg" style="display:none">No records found.</div>
+										<tr>
+											<td colspan='7' align="center">No records found.</td>
+										</tr>
 										@endif
 									</tbody>
 								</table>
