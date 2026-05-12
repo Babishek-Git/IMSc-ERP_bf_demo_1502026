@@ -19,6 +19,7 @@ class LtcAdvances extends Model
         'advance_amount',
         'sanctioned_amount',
         'sanctioned_by',
+        'sanctioned_at',
         'status',
         'remarks',
         'active',
@@ -48,12 +49,15 @@ class LtcAdvances extends Model
         'family_ids',
         'claim_amount',
         'claim_sanctioned_amount',
+        'claim_sanctioned_by',
+        'claim_sanctioned_at',
         'target_roles_adv',
         'target_roles_claim',
         'advance_or_claim',
         'is_adv_completed',
         'is_claim_completed',
-        'leave_enhancement'
+        'leave_enhancement',
+        'el_days'
     ];
 
     public function ShowLtcAdvances()
@@ -64,6 +68,16 @@ class LtcAdvances extends Model
 
     public function createLtcAdvances($EmpArr){
         return LtcAdvances::create($EmpArr);
+    }
+
+    public function updateLtcAdvance($id, $data)
+    {
+        return self::where('ltc_advance_id', $id)->update($data);
+    }
+
+    public function getLtcAdvanceById($id)
+    {
+        return self::where('ltc_advance_id', $id)->first();
     }
 
     public function ShowEmpAppiledLtcAdv($request,$EmpNo,$ModuleCode){
@@ -114,20 +128,14 @@ class LtcAdvances extends Model
     public function ShowEmpClaimedLtc($request,$EmpNo,$ModuleCode){
         $RequsetData = LtcAdvances::leftjoin('erp_employee','erp_employee.emp_no', '=', 'erp_emp_ltc_advances.emp_no')
         ->join('erp_emp_designation','erp_employee.emp_designation_id','=','erp_emp_designation.designation_id')
-<<<<<<< Updated upstream
-        ->when($EmpNo, function ($query) use ($EmpNo) {
-            return $query->where('erp_emp_ltc_advances.emp_no', $EmpNo);
-        })->where('module_code',$ModuleCode) 
-=======
-        ->leftjoin('erp_payment','erp_payment.pay_emp_no', '=', 'erp_emp_ltc_advances.emp_no')
-        ->where('erp_payment.module_code', 'LTCADV')
-        ->whereNotNull('erp_payment.voucher_no')
-        ->whereNotNull('erp_payment.bill_no')
-        ->where('erp_payment.is_completed', true)
-        ->when($EmpNo, function ($query) use ($EmpNo) {
+        ->whereExists(function ($query) {
+            $query->select(DB::raw(1))->from('erp_payment')
+            ->whereColumn('erp_payment.pay_emp_no', 'erp_emp_ltc_advances.emp_no')->where('erp_payment.module_code', 'LTCADV')
+            ->whereNotNull('erp_payment.voucher_no')->whereNotNull('erp_payment.bill_no')
+            ->where('erp_payment.is_completed', true);
+        })->when($EmpNo, function ($query) use ($EmpNo) {
             return $query->where('erp_emp_ltc_advances.emp_no', $EmpNo);
         })->where('erp_emp_ltc_advances.module_code',$ModuleCode) 
->>>>>>> Stashed changes
         ->where(function ($query) {  
             $query->where(function ($q) {
                 $q->where('erp_emp_ltc_advances.created_by', session('WcmsEmpNo'))
@@ -149,11 +157,8 @@ class LtcAdvances extends Model
                     ->orWhere('erp_emp_ltc_advances.status', 'recommended');
                 });
             });
-        })->get();
-<<<<<<< Updated upstream
-=======
+        })->distinct()->get();
 
->>>>>>> Stashed changes
         return $RequsetData;
     }
 
@@ -163,6 +168,25 @@ class LtcAdvances extends Model
             'application_no' => $LtcdetailsIds,        
         ]);
     }
+
+    public function updateSanctionedAmount($advId, $sanctionedAmount)
+    {
+        return self::where('ltc_advance_id', $advId)->update([
+            'sanctioned_amount' => $sanctionedAmount,
+            'sanctioned_by'     => session('WcmsEmpNo'),
+            'sanctioned_at'     => now(),
+        ]);
+    }
+
+    public function updateClaimSanctionedAmount($advId, $sanctionedAmount)
+    {
+        return self::where('ltc_advance_id', $advId)->update([
+            'claim_sanctioned_amount' => $sanctionedAmount,
+            'claim_sanctioned_by'     => session('WcmsEmpNo'),
+            'claim_sanctioned_at'     => now(),
+        ]);
+    }
+
     public function ShowLtcDetails($request,$RequestId){
         $RequestData = NULL;
         if($RequestId!= NULL){

@@ -14,10 +14,6 @@ $ApplyBy = $ApplyBy ?? NULL;
             <div class="grid_12">
                 <blockquote class="bq1" style="overflow:auto">
                     <div class="container">
-
-
-
-
                         <div class="div12 no-margin">
 							<div class="rm-toolbar">
 								<span class="rm-with-selected-btn" id="rm-withSelectedBtn">Leave Application List</span>
@@ -47,11 +43,7 @@ $ApplyBy = $ApplyBy ?? NULL;
                                     $LeaveAppCount = count($LeaveApplicationList);
                                     @endphp 
 									@if($Page == 'REQ_APPLY')
-									@if($LeaveAppCount>0)
-										<button type="button" class="rm-new-emp-disable-btn readonly">+ New Request</button>
-									@else
 										<button type="button" class="rm-new-emp-btn" onClick="window.location='{{route($AddUrl)}}'">+ New Request</button>
-									@endif
 									@endif
 								</div>
 							</div>

@@ -91,12 +91,9 @@ class VouchersController extends Controller
                             $SaveArr['voucher_no']  = $SaveVoucherNo;
                             $SaveArr['voucher_dt']  = $SaveVoucherDate;
                             $SaveArr['voucher_amt'] = $SaveVoucherAmount;
-<<<<<<< Updated upstream
-=======
                             $SaveArr['is_completed'] = true;
                             $SaveArr['is_approved'] = true;
                             $SaveArr['status']      = 'completed';
->>>>>>> Stashed changes
                             $PaymentList = $this->Payment->UpdatePayment($SaveArr,$SavePaymentId);
                         }
                     }

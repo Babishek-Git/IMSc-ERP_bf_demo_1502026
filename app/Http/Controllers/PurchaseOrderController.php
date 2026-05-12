@@ -338,4 +338,12 @@ class PurchaseOrderController extends Controller
             Session::put('ALertMesage', $message);
         }
     }
+    public function ViewPurchaseOrderForSD(Request $request) {
+        $ShowPoItemDetailsData  = $this->PurchaseOrder->showPurchaseOredrIssuedData(NULL);
+        return view('sdpo-entry.view-sd')->with('data',compact('ShowPoItemDetailsData'));
+    }
+    public function ViewPurchaseOrderForPG(Request $request) {
+        $ShowPoItemDetailsData  = $this->PurchaseOrder->showPurchaseOredrIssuedData(NULL);
+        return view('sdpo-entry.view-po')->with('data',compact('ShowPoItemDetailsData'));
+    }
 }

@@ -15,21 +15,6 @@
   padding:12px 18px;display:flex;align-items:center;gap:10px;
   border-bottom:2px solid #e8eef6;
 }
-<<<<<<< Updated upstream
-.lom-cat-hdr--reg{background:linear-gradient(90deg,#fdf1f0 0%,#fff9f9 100%);border-left:5px solid #c0392b}
-.lom-cat-hdr--sal{background:linear-gradient(90deg,#fef6ec 0%,#fffdf9 100%);border-left:5px solid #e67e22}
-.lom-cat-hdr--cra{background:linear-gradient(90deg,#eaf6ef 0%,#f7fdf9 100%);border-left:5px solid #1a7a4a}
-
-.lom-cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.lom-cat-hdr--reg .lom-cat-dot{background:#c0392b}
-.lom-cat-hdr--sal .lom-cat-dot{background:#e67e22}
-.lom-cat-hdr--cra .lom-cat-dot{background:#1a7a4a}
-
-.lom-cat-title{font-size:14px;font-weight:700;letter-spacing:.1px}
-.lom-cat-hdr--reg .lom-cat-title{color:#c0392b}
-.lom-cat-hdr--sal .lom-cat-title{color:#e67e22}
-.lom-cat-hdr--cra .lom-cat-title{color:#1a7a4a}
-=======
 .lom-cat-hdr--reg{background:linear-gradient(90deg,#fdf1f0 0%,#fff9f9 100%);border-left:5px solid #F5226F}
 .lom-cat-hdr--sal{background:linear-gradient(90deg,#fef6ec 0%,#fffdf9 100%);border-left:5px solid #029999}
 .lom-cat-hdr--cra{background:linear-gradient(90deg,#eaf6ef 0%,#f7fdf9 100%);border-left:5px solid #D4A800}
@@ -43,7 +28,6 @@
 .lom-cat-hdr--reg .lom-cat-title{color:#F5226F}
 .lom-cat-hdr--sal .lom-cat-title{color:#029999}
 .lom-cat-hdr--cra .lom-cat-title{color:#D4A800}
->>>>>>> Stashed changes
 
 /* ── project sub-header ── */
 .lom-proj-hdr{
@@ -63,11 +47,7 @@
 .lom-tbl col.c-led{width:auto}
 
 .lom-tbl thead tr th{
-<<<<<<< Updated upstream
-  background:#0f2d5e;color:rgba(255,255,255,.86);
-=======
   background:#DCDFE3;color:#000;
->>>>>>> Stashed changes
   font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
   padding:9px 14px;text-align:left;
   border-right:1px solid rgba(255,255,255,.1);
@@ -79,19 +59,11 @@
 .lom-tbl tbody tr:last-child{border-bottom:none}
 .lom-tbl tbody tr:hover{background:#f5f8fd}
 .lom-tbl tbody tr.lom-tr-grp{background:#f3f7fd}
-<<<<<<< Updated upstream
-.lom-tbl tbody tr.lom-tr-grp td{font-weight:700;color:#1a4080}
-
-.lom-td-sno{text-align:center;padding:9px 6px;vertical-align:middle}
-.lom-td-obj{padding:9px 14px;vertical-align:middle;font-weight:500;color:#1a2a42}
-.lom-td-obj--sub{padding-left:32px;font-weight:500;color:#374560}
-=======
 .lom-tbl tbody tr.lom-tr-grp td{font-weight:700;color:#0000CD}
 
 .lom-td-sno{text-align:center;padding:9px 6px;vertical-align:middle}
 .lom-td-obj{padding:9px 14px;vertical-align:middle;font-weight:500;color:#0000CD}
 .lom-td-obj--sub{padding-left:32px;font-weight:500;color:#0000CD}
->>>>>>> Stashed changes
 .lom-td-led{padding:7px 14px;vertical-align:middle}
 
 /* serial badges */
@@ -115,11 +87,7 @@
 .lom-tags{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .lom-tag{
   display:inline-flex;align-items:center;gap:4px;
-<<<<<<< Updated upstream
-  background:#e4ecf7;color:#1a4080;border:1px solid #b8cce8;
-=======
   background:#fff;color:#0000CD;border:1px solid #9FBAE0;
->>>>>>> Stashed changes
   padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:500;white-space:nowrap;
 }
 .lom-tag::before{

@@ -22,6 +22,7 @@ use App\Models\ContractorDetail;
 use App\Models\ContractorGST;
 use App\Models\Ledger;
 use App\Models\LedgerGroup;
+use App\Models\ProjectMaster;
 use Exception;
 use Helper;
 use Session;
@@ -52,9 +53,11 @@ class BillPaymentController extends Controller
         $this->ContractorGST = new ContractorGST();
         $this->Ledger       = new Ledger();
         $this->LedgerGroup  = new LedgerGroup();
+        $this->Project  = new ProjectMaster();
        
         $this->TransactionMappService = $TransactionMappService;
         $this->PaymentService = $PaymentService;
+        
     }
 
     public function BillPaymentCreationList(Request $request){
@@ -102,6 +105,12 @@ class BillPaymentController extends Controller
             if($BillDate != NULL){
                 $BillDate = Helper::DBDateFormat($BillDate);
             }
+            if($ProjectId != NULL){
+                $ProjectGrParData = $this->Project->GetRootParent($ProjectId);
+                $ProjectGrParId = $ProjectGrParData->project_id ?? null;
+            }else{
+                $ProjectGrParId = NULL;
+            }
             DB::beginTransaction();
             try {
                 $UpdateArr['gross_amount']      = $GrossAmount;
@@ -130,6 +139,7 @@ class BillPaymentController extends Controller
                 $SaveArr['ledger_group_id']     = $LedgerGroupId;
                 $SaveArr['gia_id']              = $GiaId;
                 $SaveArr['project_id']          = $ProjectId;
+                $SaveArr['parent_project_id']   = $ProjectGrParId;
                 $SaveArr['object_head_id']      = $ObjectHeadId;
                 $SaveArr['object_head_sub_cata_id']  = $ObjectHeadSubCataId;
                 $SaveArr['ohl_mapping_id']      = $ObjectHeadLedgerMapId;
@@ -189,7 +199,7 @@ class BillPaymentController extends Controller
         }*/
         $LedgerIdList = [];
         if($PoId != NULL){
-            $PoAmcBudgetData = $this->TransactionMappService->GetBudgetDetailsForAmcPo($PoId,$ProcessMode,$ApplicationId);
+            $PoAmcBudgetData = $this->TransactionMappService->GetBudgetDetailsForAmcPo($PoId,$ProcessMode,$ApplicationId); 
             if(filled($PoAmcBudgetData)){
                 if(isset($PoAmcBudgetData['LedgerIdList'])){
                     $LedgerIdList = $PoAmcBudgetData['LedgerIdList'];
@@ -206,7 +216,6 @@ class BillPaymentController extends Controller
         
         $Ledger  = $this->Ledger->ShowOtherThanDeductionLedger(); 
         if(filled($LedgerIdList)){ 
-
             $Ledger = $Ledger->whereIn('ledger_id',$LedgerIdList);
         }
 

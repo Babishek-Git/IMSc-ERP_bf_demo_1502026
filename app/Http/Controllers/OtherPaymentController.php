@@ -70,11 +70,7 @@ class OtherPaymentController extends Controller
             try { 
                 $ProcessMode = decrypt($request->txt_process_mode);  
                 $PaymentId = decrypt($request->txt_payment_id);
-<<<<<<< Updated upstream
-                $ObjectHeadLedgerMapId = $request->txt_oh_ledger_map_id;
-=======
                 $ObjectHeadLedgerMapId = decrypt($request->txt_oh_ledger_map_id);
->>>>>>> Stashed changes
             }catch (\Illuminate\Contracts\Encryption\DecryptException $e) { 
                 $message = 'Invalid Access'; 
                 Session::put('ALertMesage', $message); 
@@ -137,11 +133,7 @@ class OtherPaymentController extends Controller
                 $SaveArr['payment_oh_amount']   = $ExpenditureAmt;
                 $SaveArr['active']              = 1;
                 $SaveArr['created_at']          = NOW();
-<<<<<<< Updated upstream
-                $SaveArr['created_by']          = session('WcmsEmpNo');
-=======
                 $SaveArr['created_by']          = session('WcmsEmpNo'); 
->>>>>>> Stashed changes
                 $this->PaymentObjectHead->CreatePaymentObjectHead($SaveArr);
 
                 $RecoveryCodeList               = $request->input('txt_recovery');

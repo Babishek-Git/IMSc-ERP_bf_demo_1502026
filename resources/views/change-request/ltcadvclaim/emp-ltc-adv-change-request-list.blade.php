@@ -83,13 +83,7 @@ $Page = $data['Page'] ?? NULL;
 													<td>LTC Advance Request</td>
 													<!-- <td>{{ $LTCData->created_by }}</td> -->
 													<td align="center">
-<<<<<<< Updated upstream
-														@if($Page == 'REQ_APPLY')
 														<button type="button" name="btn_edit" class="btn btn-default tuploadbtn" id="btn_edit" value="Edit" onclick="window.location='{{ route('change-request.ltc-adv-change-request',['id'=>encrypt($LTCData->ltc_advance_id),'Page'=>encrypt('REQ_APPLY')]) }}'"> <i class='fa fa-edit'></i> View & Edit</button>
-														@endif
-=======
-														<button type="button" name="btn_edit" class="btn btn-default tuploadbtn" id="btn_edit" value="Edit" onclick="window.location='{{ route('change-request.ltc-adv-change-request',['id'=>encrypt($LTCData->ltc_advance_id),'Page'=>encrypt('REQ_APPLY')]) }}'"> <i class='fa fa-edit'></i> View & Edit</button>
->>>>>>> Stashed changes
 														<button type="button" name="btn_submit" class="xlbtndownload m-btm1" id="btn_submit" value="Submit" onclick="window.location='{{ route('change-request.ltc-adv-change-request-process',['Page'=>encrypt($Page),'Application'=>encrypt($LTCData->ltc_advance_id),'action'=>encrypt('REQ_PROCESS')]) }}'"> <i class='fa fa-check'></i> View & Submit</button>
 													</td>
 													<td><div class="rm-icon-btn" title="Print" onclick="window.location='{{ route('change-request.ltcadvclaim.export-ltc-adv-pdf',['id'=>encrypt($LTCData->emp_no)]) }}'">

@@ -306,18 +306,7 @@ $ExeTotalNetAmount = 0;
                                                                     <input type="hidden" name="txt_ledger_id" id="txt_ledger_id" value="{{ isset($LedgerId) ? $LedgerId : '' }}">
                                                                     <input type="hidden" name="txt_ledger_group_id" id="txt_ledger_group_id" value="{{ isset($LedgerGroupId) ? $LedgerGroupId : '' }}">
                                                                 </td>
-                                                                <td width="350px">
-                                                                    {{ collect([$ObjectHeadSubCataName, $ObjectHeadName])->filter()->implode(' / ') }}
-                                                                    <!-- <select name="cmb_bill_object_head" id="cmb_bill_object_head" class="tboxsmclass ChosenInput">
-                                                                    </select> -->
-                                                                    <input type="hidden" name="txt_object_head_id" id="txt_object_head_id" value="{{ isset($ObjectHeadId) ? $ObjectHeadId : '' }}">
-                                                                    <input type="hidden" name="txt_object_head_subcata_id" id="txt_object_head_subcata_id" value="{{ isset($ObjectHeadSubCataId) ? $ObjectHeadSubCataId : '' }}">
-                                                                    <input type="hidden" name="txt_project_id" id="txt_project_id" value="{{ isset($ProjectId) ? $ProjectId : ''}}">
-                                                                    <input type="hidden" name="txt_gia_id" id="txt_gia_id" value="{{ isset($GiaId) ? $GiaId : '' }}">
-                                                                </td>
-
                                                                 
-
                                                                 <td align="right">
                                                                     <input type="text" class="tboxsmclass" id="txt_received_amt" name="txt_received_amt" value="{{ isset($BudgetReceivedAmount) ? $BudgetReceivedAmount : '' }}" readonly>
                                                                 </td>

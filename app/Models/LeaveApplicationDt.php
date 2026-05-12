@@ -63,23 +63,12 @@ class LeaveApplicationDt extends Model
         return self::with('leaveType')->where('status', 'approved')->where('from_date', '<=', $ToDate)->where('to_date', '>=', $FromDate)->get();
     }
 
-<<<<<<< Updated upstream
-    public function CheckLTCAppliedLeave($fromDate, $toDate, $empNo)
-=======
      public function CheckLTCAppliedLeave($fromDate, $toDate, $empNo)
->>>>>>> Stashed changes
     {
         return LeaveApplicationDt::where('emp_no', $empNo)->where('reason', 'LTC')
             ->where(function ($query) use ($fromDate, $toDate) {
                 $query->where('from_date', '<=', $toDate)->where('to_date', '>=', $fromDate);
-<<<<<<< Updated upstream
-            })->get();
-=======
-            })
-            ->join('erp_leave_types', 'erp_leave_types.leave_type_id', '=', 'erp_emp_leave_application_dt.leave_type_id')
-            ->select('erp_emp_leave_application_dt.*', 'erp_leave_types.*')
-            ->get();
->>>>>>> Stashed changes
+            })->select('erp_emp_leave_application_dt.*')->get();
     } 
     
 }

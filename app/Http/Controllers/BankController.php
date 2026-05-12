@@ -225,7 +225,11 @@ class BankController extends Controller
         // dd($BankData);
         return view('bank.bank-master')->with('data',compact('BankData', 'BankDataView')) ->with('ALertMesage',$message);
     }
-
+    public function BankMasterView(Request $request)
+    { 
+        $BankDataView = $this->bank->ShowBankList(null);
+        return view('bank.view-bankmaster')->with('data',compact('BankDataView'));
+    }
     public function ValidateBank($request){                     //  Validation part for Bank
         $message = '';
         $Rules = [ 'BANK_REQ' => 'required' ];
@@ -370,7 +374,7 @@ class BankController extends Controller
     }
     public function BankBranchList(Request $request){
         $BankList = $this->bankbranch->ShowBankBranchList(NULL);
-        return view('bank.ViewBankBranchList')->with('data', compact('BankList'));
+        return view('bank.view-bankbranchmaster')->with('data', compact('BankList'));
     }
     public function DeleteBankInstrument(Request $request){
         $BankInstArr = array();

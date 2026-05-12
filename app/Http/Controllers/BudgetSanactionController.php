@@ -14,7 +14,6 @@ use App\Models\PaymentObjectHead;
 use App\Models\Payment;
 
 
-
 use App\Models\Gia;
 
 
@@ -39,6 +38,11 @@ class BudgetSanactionController extends Controller
         $this->Payment                 = new Payment();
     }
     public function BudgetSanction(Request $request){
+        if($request->btn_next_float){
+            $BudgetType = $request->txt_budget_type;
+        }else{
+            $BudgetType = NULL;
+        }
         if($request->btn_save){//dd($request);
             $GrantAidId           = $request->input('cmb_gia'); 
             $SanactionNo          = $request->input('sanction_no'); 
@@ -102,7 +106,12 @@ class BudgetSanactionController extends Controller
         }
         $ProjectHeadGroupData = $this->project->AllLeafNodesOnly();//$this->project->ShowAllParentChild(NULL); 
         $GrandDetails         = $this->GiaMaster->ShowGia();
-        return view('budget-allocation.budget-sancation-entry')->with('data',compact('ProjectHeadGroupData','GrandDetails'));
+        if(isset($BudgetType)){
+            $GrandDetails = $GrandDetails->where('gia_code',$BudgetType);
+        }else{
+            $GrandDetails = $GrandDetails->where('gia_code','!=','CRA');
+        }
+        return view('budget-allocation.budget-sancation-entry')->with('data',compact('ProjectHeadGroupData','GrandDetails','BudgetType'));
     }
     public function BudgetSanctionEntryDetails(Request $request){
         $GetGiaId      = $request->GiaId;
@@ -175,6 +184,11 @@ class BudgetSanactionController extends Controller
         return $RetunArr; 
     }
     public function BudgetClaim(Request $request){
+        if($request->btn_next_float){
+            $BudgetType = $request->txt_budget_type;
+        }else{
+            $BudgetType = NULL;
+        }
          if($request->btn_save){
             $ClaimDate               = $request->claim_date;
             $ClaimPeriod             = $request->cmb_month ?? $request->cmb_quarter;
@@ -219,9 +233,19 @@ class BudgetSanactionController extends Controller
         $ProjectHeadMapArray             = collect($ProjectHeadGroupData)->pluck('full_heads', 'project_id')->toArray();
         $ProjectHeadGroupData            = $this->project->AllLeafNodesOnly();
         $GrandDetails                    = $this->GiaMaster->ShowGia();
-        return view('budget-allocation.budget-claim-entry')->with('data',compact('ProjectHeadGroupData','GrandDetails','BudgetAllocationData','ProjectHeadMapArray','AllObectHeadSubCataGrpData'));
+        if(isset($BudgetType)){
+            $GrandDetails = $GrandDetails->where('gia_code',$BudgetType);
+        }else{
+            $GrandDetails = $GrandDetails->where('gia_code','!=','CRA');
+        }
+        return view('budget-allocation.budget-claim-entry')->with('data',compact('BudgetType','ProjectHeadGroupData','GrandDetails','BudgetAllocationData','ProjectHeadMapArray','AllObectHeadSubCataGrpData'));
     }
     public function BudgetRecived(Request $request){
+        if($request->btn_next_float){
+            $BudgetType = $request->txt_budget_type;
+        }else{
+            $BudgetType = NULL;
+        }
         if($request->btn_save){
             $RecivedDate              = $request->rece_date;
             $BudgetClaimIdArray       = $request->input('bud_claim_id'); 
@@ -264,6 +288,91 @@ class BudgetSanactionController extends Controller
         $ProjectHeadMapArray             = collect($ProjectHeadGroupData)->pluck('full_heads', 'project_id')->toArray();
         $ProjectHeadGroupData            = $this->project->AllLeafNodesOnly();
         $GrandDetails                    = $this->GiaMaster->ShowGia();
-        return view('budget-allocation.budget-received-entry')->with('data',compact('ProjectHeadGroupData','GrandDetails','BudgetAllocationData','ProjectHeadMapArray','AllObectHeadSubCataGrpData'));
+        if(isset($BudgetType)){
+            $GrandDetails = $GrandDetails->where('gia_code',$BudgetType);
+        }else{
+            $GrandDetails = $GrandDetails->where('gia_code','!=','CRA');
+        }
+        return view('budget-allocation.budget-received-entry')->with('data',compact('BudgetType','ProjectHeadGroupData','GrandDetails','BudgetAllocationData','ProjectHeadMapArray','AllObectHeadSubCataGrpData'));
+    }
+
+    public function BudgetBalance(Request $request){
+        if($request->btn_save){//dd($request);
+            $GrantAidId          = $request->input('cmb_gia'); 
+            $ProjectId           = $request->input('txt_project_id'); 
+            $ProjectParentId     = $request->input('txt_project_parent_id'); 
+            $ObjectHeadId        = $request->input('txt_object_head_id'); 
+            $ObjectHeadSubCataId = $request->input('txt_object_head_subcata_id'); 
+            $ExpAmount           = $request->input('txt_exp_amount'); 
+            $ExpDate             = $request->input('txt_exp_date'); 
+            $Remarks             = $request->input('txt_exp_remarks'); 
+            if($ObjectHeadSubCataId == ''){
+                $ObjectHeadSubCataId = NULL;
+            }
+            if($ProjectId == ''){
+                $ProjectId = NULL;
+            }
+
+            if($ProjectId != NULL){
+                $ProjectGrParData = $this->project->GetRootParent($ProjectId);
+                $ProjectGrParId = $ProjectGrParData->project_id ?? null;
+            }else{
+                $ProjectGrParId = NULL;
+            }
+            if(($ExpDate != '')&&($ExpDate != NULL)){
+                $ExpDate = Helper::DBDateFormat($ExpDate);
+            }
+            if($Remarks == ''){
+                $Remarks = NULL;
+            }
+
+            
+            DB::beginTransaction();//dd($request);
+            try { 
+
+                $SaveDtData1['gross_amount']    = $ExpAmount;
+                $SaveDtData1['net_amount']      = $ExpAmount;
+                $SaveDtData1['status']          = 'completed';
+                $SaveDtData1['is_approved']     = true;
+                $SaveDtData1['is_completed']    = true;
+                $SaveDtData1['voucher_dt']      = $ExpDate;
+                $SaveDtData1['voucher_amt']     = $ExpAmount;
+                $SaveDtData1['payment_description'] = $Remarks;
+                $SaveDtData1['active']          = 1;
+                $SaveDtData1['created_at']      = NOW();
+                $SaveDtData1['created_by']      = session('WcmsEmpNo');
+                $PaymentData = $this->Payment->CreatePayment($SaveDtData1);
+                $PaymentId   = $PaymentData->payment_id;
+
+                $SaveDtData['payment_id']               = $PaymentId;
+                $SaveDtData['payment_oh_amount']        = $ExpAmount;
+                $SaveDtData['gia_id']                   = $GrantAidId;
+                $SaveDtData['project_id']               = $ProjectId;
+                $SaveDtData['parent_project_id']        = $ProjectGrParId;
+                $SaveDtData['object_head_id']           = $ObjectHeadId;
+                $SaveDtData['object_head_sub_cata_id']  = $ObjectHeadSubCataId;
+                $SaveDtData['active']                   = 1;
+                $SaveDtData['created_at']               = NOW();
+                $SaveDtData['created_by']               = session('WcmsEmpNo'); 
+                $SaveSanction = $this->PaymentObjectHead->CreatePaymentObjectHead($SaveDtData);
+                DB::commit();
+                $message = "Budget Balance Details Saved Successfully";
+                Session::put('ALertMesage', $message);
+            }
+            catch (\Exception $e) { dd($e);
+                DB::rollback();
+                $message = "Error : Sorry transaction not fully completed";
+                Session::put('ALertMesage', $message);
+            }
+            //dd($message);
+            Session::put('ALertMesage', $message);
+            return redirect()->route('budget.balance-entry');
+        }
+        $ProjectHeadGroupData = $this->project->AllLeafNodesOnly();//$this->project->ShowAllParentChild(NULL); 
+        $GrandDetails         = $this->GiaMaster->ShowGia();
+        return view('budget-allocation.budget-balance-entry')->with('data',compact('ProjectHeadGroupData','GrandDetails'));
+    }
+    public function BudgetBalanceView(Request $request){
+
     }
 }

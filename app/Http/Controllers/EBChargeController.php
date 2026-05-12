@@ -6,121 +6,71 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\EBCharges;
 use App\Models\HouseMaster;
+use App\Models\AemEmployee;
 use Helper;
 use DB;
 use Session;
 class EBChargeController extends Controller
 {
     public function __construct(){
-        $this->Eb     = new EBCharges();
-        $this->house  = new HouseMaster();
+        $this->Eb        = new EBCharges();
+        $this->house     = new HouseMaster();
+        $this->employee  = new AemEmployee();
     }
     public function EBCharge (Request $request)
     {
-       if(isset($request->btn_save))
+        if(isset($request->btn_save))
         {
-            //dd($request);
-            $Month         = $request->cmb_month;
-            $Year          = $request->cmb_year;
-            $EmpNameArr    = $request->txt_emp_name_payslip;
-            $EmpNoArr      = $request->txt_emp_no;
-            $DesignationArr= $request->txt_designation;
-            $EBUnitArr     = $request->txt_eb_unit; //dd(Helper::DisplayDateFormat($DateVariable)); to Display in blade file
-            $EBChargeArr   = $request->txt_eb_charge;
-            $ErrArr = [];    
-
-            $rules = [
-				'EmpNameArr'     => 'required|max:50',
-				'EmpNoArr'       => 'required|max:50',
-                'DesignationArr' => 'required|max:50',
-				'EBUnitArr'      => 'required|max:50',
-                'EBChargeArr'    => 'required|max:50',
-				
-                
-			];
-			
             DB::beginTransaction();
             try {
-                foreach($EmpNameArr as $EmpNameKey => $EmpNameId){
-                    $EmpName       = $EmpNameArr[$EmpNameKey];
-                    $EmpNo         = $EmpNoArr[$EmpNameKey];
-                    $Designation   = $DesignationArr[$EmpNameKey];
-                    $EbUnit        = $EBUnitArr[$EmpNameKey];
-                    $EbCharge      = $EBChargeArr[$EmpNameKey];
+                DB::table('erp_emp_eb_charges')->where('pay_month', $request->cmb_month)->where('pay_year', $request->cmb_year)->delete();
+                foreach ($request->txt_house_address as $key => $houseAddress) {
 
-
-                    $ValidateData = [
-                        'EmpName'     =>$EmpNameArr,
-                        'EmpNo'       => $EmpNoArr,
-                        'Designation' =>$DesignationArr,
-                        'EbUnit'      => $EBUnitArr,
-                        'EbCharge'    =>$EBChargeArr,
-                                        
+                    $saveData = [
+                        'pay_month' => $request->cmb_month,
+                        'pay_year' => $request->cmb_year,
+                        'emp_no' => $request->txt_emp_no[$key] ?? null,
+                        'eb_charge' => $request->txt_eb_charge[$key] ?? 0,
+                        'lf_charge' => $request->txt_lf_charge[$key] ?? 0,
+                        'wc_charge' => $request->txt_wc_charge[$key] ?? 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
 
-                    $Validate = Validator::make($ValidateData, $rules); 
-                
-                    if($Validate->fails())
-                    {
-                        //$date = NULL;
-                        $ValidateFields = $Validate->failed();
-                        foreach ($ValidateFields as $ValidFieldName => $ValidRules) 
-                        {
-                            if($EmpName == "EmpName"){
-                                //$ItemNo = '';
-                                $ErrArr[] = "Error : Invalid Employee Name.";
-                            }
-                            if($EmpNo == "EmpNo"){
-                                //$ItemDesc = '';
-                                $ErrArr[] = "Error : Invalid Employee No.";
-                            }
-                            if($Designation == "Designation"){
-                                //$ItemNo = '';
-                                $ErrArr[] = "Error : Invalid Designation.";
-                            }
-                            if($EbUnit == "EbUnit"){
-                                //$ItemDesc = '';
-                                $ErrArr[] = "Error : Invalid EB Unit.";
-                            }
-                            if($EbCharge == "EbCharge"){
-                                //$ItemDesc = '';
-                                $ErrArr[] = "Error : Invalid EB Charge.";
-                            }
-                            
-                        }
-                    }
-                    if(filled($ErrArr)){
-                        $ErrorStr = implode(",",$ErrArr);
-                        Session::put('ALertMesage', $ErrorStr);
-                        return redirect()->route('eb-charge.eb-charge');
-                    }
-                    $SaveData['pay_month'] = $Month;
-                    $SaveData['pay_year'] = $Year;
-                    $SaveData['emp_no'] = $EmpNo;
-                    $SaveData['eb_amount'] = $EbCharge;
-                    $SaveData['eb_consump_unit'] = $EbUnit;
-                    $SaveData['active'] = 1;
-                    $SaveData['created_at'] = NOW();
-                    $SaveData['created_by'] = session('WcmsEmpNo');
-                    //$SaveData['updated_at'] = NOW();
-                   //$SaveData['updated_by'] = session('WcmsEmpNo');
-                    
-                    $SaveFees= $this->Eb->createEBCharges($SaveData);
+                    $this->Eb->createEBCharges($saveData);
                 }
                 DB::commit();
-                $message = "Eb Charges  Data Saved Successfully";
-            }catch (\Exception $e) { 
+                return redirect()->back()->with('success', 'Saved successfully');
+            } catch (\Exception $e) {
                 DB::rollback();
-                $message = "Error : Sorry transaction not fully completed";
+                dd($e);
+                return redirect()->back()->with('error', $e->getMessage());
             }
             Session::put('ALertMesage', $message);
-            return redirect()->route('eb-charge.eb-charge');
+            return redirect()->route('EbTrariffMaster.EBTariffMaster');
         }
       
-        $HouseData = $this->house->ShowHouseMaster(null,null);
-        $EbData    = $this->Eb->ShowCharges();
-        //dd($EbData);
-        return view('eb-charge.eb-charge')->with('data', compact('EbData','HouseData'));
+        $HouseData     = $this->house->ShowHouseMaster(null,null);
+        $EbData        = $this->Eb->ShowCharges();
+        $EmployeeData  = $this->employee->ShowPermenentEmployee();
+        
+        return view('eb-charge.eb-charge')->with('data', compact('EbData','HouseData','EmployeeData'));
+    }
+
+    public function getEmployeeDetails(Request $request)
+    {
+        $employee = $this->employee->join('erp_emp_designation', 'erp_emp_designation.designation_id', '=', 'erp_employee.emp_designation_id')
+            ->where('erp_employee.emp_no', $request->emp_no)
+            ->select(
+                'erp_employee.emp_no',
+                'erp_employee.emp_name_payslip',
+                'erp_emp_designation.designation_name'
+        )->first();
+
+        return response()->json([
+            'emp_no' => $employee->emp_no ?? '',
+            'designation_name' => $employee->designation_name ?? '',
+        ]);
     }
     
 

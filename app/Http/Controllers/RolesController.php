@@ -57,7 +57,7 @@ class RolesController extends Controller
                     $ExistingData = Role::find(decrypt($request->hid_roleid));
                     $RoleAccessArr['role_name'] = $request->txt_role_name;
                     $RoleAccessArr['role_group_code'] = $request->txt_role_group;
-                    $RoleAccessArr['section_id'] = $request->cmb_section;
+                    $RoleAccessArr['group_id'] = $request->cmb_section;
                     $UpdateRole = $this->role->UpdateRoleAccess($RoleAccessArr, decrypt($request->hid_roleid));
                     $LogData['OLD_VALUE']   = json_encode($ExistingData->getOriginal());
                     $LogData['NEW_VALUE']   = json_encode($RoleAccessArr);
@@ -79,7 +79,7 @@ class RolesController extends Controller
                 }else { 
                     $RoleAccessArr['role_name'] = $request->txt_role_name;
                     $RoleAccessArr['role_group_code'] = $request->txt_role_group;
-                    $RoleAccessArr['section_id'] = $request->cmb_section;
+                    $RoleAccessArr['group_id'] = $request->cmb_section;
                     $RoleAccessArr['created_by'] = session('WcmsEmpNo');
                     $RoleAccessArr['created_at'] = NOW();
                     $RoleAccessArr['active'] = 1;
@@ -134,7 +134,7 @@ class RolesController extends Controller
         Helper::CreateLogInTable($request,$LogData);
         
 
-        $data = $this->role->ShowRoleWithRoleGrp(NULL,NULL);
+        $data = $this->role->ShowRoleListByRoleIdArr();
         if(session('WcmsRoleGroupCode') == "ACCADMUSER"){
             $data = collect($data)->where('role_group_code','ACCUSER');
         }else if(session('WcmsRoleGroupCode') == "ADMUSER"){

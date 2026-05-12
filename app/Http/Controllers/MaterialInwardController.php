@@ -98,7 +98,7 @@ class MaterialInwardController extends Controller
         $showPurchaseOredrData    = $this->PurchaseOrder->showPurchaseOredrIssuedData($request,NULL);
         $ShowSessionEmpdata       = $this->Employee->ShowEmployeeBySessionEmpNo(); 
         $SessionEmpSectionId      = collect($ShowSessionEmpdata)->pluck('section_id')->first();
-        $Vocherdata               = $this->PaymentMaster->ShowPendingPayment();
+        $Vocherdata               = $this->PaymentMaster->ShowCompletedPayment();
         $VocherDetails           = collect($Vocherdata)->where('module_code','MAT_INWARD');
         $ShowMaterialInwardData   = $this->MaterialInwardMaster->showMaterialInwardPendingPaymentData(); 
         return view('material-inward.material-inward-pending-payment-list')->with('data',compact('SessionEmpSectionId','showPurchaseOredrData','Contractordata','ShowMaterialInwardData','VocherDetails'));

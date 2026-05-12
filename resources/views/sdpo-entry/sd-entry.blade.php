@@ -20,7 +20,7 @@
                                         <div class="row smclearrow"></div>
                                         <div class="row" align="right">
                                             <button type="submit" id="btn_save" name="btn_save" class="step-btn" value="Save">SAVE</button>
-                                            <input type="button" class="backbutton" name="home" id="home" value=" Home " onclick="window.location='{{ route('dashboard.index') }}'" />
+                                            <input type="button" class="backbutton" name="btn_back" id="btn_back" value="Back " onclick="window.location='{{ route('sdpo-entry.view-sd') }}'" />
                                         </div>
                                         <div class="row smclearrow"></div>
                                         <div class="row smclearrow"></div>

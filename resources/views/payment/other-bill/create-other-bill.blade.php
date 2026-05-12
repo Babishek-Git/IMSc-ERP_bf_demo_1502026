@@ -36,11 +36,7 @@ if(isset($ModuleData)){
 
 $TotalGrossAmount = 0; $TotalDeductions = 0; $TotalNetAmount = 0;
 
-<<<<<<< Updated upstream
-
-=======
 $UptoDtExpenditureAmt = 0;
->>>>>>> Stashed changes
 if(isset($BudgetObjectHeadData)){
     $LedgerId               = $BudgetObjectHeadData['LedgerId'] ?? NULL;
     $LedgerName             = $BudgetObjectHeadData['LedgerName'] ?? NULL;
@@ -57,10 +53,7 @@ if(isset($BudgetObjectHeadData)){
     $BudgetClaimAmount      = $BudgetObjectHeadData['BudgetClaimAmount'] ?? NULL;
     $BudgetReceivedAmount   = $BudgetObjectHeadData['BudgetReceivedAmount'] ?? NULL;
     $ObjectHeadLedgerMapId  = $BudgetObjectHeadData['ObjectHeadLedgerMapId'] ?? NULL;
-<<<<<<< Updated upstream
-=======
     $UptoDtExpenditureAmt   = $BudgetObjectHeadData['UptoDtExpenditureAmt'] ?? NULL;
->>>>>>> Stashed changes
 }
 $OptionStr = '';
 if(isset($AllObectHead)){
@@ -256,14 +249,8 @@ $ExeTotalNetAmount = 0;
                                                                 </th>
                                                             </tr>
                                                             <tr>
-<<<<<<< Updated upstream
-                                                                
-                                                                <th style="width:200px;">Ledger Name</th>
-                                                                <th style="width:140px;">Object Head</th>
-=======
                                                                 <th style="width:140px;">Object Head</th>
                                                                 <th style="width:200px;">Ledger Name</th>
->>>>>>> Stashed changes
                                                                 <th nowrap="">Upto Date Received (&#8377;)</th>
                                                                 <th nowrap="">Upto Date Expenditure (&#8377;)</th>
                                                                 <th nowrap="">Current Expenditure (&#8377;)</th>
@@ -272,15 +259,6 @@ $ExeTotalNetAmount = 0;
                                                         </thead>
                                                         <tbody>
                                                             <tr id="inputRow">
-<<<<<<< Updated upstream
-                                                                <td>
-                                                                    <!-- {{ collect([$LedgerName, $LedgerGroupName])->filter()->implode(' / ') }} -->
-                                                                    {{ $LedgerName }}
-                                                                    <input type="hidden" name="txt_ledger_id" id="txt_ledger_id" value="{{ isset($LedgerId) ? $LedgerId : '' }}">
-                                                                    <input type="hidden" name="txt_ledger_group_id" id="txt_ledger_group_id" value="{{ isset($LedgerGroupId) ? $LedgerGroupId : '' }}">
-                                                                </td>
-=======
->>>>>>> Stashed changes
                                                                 <td width="350px">
                                                                     {{ collect([$ObjectHeadSubCataName, $ObjectHeadName])->filter()->implode(' / ') }}
                                                                     <input type="hidden" name="txt_object_head_id" id="txt_object_head_id" value="{{ isset($ObjectHeadId) ? $ObjectHeadId : '' }}">
@@ -288,14 +266,6 @@ $ExeTotalNetAmount = 0;
                                                                     <input type="hidden" name="txt_project_id" id="txt_project_id" value="{{ isset($ProjectId) ? $ProjectId : '' }}">
                                                                     <input type="hidden" name="txt_gia_id" id="txt_gia_id" value="{{ isset($GiaId) ? $GiaId : '' }}">
                                                                 </td>
-<<<<<<< Updated upstream
-                                                                <td align="right">{{ $BudgetReceivedAmount ?? '' }}</td>
-                                                                <td align="right"></td>
-                                                                <td>
-                                                                    <input type="text" class="tboxsmclass" id="txt_expenditure_amt" name="txt_expenditure_amt" value="{{ $BillAmount ?? '' }}" readonly>
-                                                                </td>
-                                                                <td></td>
-=======
                                                                 <td>
                                                                     <!-- {{ collect([$LedgerName, $LedgerGroupName])->filter()->implode(' / ') }} -->
                                                                     {{ $LedgerName }}
@@ -313,7 +283,6 @@ $ExeTotalNetAmount = 0;
                                                                     @php $BalanceAmt = round($BudgetReceivedAmount - $UptoDtExpenditureAmt - $BillAmount); @endphp
                                                                     {{ $BalanceAmt ?? '' }}
                                                                 </td>
->>>>>>> Stashed changes
                                                             </tr>
                                                         </tbody>
                                                         

@@ -308,11 +308,12 @@ class WorkFlowProcessService
                 $CurrentData = $ModelClassName::where('ltc_advance_id', $TransactionId)->get();
                 $CurrentJsonData = json_encode($CurrentData);
                 $SaveMovementData['current_data'] = $CurrentJsonData;
-                $this->SaveLtcPayment($TransactionId,$ModelClassName);
                 if($WorkFlowAction == 'AP'){
-                    $SaveApplicationData['advance_or_claim']    = "claim";
-                    $SaveApplicationData['is_claim_completed']  = true;
-                    $SaveApplicationData['target_roles_claim'] = $TargetRoles;
+                    $SaveApplicationData['claim_sanctioned_amount'] = $CurrentData->first()->claim_sanctioned_amount ?? null;
+                    $SaveApplicationData['advance_or_claim']        = "claim";
+                    $SaveApplicationData['is_claim_completed']      = true;
+                    $SaveApplicationData['target_roles_claim']      = $TargetRoles;
+                    $this->SaveLtcPayment($TransactionId,$ModelClassName);
                 }
             }
             $this->SaveWorkFlowMovement($SaveMovementData);
@@ -353,10 +354,10 @@ class WorkFlowProcessService
         $TransactionTable   = $Model->getTable();
         $BankDetailData     = EmployeePayBank::where('emp_no', $ApplicationData->emp_no)->where('is_current', true)->first();
         if($ApplicationData->module_code == 'LTCADV'){
-            $amount = $ApplicationData->advance_amount;
+            $amount = $ApplicationData->sanctioned_amount;
         }
         if($ApplicationData->module_code == 'LTCCLAIM'){
-            $amount = $ApplicationData->claim_amount;
+            $amount = $ApplicationData->claim_sanctioned_amount;
         }
         $InsertArr = [
             'transaction_id'       => $ApplicationData->ltc_advance_id,

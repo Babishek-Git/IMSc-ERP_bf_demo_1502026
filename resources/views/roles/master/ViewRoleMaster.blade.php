@@ -40,13 +40,13 @@
 									<button type="button" class="rm-new-emp-btn" onClick="window.location='{{route($AddUrl)}}'">+ NEW ROLE</button>
 								</div>
 							</div>
-
 							<div class="rm-table-wrap">
 								<table id="rm-empTable">
 									<thead>
 										<tr>
 										<th style="width:40px">#</th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Role Name <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
+										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Role Group <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th style="width:80px; text-align:center;">Edit</th>
 										<th style="width:80px; text-align:center;">Delete</th>
 										<th style="width:80px; text-align:center;" class="rm-sortable" data-col="status"><div class="rm-th-inner">Status <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
@@ -58,6 +58,7 @@
 												<tr data-name="{{ $Role->role_name }}" data-status="{{ $Role->active == 1 ? 'active' : 'inactive' }}">
 													<td>{{ $loop->iteration }}</td>
 													<td>{{ $Role->role_name }}</td>
+													<td>{{ $Role->office_name}}</td>
 													<td align="center">
 														<button type="button" name="btn_edit" id="btn_edit" class="btn btn-default teditbtn estEdit" onClick="window.location='{{route('roles.RoleMaster', ['id' => encrypt($Role->roleid)])}}'" title="Click here to Edit" style="cursor: pointer;"><i class="fa fa-edit pt2"></i></button>
 													</td>
@@ -68,7 +69,6 @@
 												</tr>
 											@endforeach
 										@endif
-										
 									</tbody>
 								</table>
 								<div class="rm-empty" id="rm-emptyMsg" style="display:none">No records found.</div>

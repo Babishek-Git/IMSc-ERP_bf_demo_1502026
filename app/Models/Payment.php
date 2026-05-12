@@ -110,7 +110,8 @@ class Payment extends Model
     public function ShowPaymentForVoucherCreate(){
         return self::where('active',1)->where('status','pending')->whereNull('voucher_no')->whereNull('voucher_dt')->whereNull('voucher_amt')->get();
     }
-    public static function ShowPendingPayment(){
+    public static function ShowCompletedPayment(){
        return self::where('active',1)->whereNotNull('voucher_no')->whereNotNull('voucher_dt')->whereNotNull('voucher_amt')->get();
     }
+   
 }

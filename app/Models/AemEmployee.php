@@ -257,6 +257,12 @@ class AemEmployee extends Model
                 ->select('e.emp_no', 'e.emp_name_payslip')
                 ->get();
     }
+
+    public function ShowPermenentEmployee()
+    {
+        return DB::table('erp_employee as e')->where('e.employment_type', 'P')->select('e.emp_no', 'e.emp_name_payslip')->get();
+    }
+
     public static function ShowEmployeesBYEmpNo($request,$EmpNo){ // THIS FUNCTION AD BY BABI FOR INDENT CREATION ///
         $EmpData = NULL;
         if(filled($EmpNo)){

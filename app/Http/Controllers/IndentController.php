@@ -16,7 +16,7 @@ use App\Models\WorkFlowMovement;
 use App\Models\ProjectMaster;
 use App\Models\ProjectStaff;
 use App\Models\FieldAccesMaster;
-use App\Models\BudgetSanction;
+//use App\Models\BudgetSanction;
 use App\Models\BudgetSanctionExpenditureMaster;
 use App\Models\EmployeeGroupMaster;
 use App\Models\RcItemRateMaster;
@@ -65,7 +65,7 @@ class IndentController extends Controller
         $this->ProjectMaster       = new ProjectMaster();
         $this->StaffProjectMaster  = new ProjectStaff();
         $this->FieldAccesMaster    = new FieldAccesMaster();
-        $this->BudgetSanction      = new BudgetSanction();
+      //  $this->BudgetSanction      = new BudgetSanction();
         $this->BudSanExpMaster     = new BudgetSanctionExpenditureMaster();
         $this->EmpGroupMaster      = new EmployeeGroupMaster();
         $this->RcItemRateMaster    = new RcItemRateMaster();

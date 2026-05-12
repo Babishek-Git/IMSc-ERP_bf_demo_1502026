@@ -36,6 +36,11 @@ class LtcAdvanceDetails extends Model
         return self::create($LtcAdvDetailsArr);
     }
 
+    public function updateLtcAdvDetails($detailId, $data)
+    {
+        return self::where('ltc_detail_id', $detailId)->update($data);
+    }
+
     public function GetLtcAdvDetails($ids)
     {
         $LtcData = LtcAdvanceDetails::whereIn('ltc_detail_id', $ids)->get();
