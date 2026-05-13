@@ -218,9 +218,10 @@ if(isset($BudgetFiledAcessData)){
                                 <div class="row innerdiv">
                                     <div class="row">
 										@php
-											$RouteUrl   = 'indent.indent-creation';
-											$ModuleCode = 'INDENT';
-											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$WorkFlowActionData,$BackUrl,$IndentId,$RouteUrl,$ActionStatus,$ModuleCode);
+											$RouteUrl      = 'indent.indent-creation';
+											$ModuleCode    = 'INDENT';
+											$SubmitBtnName = 'Submit Indent';
+											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$SubmitBtnName,$WorkFlowActionData,$BackUrl,$IndentId,$RouteUrl,$ActionStatus,$ModuleCode);
 											$ButtonDetailsHTML = $ForwRejApprButtonComponentArr['HTMLSTR'];
 										@endphp
 											{!!$ButtonDetailsHTML!!}
@@ -583,7 +584,7 @@ if(isset($BudgetFiledAcessData)){
 													}
 												?>
 											 <input type="hidden" name ='hidd_buget_apr' id ='hidd_buget_apr' value='{{$data["BudegtFieldAccess"]}}'>
-											 <input type="hidden" name ='hidd_fund_avable' id ='hidd_buget_apr' value='{{$FundStatus}}'>
+											 <input type="hidden" name ='hidd_fund_avable' id ='hidd_fund_avable' value='{{$FundStatus}}'>
 												<div class="table-container">
 													<div class="table-wrapper">
 														<div class="section-header">

@@ -914,7 +914,7 @@ class Helper{
         $Days = Carbon::create($Year, $Month, 1)->daysInMonth;
         return $Days;
     }
-    public static function Forward_Reject_Approve_Button($request,$WorkFlowActionData,$BackUrl,$EditId,$RouteUrl,$ActionStatus,$ModuleCode){
+    public static function Forward_Reject_Approve_Button($request,$SubmitBtnName,$WorkFlowActionData,$BackUrl,$EditId,$RouteUrl,$ActionStatus,$ModuleCode){
         $IsApprove  = $WorkFlowActionData['IsApprove'] ?? NULL;
         $IsNext     = $WorkFlowActionData['IsNext'] ?? NULL;
         $IsPrevious = $WorkFlowActionData['IsPrevious'] ?? NULL;
@@ -946,7 +946,7 @@ class Helper{
             }
             if(($WorkFlowActionData['WorkFlowAction'] ?? null) === 'SU'){
                 $ApndTxt  .= '<div class="btn-group floatr">';
-                $ApndTxt .= '<button type="submit" id="SubmitApplication" name="SubmitApplication" data-flag="SU"  class="btn btn-default btninfo  WorkFlowAction" value="SUBMIT" data-flag="SU"><i class="fa fa-arrow-circle-right pt2"></i> Submit Application </button>';
+                $ApndTxt .= '<button type="submit" id="SubmitApplication" name="SubmitApplication" data-flag="SU"  class="btn btn-default btninfo  WorkFlowAction" value="SUBMIT" data-flag="SU"><i class="fa fa-arrow-circle-right pt2"></i> '.$SubmitBtnName.' </button>';
                 $ApndTxt .= '</div>';
                 // $ApndTxt  .= '<div class="btn-group floatr">';
                 // $ApndTxt .= '<button type="button" class="btn btn-default 	btnprimary"  name="btn_edit" id="btn_edit" value=" Edit "onclick="window.location=\''.route($RouteUrl, ['page' => encrypt('EDIT'), 'EditId' => encrypt($EditId), 'modulecode' => encrypt($ModuleCode)]).'\'" ><i class="fa fa-edit pt2"></i> Edit</button>';

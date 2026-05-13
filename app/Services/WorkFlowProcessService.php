@@ -14,6 +14,7 @@ use App\Models\RoleMapping;
 use App\Models\Payment;
 use App\Models\Role;
 use App\Models\LeaveApplicationDt;
+use App\Models\modules;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 //use Exception;
@@ -318,17 +319,18 @@ class WorkFlowProcessService
             }
             $this->SaveWorkFlowMovement($SaveMovementData);
             $this->SaveApplicationData($TransactionId,$ModelClassName,$SaveApplicationData);
+            $messagePerfix     = modules::where('module_code', $WorkFlowModuleCode)->pluck('message_prefix')->first() ?? '';
             DB::commit();
             if($WorkFlowAction == 'RJ'){
-                $message = "Application returned to the user successfully.";
+                $message = $messagePerfix ." Application returned to the user successfully.";
             }else if($WorkFlowAction == 'AP'){
-                $message = "Application approved successfully.";
+                $message = $messagePerfix ." Application approved successfully.";
             }else if($WorkFlowAction == 'SU'){
-                $message = "Application submitted successfully.";
+                $message = $messagePerfix ." Application submitted successfully.";
             }else if($WorkFlowAction == 'FW'){
-                $message = "Application forwarded / recommended successfully.";
+                $message = $messagePerfix ." Application forwarded / recommended successfully.";
             }else{
-                $message = "Work flow data saved successfully.";
+                $message = $messagePerfix ." Work flow data saved successfully.";
             }
         } catch (\Exception $e) { dd($e);
             DB::rollback();

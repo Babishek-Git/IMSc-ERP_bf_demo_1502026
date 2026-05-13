@@ -161,6 +161,10 @@ class AMCPurchaseOrderController extends Controller
         $GrandTotal           =  $request->txt_total_amout;
         $PoEditId             =  $request->hid_amc_po_id;
         $TotalAmcPoAmt        =  $request->hidden_total_po_amt;
+        $WrkDuration          =  $request->txt_work_duration;
+        $WrkMode              =  $request->cmb_work_duration;
+        $WrkStartDate         =  $request->txt_start_date;
+        $WrkEndDate           =  $request->txt_end_date;
         $LocationStr          = "LOC";
         $LocationCount        = 1;
         $FinalLocationIdArray = [];
@@ -194,7 +198,10 @@ class AMCPurchaseOrderController extends Controller
             $SaveData['location_id']    = $FinalLocationJsonData;
             $SaveData['bill_pay_mode']  = $BillPayMode;
             $SaveData['grand_total']    = $GrandTotal;
-            $SaveData['amc_po_total_amt'] = $TotalAmcPoAmt;
+            $SaveData['work_duration']        = $WrkDuration;
+            $SaveData['work_duration_mode']   = $WrkMode;
+            $SaveData['work_starting_date']   = $WrkStartDate;
+            $SaveData['work_completion_date'] = $WrkEndDate;
             $SaveData['active']         = 1;
             if(filled($PoEditId)){
                 $SaveData['created_at']         = NOW();

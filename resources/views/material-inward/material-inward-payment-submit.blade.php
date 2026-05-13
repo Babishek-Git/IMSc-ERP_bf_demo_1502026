@@ -53,9 +53,10 @@ $DeliveryChallDocArr    = $data['DeliveryChallanWithDocs'] ?? [];
                                 <div class="row innerdiv">
                                     <div class="row">
                                         @php
-											$RouteUrl   = 'material.material-inward-submission';
-											$ModuleCode = 'MAT_INWARD';
-											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$WorkFlowActionData,$BackUrl,$MatInwardId,$RouteUrl,$ActionStatus,$ModuleCode);
+											$RouteUrl      = 'material.material-inward-submission';
+											$ModuleCode    = 'MAT_INWARD';
+                                            $SubmitBtnName = 'Submit Material Certification';
+											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$SubmitBtnName,$WorkFlowActionData,$BackUrl,$MatInwardId,$RouteUrl,$ActionStatus,$ModuleCode);
 											$ButtonDetailsHTML = $ForwRejApprButtonComponentArr['HTMLSTR'];
 										@endphp
 											{!!$ButtonDetailsHTML!!}
@@ -839,17 +840,29 @@ $DeliveryChallDocArr    = $data['DeliveryChallanWithDocs'] ?? [];
                         if (PgSdDataArr.length > 0) {
                             PgSdDataArr.forEach(function (item) {
                                 if (item.sd_po == 'PG') {
+                                    if(item.sdpo_received_date){
+                                        let parts = item.sdpo_received_date.split('-');
+                                        ReceivedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                    }
+                                    if(item.instrument_date){
+                                        let parts = item.instrument_date.split('-');
+                                        InstrumentDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                    }
+                                    if(item.instrument_validity){
+                                        let parts = item.instrument_validity.split('-');
+                                        InstrumentDateValidDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                    }
                                     PbgDataStr += '<tr>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + PgSno + '</td>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sd_po_percentage || '-') + '</td>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sd_po_amount || '-') + '</td>';
-                                    PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sdpo_received_date || '-') + '</td>';
+                                    PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (ReceivedDate || '-') + '</td>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sd_po_mode || '-') + '</td>';
-                                    PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_date || '-') + '</td>';
+                                    PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (InstrumentDate || '-') + '</td>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_no || '-') + '</td>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_amount || '-') + '</td>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_bank || '-') + '</td>';
-                                    PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_validity || '-') + '</td>';
+                                    PbgDataStr += '<td class="lboxlabel" style="text-align:center;">' + (InstrumentDateValidDate || '-') + '</td>';
                                     PbgDataStr += '<td class="lboxlabel" style="text-align:center;">-</td>';
                                     PbgDataStr += '</tr>';
                                     PgSno++;
@@ -883,17 +896,29 @@ $DeliveryChallDocArr    = $data['DeliveryChallanWithDocs'] ?? [];
                         if (PgSdDataArr.length > 0) {
                             PgSdDataArr.forEach(function (item) {
                                 if (item.sd_po == 'SD') {
+                                    if(item.sdpo_received_date){
+                                        let parts = item.sdpo_received_date.split('-');
+                                        ReceivedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                    }
+                                    if(item.instrument_date){
+                                        let parts = item.sdpo_received_date.split('-');
+                                        InstrumentDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                    }
+                                    if(item.instrument_validity){
+                                        let parts = item.instrument_validity.split('-');
+                                        InstrumentDateValidDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                    }
                                     SDDataStr += '<tr>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + SdSno + '</td>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sd_po_percentage || '-') + '</td>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sd_po_amount || '-') + '</td>';
-                                    SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sdpo_received_date || '-') + '</td>';
+                                    SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (ReceivedDate || '-') + '</td>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.sd_po_mode || '-') + '</td>';
-                                    SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_date || '-') + '</td>';
+                                    SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (InstrumentDate || '-') + '</td>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_no || '-') + '</td>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_amount || '-') + '</td>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_bank || '-') + '</td>';
-                                    SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (item.instrument_validity || '-') + '</td>';
+                                    SDDataStr += '<td class="lboxlabel" style="text-align:center;">' + (InstrumentDateValidDate || '-') + '</td>';
                                     SDDataStr += '<td class="lboxlabel" style="text-align:center;"></td>';
                                     // SDDataStr += '<td class="lboxlabel" style="text-align:center;"><span class="status-badge-active">Active</span></td>';
                                     SDDataStr += '</tr>';

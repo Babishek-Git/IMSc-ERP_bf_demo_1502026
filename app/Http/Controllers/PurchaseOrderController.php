@@ -74,7 +74,7 @@ class PurchaseOrderController extends Controller
                     if($IsssudePoOrder == TRUE){
                         $TransactionId = $PoId;
                         $SaveBudgetExpData = $this->SaveBudgetExpenditureDetails($request,$TransactionId,$IndentId,$CurrentStage);
-                        $message = 'Purchase Order Issue Successfully';
+                        $message = 'Purchase Order Issued Successfully';
                     }else{
                         $message = 'Sorry, try again ....!';
                     }

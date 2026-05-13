@@ -306,6 +306,8 @@
 																					echo '<span class="blink indent-status-value" >  LTC Advance Declined by '.$RejRoles.' Desk </span>';
 																				}
 																			} 
+																		}else{
+																			echo '<span class="blink indent-status-value" >Not yet submitted</span>';
 																		}
 																	}
 																@endphp

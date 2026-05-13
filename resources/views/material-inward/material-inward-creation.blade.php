@@ -201,7 +201,7 @@ $DeliveryChallanArr = $data['GetDeliveryChallanMasterData'] ?? [];
                                                 <div class="table-container">
                                                     <div class="table-wrapper">
                                                         <div class="section-header">
-                                                            <span>Invoice  Documents Details</span>
+                                                            <span>Invoice / Supporting Documents Details</span>
                                                             <button align="right" type="button" id='btn_add_new' class="rm-new-emp-btn" >+ Add New Row</button>
                                                         </div>
                                                         <table class="formtable" disabled width="100%">
@@ -479,7 +479,11 @@ $('document').ready(function(){
                 });
                 if (DeliveryChallanDoc.length > 0) {
                     var DocData = DeliveryChallanDoc[0];
-                    $('#txt_receipt_date').val(DocData.doc_date ?? '');
+                     if (DocData.doc_date) {
+                        let parts   = DocData.doc_date.split('-'); // [yyyy, mm, dd]
+                        let RecDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                        $('#txt_receipt_date').val(RecDate);
+                    }
                     $('#btn_receipt_download').attr('data-fileid', DocData.sup_doc_id ?? '');
                 }
             }
@@ -516,7 +520,6 @@ $('document').ready(function(){
             event.returnValue = false;  
         }else{
 		    DownloadFile(SuppDocId,ModuleCode,ModuleSubCode);
-            console.log(SuppDocId);
             
         }
 	});

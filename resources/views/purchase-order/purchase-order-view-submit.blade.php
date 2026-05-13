@@ -82,9 +82,10 @@ $BackUrl  = 'purchase-order.purchase-order_view';
                                 <div class="row innerdiv">
                                     <div class="row">
 										@php
-											$RouteUrl   = 'purchase-order.purchase-order_form';
-											$ModuleCode = 'PO_ORDER';
-											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$WorkFlowActionData,$BackUrl,$IndentId,$RouteUrl,$ActionStatus,$ModuleCode);
+											$RouteUrl      = 'purchase-order.purchase-order_form';
+											$ModuleCode    = 'PO_ORDER';
+											$SubmitBtnName ='Submit Purchase Order';
+											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$SubmitBtnName,$WorkFlowActionData,$BackUrl,$IndentId,$RouteUrl,$ActionStatus,$ModuleCode);
 											$ButtonDetailsHTML = $ForwRejApprButtonComponentArr['HTMLSTR'];
 										@endphp
 											{!!$ButtonDetailsHTML!!}

@@ -60,9 +60,10 @@ $Action       = $FromPage;
                                 <div class="row innerdiv">
                                     <div class="row">
                                         @php
-											$RouteUrl   = 'amc-material-payment.amc-material-inward-payment-submission';
-											$ModuleCode = 'AMC_MAT_IW';
-											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$WorkFlowActionData,$BackUrl,$AMCMatInwardId,$RouteUrl,$ActionStatus,$ModuleCode);
+											$RouteUrl      = 'amc-material-payment.amc-material-inward-payment-submission';
+											$ModuleCode    = 'AMC_MAT_IW';
+                                            $SubmitBtnName = 'Submit AMC Material Inward';
+											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$SubmitBtnName,$WorkFlowActionData,$BackUrl,$AMCMatInwardId,$RouteUrl,$ActionStatus,$ModuleCode);
 											$ButtonDetailsHTML             = $ForwRejApprButtonComponentArr['HTMLSTR'];
 										@endphp
 											{!!$ButtonDetailsHTML!!}
