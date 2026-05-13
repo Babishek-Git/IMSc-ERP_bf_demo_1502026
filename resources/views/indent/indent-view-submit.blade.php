@@ -594,8 +594,8 @@ if(isset($BudgetFiledAcessData)){
 																<thead>
 																	<tr>
 																		<th rowspan="2">{{$TableHeadTittel ?? ''}}</th>  
-																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details</th>  
-																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details</th>  
+																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details <br>Financial Year {{$FinYear}}</th>  
+																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details<br>Financial Year {{$FinYear}}</th>  
 																		<th rowspan="2" style="text-align:center;">Object Head Wise<br>Fund Availability</th>
 																	</tr>
 																	<tr>
@@ -653,8 +653,8 @@ if(isset($BudgetFiledAcessData)){
 																<thead>
 																	<tr>
 																		<th rowspan="2">{{$TableHeadTittel ?? ''}}</th>  
-																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details</th>  
-																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details</th>  
+																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details<br>Financial Year {{$FinYear}}</th>  
+																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details<br>Financial Year {{$FinYear}}</th>  
 																		<th rowspan="2" style="text-align:center;">Object Head Wise<br>Fund Availability</th>
 																		<th rowspan="2" style="text-align:center;">Project wise<br>Fund Availability</th>
 																	</tr>

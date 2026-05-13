@@ -32,6 +32,8 @@ $IsPaymentEdit          = collect($PaymentPercFieldAccess)->contains('is_editabl
 $InvoicesDocArr         = $data['InvoicesDocData'] ?? [];
 $IndentCreateEmpNameArr = $data['IndentCreateEmpName'] ?? [];
 $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
+$DeliveryChallDocArr    = $data['DeliveryChallanWithDocs'] ?? [];
+
 @endphp
 <form action="" method="post" enctype="multipart/form-data" name="form">
     <div class="content">
@@ -45,7 +47,7 @@ $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
                                 {{-- ── Page Title ── --}}
                                 <div class="row">
                                     <div class="div12" style="margin-top:0px;">
-                                        <div class="row divhead" align="center">Material Inward Payment </div>
+                                        <div class="row divhead" align="center">Material Inward Payment</div>
                                     </div>
                                 </div>
                                 <div class="row innerdiv">
@@ -61,14 +63,14 @@ $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
                                             {{-- ── Purchase / Receipt Information Fieldset ── --}}
                                         	<div class="row smclearrow"></div>
 												<fieldset class="fieldbox"  >
-													<legend class="fieldbox-legend" style ='top-padding : 10%'>Purchase / Receipt Details</legend>
+													<legend class="fieldbox-legend" style ='top-padding : 10%'>Purchase</legend>
 													<div class="fieldbox-div">
                                                         <div class="div2"><div class="lboxlabel ">Purchase order No.</div><input type="text" name="txt_purchase_order_no" id="txt_purchase_order_no" class="tboxsmclass " readonly value="{{ $PoNo ?? $PoNo ?? '' }}" ></div>
                                                         <div class="div2"><div class="lboxlabel ">Purchase order Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="{{ Helper::DisplayDateFormat($PoDate ?? $PoDate ?? '') }}" ></div>
                                                         <div class="div2"><div class="lboxlabel ">Indent Created By</div><input type="text" name="txt_indent_created_by" id="txt_indent_created_by" class="tboxsmclass " readonly value="{{$IndentCreateEmpName}}" ></div>
                                                         <div class="div2"><div class="lboxlabel ">Vendor Name</div><input type="text" name="txt_vendor_name" id="txt_vendor_name" class="tboxsmclass " readonly value="{{$VendorName ?? $VendorName ?? ''}}" ></div>
-                                                        <div class="div2"><div class="lboxlabel ">Receipt No. / GRN No.</div><input type="text" name="txt_receipt_no" id="txt_receipt_no" class="tboxsmclass" readonly value="{{ $ReceiptNo ?? $NewReceiptNo ?? '' }}"></div>
-                                                        <div class="div1"><div class="lboxlabel ">Receipt Date</div><input type="text" name="txt_receipt_date" id="txt_receipt_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($ReceiptDate ?? $ReceiptDate ?? '') }}" ></div>
+                                                        <!-- <div class="div2"><div class="lboxlabel ">Receipt No. / GRN No.</div><input type="text" name="txt_receipt_no" id="txt_receipt_no" class="tboxsmclass" readonly value="{{ $ReceiptNo ?? $NewReceiptNo ?? '' }}"></div> -->
+                                                        <!-- <div class="div1"><div class="lboxlabel ">Receipt Date</div><input type="text" name="txt_receipt_date" id="txt_receipt_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($ReceiptDate ?? $ReceiptDate ?? '') }}" ></div> -->
                                                          <!-- <div class="div1"><div class="lboxlabel ">Invoice No.</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="@php if(isset($InvoiceString)){ echo $InvoiceString; } @endphp" ></div> -->
                                                         <!-- <div class="div1"><div class="lboxlabel ">Invoice Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="@php if(isset($InvoiceDate)){ echo Helper::DisplayDateFormat($InvoiceDate);} @endphp" ></div> -->
                                                         <div class="row smclearrow"></div>
@@ -78,11 +80,48 @@ $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
                                             <div class="row smclearrow"></div>
                                             <div class="row smclearrow"></div>
                                             <div class="row smclearrow"></div>
+                                               {{-- ── MATERILA INWARD  DELIVERY CHALLAN DOCUMENTS TABLE  ── --}}
+                                            <div class="table-container">
+                                                <div class="table-wrapper">
+                                                    <div class="section-header"><span>Delivery Challan Documents / Receipt Details</span></div>
+                                                    <table class="formtable" disabled width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="text-align:center; width:60%">Receipt No. / GRN No.</th>  
+                                                                <th style="text-align:center; width:30%">Receipt Date</th>  
+                                                                <th style="text-align:center; width:30%">Download</th>  
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="supp_doc_tbody">	
+                                                            @if(isset($DeliveryChallDocArr))
+                                                                @foreach($DeliveryChallDocArr as $DocValue)
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="text"  style="width:100%" name="txt_supp_doc_desc[]" id="txt_sno" class="tboxsmclass" readonly value="{{$DocValue->receipt_no ?? ''}}">
+                                                                    </td>
+                                                                    <td><input type="text" name="txt_supp_doc_date[]" id="txt_supp_doc_date" class="tboxsmclass "  readonly value="{{ Helper::DisplayDateFormat($DocValue->receipt_date ?? $DocValue->receipt_date ?? '') }}"></td>
+                                                                    <td class="labelcenter" style="text-align:center;">
+                                                                        <button type="button"  id="btn_recpt_download" data-fileid="{{ encrypt($DocValue->sup_doc_id) }}" class="btn btn-default tuploadbtn" title="Click here to Download the File" style="cursor: pointer;"><i class="fa fa-download"></i> Download File</button>
+                                                                    </td>
+                                                                </tr>
+                                                                @endforeach
+                                                            @else
+                                                                <tr>
+                                                                    <td colspan='3'style="text-align:center;">No Records Found ..!</td>
+                                                                </tr> 
+                                                            @endif	
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="row smclearrow"></div>
+                                            <div class="row smclearrow"></div>
+                                            <div class="row smclearrow"></div>
                                             {{-- ── MATERILA INWARD  SUPPORTING DOCUMENTS TABLE  ── --}}
                                             <div class="table-container">
                                                 <div class="table-wrapper">
                                                     <div class="section-header">
-                                                    <span>Invoice / Delivery Documents Details</span>
+                                                    <span>Invoice Documents Details</span>
                                                     <div style="display:flex; gap:8px; align-items:center;">
                                                         <button type="button" id='btn_supp_doc' data-id="{{$IndentId}}" class="rm-new-emp-btn pill-header-btn">Sanction Supporting Documents</button>
                                                         <button type="button" id='btn_Pg_Fd' data-id="{{$POId}}" class="rm-new-emp-btn pill-header-btn">SD & PBG Details</button>
@@ -91,7 +130,7 @@ $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
                                                 <table class="formtable" disabled width="100%">
                                                     <thead>
                                                         <tr>
-                                                            <th style="text-align:center; width:60%">Invoice / Delivery Challan Description</th>  
+                                                            <th style="text-align:center; width:60%">Invoice Description</th>  
                                                             <th style="text-align:center; width:30%">Date</th>  
                                                             <th style="text-align:center; width:30%">Download</th>  
                                                         </tr>
@@ -120,7 +159,6 @@ $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
                                             <div class="row smclearrow"></div>
                                             <div class="row smclearrow"></div>
                                             <div class="row smclearrow"></div>
-
                                             {{-- ── Material Inward  Information Table ── --}}
                                             @if($HasPaymentPercAccess == 'Y')
                                                 <input type="hidden" id= 'hidd_ispayemt_edit' name ='hidd_ispayemt_edit' value='{{$IsPaymentEdit ?? ""}}'>
@@ -556,6 +594,12 @@ $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
             var SuppDocId     = $(this).attr("data-fileid");
             var ModuleCode    = 'MAT_INWARD';
             var ModuleSubCode = 'INVOICE';
+            DownloadFile(SuppDocId,ModuleCode,ModuleSubCode);
+        });
+        $(document).on("click", "#btn_recpt_download", function(event) {
+            var SuppDocId     = $(this).attr("data-fileid");
+            var ModuleCode    = 'MAT_INWARD';
+            var ModuleSubCode = 'DEL_CHALLAN';
             DownloadFile(SuppDocId,ModuleCode,ModuleSubCode);
         });
         function DownloadFile(SuppDocId,ModuleCode,ModuleSubCode) {

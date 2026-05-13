@@ -124,7 +124,8 @@ class PurchaseOrderController extends Controller
                     return view('purchase-order.purchase-order_form')->with('data',compact('Contractordata','MaterialCertifySecData','BillpaymodeData','POIndentData','IndentEmpdata','FromPage','ShowMaterialUnit','ShowPoItemDetailsData','ShowPurchaseEditData'));
                 }else{
                     $ContractorDetails  = collect($Contractordata)->pluck('name_contractor','contid')->toArray();
-                    return view('purchase-order.purchase-order-view-submit')->with('data',compact('IndentEmpdata','ContractorDetails','ShowPoItemDetailsData','ShowMaterialUnit','Indentdata','OfficeDetails','ShowPurchaseEditData','FromPage','WorkFlowActionData'));
+                    $BillpaymodeDetais  = collect($BillpaymodeData)->pluck('pay_mode_name','pay_mode_id')->toArray();
+                    return view('purchase-order.purchase-order-view-submit')->with('data',compact('IndentEmpdata','BillpaymodeDetais','ContractorDetails','ShowPoItemDetailsData','ShowMaterialUnit','Indentdata','OfficeDetails','ShowPurchaseEditData','FromPage','WorkFlowActionData'));
                 }
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";

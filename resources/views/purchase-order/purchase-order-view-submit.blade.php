@@ -8,6 +8,7 @@ if(isset($data['ContractorDetails'])){
 if(isset($data['OfficeDetails'])){
 	$OfficeData = $data['OfficeDetails'];
 }
+$BillpaymodeArr = $data['BillpaymodeDetais'] ?? [];
 if(isset($data['ShowPurchaseEditData'])){
 	$PurchaseEditData   = $data['ShowPurchaseEditData'];
 	$PurchaseNo         = collect($PurchaseEditData)->pluck('work_order_no')->first();
@@ -30,8 +31,10 @@ if(isset($data['ShowPurchaseEditData'])){
 	$IsGemPortal       = collect($PurchaseEditData)->pluck('is_gem_portal')->first();
 	$GemPoNo           = collect($PurchaseEditData)->pluck('gem_po_no')->first();
 	$PoTotalAmt        = collect($PurchaseEditData)->pluck('tax_with_po_amt')->first();
+	$BillPayMode       = collect($PurchaseEditData)->pluck('bill_pay_mode')->first();
 	$ContName          = $ContractorData[$ContId];
 	$MatCertBy         = $OfficeData[$MatSectionId];
+	$BillPayModeName   = $BillpaymodeArr[$BillPayMode];
 	if($PoTaxType == 'INC'){
 		$TaxName  = 'Including';
 	}else{
@@ -138,7 +141,7 @@ $BackUrl  = 'purchase-order.purchase-order_view';
 													<div class="div2"><div class="lboxlabel ">Work Starting Date</div><input type="text" style="width:100px" name="txt_start_date" id="txt_start_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($WrkStartDate ?? null) }}"readonly></div>
 													<div class="div3"><div class="lboxlabel ">Work Completion Date</div><input type="text" name="txt_end_date" style="width:250px" id="txt_end_date" class="tboxsmclass " value="{{Helper::DisplayDateFormat($DateOfComp ?? null) }}" readonly></div>
 													<div class="div3"><div class="lboxlabel ">Payment Mode</div>
-														<input type="text" style="width:250px" class="tboxsmclass" style="width:250px" value="@if(isset($MatCertBy)){{$MatCertBy}}@endif" readonly>
+														<input type="text" style="width:250px" class="tboxsmclass" style="width:250px" value="@if(isset($BillPayModeName)){{$BillPayModeName}}@endif" readonly>
 													</div>
 													@if(!empty($TrNO))
 														<div class="div2 editpage"><div class="lboxlabel tenderlabel" >Tender No.</div><input type="text" name="txt_tender_no"style="width:200px" id="txt_tender_no" class="tboxsmclass tenderlabel" value="{{$TrNO ?? ''}}"></div> 

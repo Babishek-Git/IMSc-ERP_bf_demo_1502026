@@ -554,7 +554,8 @@ class IndentController extends Controller
                 $ProjectDetailsData      = $this->ProjectMaster->GetAllProjectData(NULL);
                 $ProjectDetailsDataArray = collect($ProjectDetailsData)->pluck('project_name','project_id')->toArray();
                 $FromPage                ='ALLSTATUSVIEW';//dd($FromPage);
-                return view('indent.indent-staus-view')->with('data',compact('IndentId','Empdata','EditIndentData','RoleData','WorkFlowData','WorkTransData','LastWorkTransData','ProjectDetailsDataArray','FromPage'));
+                $ProcessTrancationData   = $this->IndentProcessMaster->GetIndentTranscationData($IndentId);
+                return view('indent.indent-staus-view')->with('data',compact('IndentId','Empdata','ProcessTrancationData','EditIndentData','RoleData','WorkFlowData','WorkTransData','LastWorkTransData','ProjectDetailsDataArray','FromPage'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
             }

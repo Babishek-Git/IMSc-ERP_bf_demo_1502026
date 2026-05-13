@@ -52,7 +52,8 @@ class MaterialInwardMaster extends Model
         'is_completed',
         'receipt_suffix_no',
         'approved_by',
-        'mat_inward_submit'
+        'mat_inward_submit',
+        'delivery_challan_id'
     ];
     public static function ShowMaxReceipNo($request){
         return MaterialInwardMaster::max('receipt_suffix_no');
