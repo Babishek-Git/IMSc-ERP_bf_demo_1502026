@@ -300,7 +300,7 @@ class IndentController extends Controller
     //                 $SaveEmployee= $this->Pratice->createFamilyMember($SaveData);
     //              }
     //             DB::commit();
-    //             $message = "Family Member  Data Saved Successfully";
+    //             $message = "Family Member  Data Saved ";
     //         }catch (\Exception $e) { dd($e);
     //             DB::rollback();
     //             $message = "Error : Sorry transaction not fully completed";
@@ -808,7 +808,7 @@ class IndentController extends Controller
                 }
             }
             DB::commit();
-            $message = "Indent Details Saved Successfully";
+            $message = "Indent Details Saved ";
             Session::put('ALertMesage', $message);
         }
         catch (\Exception $e) { dd($e);
@@ -817,10 +817,10 @@ class IndentController extends Controller
             Session::put('ALertMesage', $message);
         }
         if(filled($IndentEditId)){
-            $message   = 'Indent Details Update Successfully';
+            $message   = 'Indent Details Update ';
             return redirect()->route('indent.indent-view')->with('ALertMesage', $message);
         }else{
-            $message   = 'Indent Details Saved Successfully';
+            $message   = 'Indent Details Saved ';
             return redirect()->route('indent.indent-creation')->with('ALertMesage', $message);
         }
     }
@@ -999,7 +999,7 @@ class IndentController extends Controller
             $this->BudSanExpMaster->DeleteBudgetExp($TransactionId,'INDENT');
             $this->BudSanExpMaster->BudgetExpDetatilsCreate($SaveData);
             DB::commit();
-            // $message = "Indent Details Saved Successfully";
+            // $message = "Indent Details Saved ";
             // Session::put('ALertMesage', $message);
         }
         catch (\Exception $e) { dd($e);

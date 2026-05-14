@@ -103,7 +103,7 @@ class EmployeeGroupController extends Controller
                 //dd($SaveGroup);
                            
                 DB::commit();
-                $message = "Group Master  Data Saved Successfully";
+                $message = "Group Master  Data Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

@@ -82,6 +82,8 @@ if(isset($AllObectHead)){
 $DeductionArr = [];
 $ExeTotalGrossAmount = 0;
 $ExeTotalNetAmount = 0;
+$CurrentFinYear = Helper::GetCurrentFinYear(NULL);
+$BillProcessNo = "IMSc/BILL/OTHER/XXXX/".$CurrentFinYear;
 @endphp
 
 <form action="" method="post" enctype="multipart/form-data" name="form">
@@ -230,7 +232,7 @@ $ExeTotalNetAmount = 0;
                                                                     <div class="row smclearrow"></div>
                                                                     <div class="div2 label no-margin">Bill Processing No.</div>
                                                                     <div class="div2 no-margin">
-                                                                        <input type="text" name="txt_bill_no" id="txt_bill_no" class="tboxsmclass" value="">
+                                                                        <input type="text" name="txt_bill_no" id="txt_bill_no" class="tboxsmclass disable" readonly value="{{ $BillProcessNo }}">
                                                                         <input type="hidden" name="txt_bill_date" id="txt_bill_date" class="tboxsmclass datepicker" value="">
                                                                     </div>
                                                                     <div class="div2 label no-margin pd-l-20">Bill Gross Amount</div>

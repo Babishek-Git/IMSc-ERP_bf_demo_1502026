@@ -118,7 +118,7 @@ class AMCMaterialInwardController extends Controller
                 $message = "Error: Sorry, invalid attempt.";
             }
             if(filled($IssueAMCMatInwardApplication)){
-                $message   = 'AMC Work Certification submitted successfully';
+                $message   = 'AMC Work Certification submitted';
                 return redirect()->route('amc-material.amc-material-inward-list')->with('ALertMesage', $message);
             }else{
                 $message   = 'Error: Sorry, invalid attempt.';
@@ -334,7 +334,7 @@ class AMCMaterialInwardController extends Controller
                     }
                 }
                 DB::commit();
-                $message = "AMC Work Certification Details updated successfully";
+                $message = "AMC Work Certification Details updated";
                 Session::put('ALertMesage', $message);
                 return redirect()->route('amc-material.amc-material-inward-list');
             // }else{
@@ -461,7 +461,7 @@ class AMCMaterialInwardController extends Controller
                 }
             }
             DB::commit();
-            $message = "AMC Work Certification payment Details updated Successfully";
+            $message = "AMC Work Certification payment Details updated";
             Session::put('ALertMesage', $message);
             return redirect()->route('amc-material-payment.amc-material-inward-payment-submission');
         }catch (\Exception $e) { dd($e);

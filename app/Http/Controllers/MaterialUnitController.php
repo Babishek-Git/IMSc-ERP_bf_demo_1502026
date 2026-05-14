@@ -75,7 +75,7 @@ class MaterialUnitController extends Controller
                 }
               //dd($SaveEmployment);
                 DB::commit();
-                $message = "Unit Data Saved Successfully";
+                $message = "Unit Data Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

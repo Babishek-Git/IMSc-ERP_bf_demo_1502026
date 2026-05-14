@@ -17,7 +17,7 @@
 								<div class="row smclearrow"></div>
 								<div class="div2">&nbsp;</div>
 								<div class="div8 mbtable">
-									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="center">Budget Reports - Apex Project & Object Head Consolidated</div></div></div>
+									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="center">Budget Reports - Revenue & Object Head Consolidated</div></div></div>
 									<div class="div12">
 										<div class="row innerdiv">
 											
@@ -32,17 +32,15 @@
 														$GiaObjectHeadGrpData = collect($GiaObjectHeadData)->groupBy('object_head_id');
 													}
 												}
+												$GiaSanctionedTotal = 0; $GiaExpenditureTotal = 0; $Sno = 1;
 												@endphp
-												@if($ApplicableTo == 'PROJECT')
-													@if(isset($ParentProjectData) && filled($ParentProjectData))
-														@foreach($ParentProjectData as $ParentProject)
-															@php 
-															$Sno = 1; $ProjectGrantparentId = $ParentProject->project_id; 
-															$ProjectSanctionedTotal = 0; $ProjectExpenditureTotal = 0; 
-															@endphp
+												@if($ApplicableTo != 'PROJECT') 
+													
+														
+															
 															<table class="attTable">
 																<thead>
-																	<tr><th colspan="5">{{ $ParentProject->project_name }} - Object Head Wise Expenditure Upto {{ isset($ToDate) ? Helper::DisplayDateFormat($ToDate) : '' }}</th></tr>
+																	<tr><th colspan="5">{{ $Gia->gia_name }} - Object Head Wise Expenditure Upto {{ isset($ToDate) ? Helper::DisplayDateFormat($ToDate) : '' }}</th></tr>
 																	<tr>
 																		<th>S.No.</th>
 																		<th style="text-align:center">Object Head</th>
@@ -57,8 +55,7 @@
 																			@php
 																			$IsMapped = 0; $IsSubCataApplicable = false; $GiaObjectHeadMapId = '';
 																			if(isset($GiaObjectHeadGrpData[$ObjectHead->object_head_id])){
-																				$GiaObjectHeadMapData = collect($GiaObjectHeadGrpData[$ObjectHead->object_head_id])
-																										->where('project_id', $ParentProject->project_id);
+																				$GiaObjectHeadMapData = $GiaObjectHeadGrpData[$ObjectHead->object_head_id];
 																				if(filled($GiaObjectHeadMapData)){
 																					$IsSubCataApplicable = $GiaObjectHeadMapData->pluck('is_sup_cata_applicable')->first();
 																					$GiaObjectHeadMapId  = $GiaObjectHeadMapData->pluck('oh_gia_mapp_id')->first();
@@ -82,14 +79,13 @@
 																					@foreach($SubCataData as $ObjectHeadSubCata)
 																						@php
 																						$ObjectHeadSanctionAmt = 0;
-																						if(isset($ApexObjectHeadSanctionData)){
-																							$ObjeadHeadSancData = $ApexObjectHeadSanctionData
+																						if(isset($RevenueObjectHeadSanctionData)){ 
+																							$ObjeadHeadSancData = $RevenueObjectHeadSanctionData
 																							->where('gia_id', $Gia->gia_id)
 																							->where('object_head_id', $ObjectHead->object_head_id)
-																							->where('object_head_sub_cata_id', $ObjectHeadSubCata->oh_sub_cata_id)
-																							->where('apex_project_id', $ParentProject->project_id);
+																							->where('oh_sub_cata_id', $ObjectHeadSubCata->oh_sub_cata_id);
 																							if(filled($ObjeadHeadSancData)){
-																								$ObjectHeadSanctionAmt = collect($ObjeadHeadSancData)->pluck('oh_sanctioned_amount')->first();
+																								$ObjectHeadSanctionAmt = collect($ObjeadHeadSancData)->pluck('sanctioned_amount')->first();
 																							}
 																						}
 																						if($ObjectHeadSanctionAmt != NULL){
@@ -100,16 +96,15 @@
 																							$ExpenditureData = $PaymentData
 																							->where('gia_id', $Gia->gia_id)
 																							->where('object_head_id', $ObjectHead->object_head_id)
-																							->where('object_head_sub_cata_id', $ObjectHeadSubCata->oh_sub_cata_id)
-																							->where('parent_project_id', $ParentProject->project_id);
+																							->where('object_head_sub_cata_id', $ObjectHeadSubCata->oh_sub_cata_id);
 																							if(filled($ExpenditureData)){
 																								$ExpenditureAmount = collect($ExpenditureData)->pluck('total_amount')->first();
 																							}
 																						}
 																						$BalanceAmount = $ObjectHeadSanctionAmt - $ExpenditureAmount;
 
-																						$ProjectSanctionedTotal = $ProjectSanctionedTotal + $ObjectHeadSanctionAmt;
-																						$ProjectExpenditureTotal = $ProjectExpenditureTotal + $ExpenditureAmount;
+																						$GiaSanctionedTotal = $GiaSanctionedTotal + $ObjectHeadSanctionAmt;
+																						$GiaExpenditureTotal = $GiaExpenditureTotal + $ExpenditureAmount;
 
 
 																						
@@ -126,13 +121,12 @@
 																				@else
 																					@php
 																					$ObjectHeadSanctionAmt = 0;
-																					if(isset($ApexObjectHeadSanctionData)){
-																						$ObjeadHeadSancData = $ApexObjectHeadSanctionData
+																					if(isset($RevenueObjectHeadSanctionData)){
+																						$ObjeadHeadSancData = $RevenueObjectHeadSanctionData
 																							->where('gia_id', $Gia->gia_id)
-																							->where('object_head_id', $ObjectHead->object_head_id)
-																							->where('apex_project_id', $ParentProject->project_id); 
+																							->where('object_head_id', $ObjectHead->object_head_id); 
 																						if(filled($ObjeadHeadSancData)){
-																							$ObjectHeadSanctionAmt = collect($ObjeadHeadSancData)->pluck('oh_sanctioned_amount')->first();
+																							$ObjectHeadSanctionAmt = collect($ObjeadHeadSancData)->pluck('sanctioned_amount')->first();
 																						}
 																					}
 																					if($ObjectHeadSanctionAmt != NULL){
@@ -142,15 +136,14 @@
 																					if(isset($PaymentData)){
 																						$ExpenditureData = $PaymentData
 																						->where('gia_id', $Gia->gia_id)
-																						->where('object_head_id', $ObjectHead->object_head_id)
-																						->where('parent_project_id', $ParentProject->project_id);
+																						->where('object_head_id', $ObjectHead->object_head_id);
 																						if(filled($ExpenditureData)){
 																							$ExpenditureAmount = collect($ExpenditureData)->pluck('total_amount')->first();
 																						}
 																					}
 																					$BalanceAmount = $ObjectHeadSanctionAmt - $ExpenditureAmount;
-																					$ProjectSanctionedTotal = $ProjectSanctionedTotal + $ObjectHeadSanctionAmt;
-																					$ProjectExpenditureTotal = $ProjectExpenditureTotal + $ExpenditureAmount;
+																					$GiaSanctionedTotal = $GiaSanctionedTotal + $ObjectHeadSanctionAmt;
+																					$GiaExpenditureTotal = $GiaExpenditureTotal + $ExpenditureAmount;
 																					@endphp
 																					<tr>
 																						<td class="lom-td-sno" align="center"><span class="lom-sno-num">{{ $Sno }}</span></td>
@@ -167,22 +160,22 @@
 																	@endif
 																</tbody>
 																@php 
-																$ProjectBalanceTotal = $ProjectSanctionedTotal - $ProjectExpenditureTotal;
+																$GiaBalanceTotal = $GiaSanctionedTotal - $GiaExpenditureTotal;
 																@endphp
 																<tfoot>
 																	<tr>
 																		<th style="text-align:right" colspan="2">Total ( &#8377; )</th>
-																		<th style="text-align:right">{{ Helper::IndianMoneyFormat($ProjectSanctionedTotal) }}</th>
-																		<th style="text-align:right">{{ Helper::IndianMoneyFormat($ProjectExpenditureTotal) }}</th>
-																		<th style="text-align:right">{{ Helper::IndianMoneyFormat($ProjectBalanceTotal) }}</th>
+																		<th style="text-align:right">{{ Helper::IndianMoneyFormat($GiaSanctionedTotal) }}</th>
+																		<th style="text-align:right">{{ Helper::IndianMoneyFormat($GiaExpenditureTotal) }}</th>
+																		<th style="text-align:right">{{ Helper::IndianMoneyFormat($GiaBalanceTotal) }}</th>
 																	</tr>
 																</tfoot>
 															</table>
 															<div class="row smclearrow"></div> 
 															<div class="row smclearrow"></div> 
 															<div class="row smclearrow"></div>  
-														@endforeach
-													@endif
+														
+													
 												@endif
 
 											@endforeach

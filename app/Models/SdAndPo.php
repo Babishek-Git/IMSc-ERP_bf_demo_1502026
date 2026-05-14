@@ -32,12 +32,15 @@ class SdAndPo extends Model
         'updated_by',
         'sdpo_received_date'
     ];
-   
-    public function CreateSdPo($SdpoArr){
-        return self::create($SdpoArr);
+    public function CreateSdPo($SdpoArr,$SdPgId){
+        if(filled($SdPgId)){
+            return self:: where('sd_po_id', $SdPgId)->update($SdpoArr);
+        }else{
+            return self::create($SdpoArr);
+        }
     }
     public static function ShowPgSdData($PoId){
-        return self::where('po_id',$PoId)->where('active',1)->get();
+        return self::where('sd_po_id',$PoId)->where('active',1)->get();
     }
 }
         

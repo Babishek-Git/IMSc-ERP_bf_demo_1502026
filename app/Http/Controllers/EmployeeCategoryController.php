@@ -73,7 +73,7 @@ class EmployeeCategoryController extends Controller
                     $SaveEmployee= $this->employeecategory->createEmployeeCategory($SaveData);
                 }
                 DB::commit();
-                $message = "Employee Category Type Data Saved Successfully";
+                $message = "Employee Category Type Data Saved ";
             }catch (\Exception $e) {
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

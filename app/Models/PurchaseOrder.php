@@ -121,9 +121,18 @@ class PurchaseOrder extends Model
             return PurchaseOrder::where('work_order_id', $PoId)->update(['po_issued' => true]);
         }
     }
-    public static function SavesdIssued($PoId){
-        if(filled($PoId)){
-            return PurchaseOrder::where('work_order_id', $PoId)->update(['sd_received' => true]);
+    public static function SavesdIssued($PoId, $SdPo)
+    {
+        if (filled($PoId)) {
+            $updateData = [];
+            if (strtoupper($SdPo) === 'SD') {
+                $updateData['sd_received'] = true;
+            }
+            if (strtoupper($SdPo) === 'PG') {
+                $updateData['pg_received'] = true;
+            }
+
+            return PurchaseOrder::where('work_order_id', $PoId)->update($updateData);
         }
     }
     public static function showPurchaseOredrIssuedData($request){
@@ -158,15 +167,31 @@ class PurchaseOrder extends Model
         return $query->get();
     }
 
-    public static function showPoRecievedData(){
-        return PurchaseOrder::where(function ($query) {
-            $query->where('pg_received', false)->orWhereNull('pg_received');
-        })->where('active', 1)->get();
+    public static function showPgRecievedData($request, $purchaseId){
+        $query = PurchaseOrder::where('po_issued',true)->where('active', 1);
+        if (filled($purchaseId)) {
+            $query->where(function ($q) {
+                $q->where('pg_received', true)->orWhereNull('pg_received');
+            })->where('work_order_id', $purchaseId);
+        } else {
+            $query->where(function ($q) {
+                $q->where('pg_received', false)->orWhereNull('pg_received');
+            });
+        }
+
+        return $query->get();
     }
 
     public static function showSDPGIssuedData($request,$sdrpo){
         return PurchaseOrder::join('erp_sd_po','erp_sd_po.po_id','=','erp_po_order.work_order_id')
-        ->where('erp_sd_po.sd_po','=',$sdrpo)->where('sd_received',true)->where('erp_po_order.active',1)->get();
+            ->where(function ($query) use ($sdrpo) {
+                if (strtoupper($sdrpo) === 'SD') {
+                    $query->where('erp_po_order.sd_received', true);
+                }
+                if (strtoupper($sdrpo) === 'PD') {
+                    $query->where('erp_po_order.pg_received', true);
+                }
+            })->where('erp_sd_po.sd_po','=',$sdrpo)->where('erp_po_order.active',1)->get();
     }
     
    /*  public function CheckBank($BankArr){

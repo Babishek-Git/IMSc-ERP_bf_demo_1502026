@@ -148,7 +148,7 @@ class VendorController extends Controller
                 $SaveEmployee= $this->ContractorDetail->CreateContractorDetail($SaveDatadt);
                  //dd($SaveEmployee);
                 DB::commit();
-                $message = "Contractor Data Saved Successfully";
+                $message = "Contractor Data Saved ";
             }catch (\Exception $e) {dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

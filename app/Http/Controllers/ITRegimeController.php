@@ -39,7 +39,7 @@ class ITRegimeController extends Controller
                     $SaveRegime = $this->Employee->UpdateEmployee($SaveData,$SaveIcNo);
                 }
                 DB::commit();
-                $message = "Income Tax Regime Saved Successfully";
+                $message = "Income Tax Regime Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback(); 
                 $message = "Error : Sorry transaction not fully completed";

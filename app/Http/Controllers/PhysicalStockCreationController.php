@@ -50,9 +50,9 @@ class PhysicalStockCreationController extends Controller
                 $InsertedData = $this->Materialgroup->CreateMaterialgroup($InsertArr);
                 if($InsertedData != NULL)
                 {
-                    $LogMessage = "PhysicalStockCreationController || New Leder Created Successfully )";
+                    $LogMessage = "PhysicalStockCreationController || New Leder Created  )";
                     Helper::CreateLog($request,$LogMessage);       
-                    $message = ("New Physical Stock Created ** Successfully!");
+                    $message = ("New Physical Stock Created ** !");
                 }
             }   
         }  
@@ -152,7 +152,7 @@ class PhysicalStockCreationController extends Controller
     //             $SaveEmployment= $this->Ledger->CreateLedger($SaveData);
     //             //dd($SaveEmployment);
     //             DB::commit();
-    //             $message = "Ledger Saved Successfully";
+    //             $message = "Ledger Saved ";
     //         }catch (\Exception $e) {dd($e); 
     //             DB::rollback();
     //             $message = "Error : Sorry transaction not fully completed";

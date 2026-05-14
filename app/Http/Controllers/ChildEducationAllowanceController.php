@@ -96,7 +96,7 @@ class ChildEducationAllowanceController extends Controller
                 
                 //dd($SaveEmployment);
                 DB::commit();
-                $message = "ChildEducationAllowance Data Saved Successfully";
+                $message = "ChildEducationAllowance Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

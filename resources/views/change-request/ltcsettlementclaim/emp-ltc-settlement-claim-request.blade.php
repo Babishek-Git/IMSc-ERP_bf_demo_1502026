@@ -44,7 +44,7 @@ if(isset($data['EditClaimData']))
 	$Leaveexits    		= NULL;
 	$selectedFamilyIds  = NULL;
 }
-
+$existingFamilyIds    = $data['existingFamilyIds'];
 $isReadOnly = ($ICNo != session('WcmsEmpNo'));
 
 @endphp
@@ -336,14 +336,21 @@ $isReadOnly = ($ICNo != session('WcmsEmpNo'));
 																</tr>
 																@if(isset($data['Familydata']))
 																	@foreach($data['Familydata'] as $Familydata)
+																	@php
+																		$age = $Familydata->fam_member_dob ? \Carbon\Carbon::parse($Familydata->fam_member_dob)->age: 0;
+                                                                        $relationship = strtolower($Familydata->ShowRelationship($Familydata->fam_relationship_id));
+                                                                        $isAgeRestricted = in_array($relationship, ['son', 'daughter']) && $age > 25;
+																		$isAlreadyUsed = in_array($Familydata->family_det_id, $existingFamilyIds);
+																		$disableCheckbox = $isAgeRestricted || $isAlreadyUsed;
+																	@endphp
 																		<tr>
 																			<td>{{ $loop->iteration + 1}}</td>
 																			<td>{{ $Familydata->fam_member_name }}</td>
 																			<td>{{ $Familydata->ShowRelationship($Familydata->fam_relationship_id) }}</td>
-																			<td>{{ $Familydata->fam_member_dob ? \Carbon\Carbon::parse($Familydata->fam_member_dob)->age : '' }}</td>
+																			<td>{{ $age }}</td>
 																			<td>
 																				<input type="checkbox" name="chk_cout_rel[]" id="chk_cout_rel" class="chk_rel" value="{{$Familydata->family_det_id}}"
-																				{{ in_array($Familydata->family_det_id, $selectedFamilyIds ?? []) ? 'checked' : '' }}>
+																				{{ in_array($Familydata->family_det_id, $selectedFamilyIds ?? []) ? 'checked' : '' }} {{ $disableCheckbox ? 'disabled' : '' }}>
 																			</td>
 																		</tr>
 																	@endforeach

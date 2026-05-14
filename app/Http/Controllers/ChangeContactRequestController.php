@@ -151,7 +151,7 @@ class ChangeContactRequestController extends Controller
                 }
               
                 DB::commit();
-                $message = "Contact No.  Update Request Form Data Saved Successfully";
+                $message = "Contact No.  Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

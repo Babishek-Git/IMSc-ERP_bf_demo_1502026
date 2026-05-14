@@ -90,7 +90,7 @@ class LeaveMasterController extends Controller
                 $SaveLeave= $this->leave->createLeaveMaster($SaveData);
                 
                 DB::commit();
-                $message = "Leave Master Data Saved Successfully";
+                $message = "Leave Master Data Saved ";
             }catch (\Exception $e) {
             //dd($e);
                 DB::rollback();

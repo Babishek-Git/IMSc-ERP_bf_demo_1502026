@@ -156,7 +156,7 @@ class ChangePhysicaldisabilityRequestController extends Controller
                 }
                 //dd($SaveEmployee);
                 DB::commit();
-                $message = "Physical disability Status Update Request Form Data Saved Successfully";
+                $message = "Physical disability Status Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

@@ -56,7 +56,7 @@ class AMCPurchaseOrderController extends Controller
             if($FROMPage == 'SUBMIT'){
                 $SubmitAMCPOApplication = $this->AMCPurchaseOrderMaster->SubmitApplication($EditAMCPoId);
                 if($SubmitAMCPOApplication == TRUE){
-                    $message = 'AMC Purchase Order submitted successfully.';
+                    $message = 'AMC Purchase Order submitted ';
                     return redirect()->route('amc-purchase-order.amc-purchase-order-submission')->with('ALertMesage', $message);
                 }else{
                     $message = 'AMC Purchase Order Details could not be submitted';
@@ -93,7 +93,7 @@ class AMCPurchaseOrderController extends Controller
                 $FROMPage           = decrypt($request->page);
                 $DeleteAmcPoDetails = $this->AMCPurchaseOrderMaster->DeletAMCPOData($AMCPoId);
                 if($DeleteAmcPoDetails == TRUE){
-                    $message = 'AMC Purchase Order Details Deleted Successfully';
+                    $message = 'AMC Purchase Order Details Deleted';
                     return redirect()->route('amc-purchase-order.amc-purchase-order-submission')->with('ALertMesage', $message);
                 }else{
                     $message = 'Sorry, try again ....!';
@@ -251,10 +251,10 @@ class AMCPurchaseOrderController extends Controller
             Session::put('ALertMesage', $message);
         }
         if(filled($PoEditId)){
-            $message   = 'Purchase Order Details Update Successfully';
+            $message   = 'Purchase Order Details Update';
             return redirect()->route('amc-purchase-order.amc-purchase-order-submission')->with('ALertMesage', $message);
         }else{
-            $message   = 'AMC Purchase Order Details Saved Successfully';
+            $message   = 'AMC Purchase Order Details Saved';
             return redirect()->route('amc-purchase-order.amc-purchase-order-creation')->with('ALertMesage', $message);
         }
     }

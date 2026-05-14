@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Unit;
 use App\Models\mail_transaction;
 use App\Models\UploadFileDir;
-use App\Models\seq_no;
+use App\Models\SequenceNo;
 use App\Models\LogDt;
 use App\Models\Holiday;
 use App\Models\Payment;
@@ -26,12 +26,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Helper{
 
-    public static function GetAutoSequenceNo($ModuleCode,$DivisionId,$TransactionId,$SubModuleCode = NULL){
+    public static function GetAutoSequenceNo($ModuleCode,$TransactionId,$SubModuleCode = NULL){
         $FinYear = Helper::GetCurrentFinYear(NULL);
         $DataArr = array();
         $DataArr['module_code']     = $ModuleCode;
         $DataArr['fin_year']        = $FinYear;
-        $DataArr['division_id']     = $DivisionId;
+        //$DataArr['division_id']     = $DivisionId;
         $DataArr['transaction_id']  = $TransactionId;
         $DataArr['active']          = 1;
         $DataArr['created_by']      = session('WcmsEmpNo');
@@ -41,7 +41,7 @@ class Helper{
                 $DataArr['sub_module_code']  = $SubModuleCode;
             }
         }
-        $SeqNoData 	                = seq_no::create($DataArr);
+        $SeqNoData 	                = SequenceNo::create($DataArr);
         return $SeqNoData;
     }
     public static function IND_money_format($money){

@@ -142,8 +142,8 @@ class WorkFlowAssignController extends Controller
 
             $UpdateWfModuleData = $this->WorkFlow->UpdateModuleRoles($WfModuleArr, $Id);    
             if($UpdateWfModuleData != NULL) {
-                Helper::CreateLog($request, "ModuleController || Work Flow Updated Successfully");
-                $message = "Work Flow Updated Successfully!";
+                Helper::CreateLog($request, "ModuleController || Work Flow Updated ");
+                $message = "Work Flow Updated !";
             }else{
                 $message = "Failed to update workflow.";
             }

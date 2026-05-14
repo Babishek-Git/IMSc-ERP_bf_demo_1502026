@@ -48,9 +48,9 @@ class RcItemController extends Controller
                 //dd($InsertedData);
                 if($InsertedData != NULL)
                 {
-                    $LogMessage = "RcItemController || New Item Created Successfully )";
+                    $LogMessage = "RcItemController || New Item Created  )";
                     Helper::CreateLog($request,$LogMessage);       
-                    $message = ("New Items Created Successfully!");
+                    $message = ("New Items Created !");
                 }
             }   
         }  

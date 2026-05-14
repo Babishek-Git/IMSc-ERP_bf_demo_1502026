@@ -238,7 +238,7 @@ class MaterialInwardPendingPaymentController extends Controller
         }
         $SumbitMaterialInWardDetails = $this->MaterialInwardMaster->SumbitMaterialInWardDetails($TransactionId);
         if($SumbitMaterialInWardDetails == TRUE){
-            $message = 'Material Inward Submited Successfully';
+            $message = 'Material Inward Submited ';
         }else{
             $message ='Error : Sorry Invalid Attempt';
         }
@@ -358,7 +358,7 @@ class MaterialInwardPendingPaymentController extends Controller
                 }
             }
             DB::commit();
-            $message = "Material Inward Details updated Successfully";
+            $message = "Material Inward Details updated ";
             Session::put('ALertMesage', $message);
             return redirect()->route('material.material-inward-pending-payment');
         }catch (\Exception $e) { dd($e);

@@ -98,7 +98,7 @@ class BudgetSanactionController extends Controller
                     }
                 }
                 DB::commit();
-                $message = "Budget Allocation Saved Successfully";
+                $message = "Budget Allocation Saved";
                 Session::put('ALertMesage', $message);
             }
             catch (\Exception $e) { dd($e);
@@ -228,7 +228,7 @@ class BudgetSanactionController extends Controller
                     }
                 }
                 DB::commit();
-                $message = "Budget Claimed Details Saved Successfully";
+                $message = "Budget Claimed Details Saved";
                 Session::put('ALertMesage', $message);
             }
             catch (\Exception $e) { dd($e);
@@ -289,7 +289,7 @@ class BudgetSanactionController extends Controller
                     }
                 }
                 DB::commit();
-                $message = "Budget Received Details Saved Successfully";
+                $message = "Budget Received Details Saved";
                 Session::put('ALertMesage', $message);
             }
             catch (\Exception $e) { dd($e);
@@ -379,7 +379,7 @@ class BudgetSanactionController extends Controller
                 $SaveDtData['created_by']               = session('WcmsEmpNo'); 
                 $SaveSanction = $this->PaymentObjectHead->CreatePaymentObjectHead($SaveDtData);
                 DB::commit();
-                $message = "Budget Balance Details Saved Successfully";
+                $message = "Budget Balance Details Saved";
                 Session::put('ALertMesage', $message);
             }
             catch (\Exception $e) { dd($e);

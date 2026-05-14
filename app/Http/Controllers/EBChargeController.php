@@ -47,7 +47,7 @@ class EBChargeController extends Controller
                     $this->Eb->createEBCharges($saveData);
                 }
                 DB::commit();
-                return redirect()->back()->with('success', 'Saved successfully');
+                return redirect()->back()->with('success', 'EB Data Saved ');
                 Session::put('ALertMesage', $message);
             } catch (\Exception $e) {
                 DB::rollback();

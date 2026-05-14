@@ -46,14 +46,14 @@ if(isset($data['PODetails'])){
                                         <div class="row smclearrow"></div>
                                         <div class="row smclearrow"></div>
                                         <div class="row" align="right">
-                                            <button type="submit" id="btn_save" name="btn_save" class="step-btn" value="Save">SAVE</button>
+                                            <button type="submit" id="btn_save" name="btn_save" class="step-btn" value="Save">Save</button>
                                             <input type="button" class="backbutton" name="btn_back" id="btn_back" value="Back " onclick="window.location='{{ route('sdpo-entry.view-sd') }}'" />
                                         </div>
                                         <div class="row smclearrow"></div>
                                         <div class="row smclearrow"></div>
 										<div class="form-step active"> 
                                             <fieldset class="fieldbox">
-                                                <input type="hidden" name="sd_po" id="sd_po" value="SD">
+                                                <input type="hidden" name="sd_po" id="sd_po" value="{{ isset($SDPO) ? $SDPO : 'SD' }}">
 												<div class="fieldbox-div">
 													<div class="div2 label label">PO Name</div>
 													<div class="div2">

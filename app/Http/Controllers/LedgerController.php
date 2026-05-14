@@ -50,9 +50,9 @@ class LedgerController extends Controller
                 $InsertedData = $this->LedgerGroup->CreateLedgerGroup($InsertArr);
                 if($InsertedData != NULL)
                 {
-                    $LogMessage = "LedgerController || New Leder Created Successfully )";
+                    $LogMessage = "LedgerController || New Leder Created  )";
                     Helper::CreateLog($request,$LogMessage);       
-                    $message = ("New Ledger Created Successfully!");
+                    $message = ("New Ledger Created !");
                 }
             }   
         }  
@@ -135,7 +135,7 @@ class LedgerController extends Controller
                 $SaveEmployment= $this->Ledger->CreateLedger($SaveData);
                 //dd($SaveEmployment);
                 DB::commit();
-                $message = "Ledger Saved Successfully";
+                $message = "Ledger Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

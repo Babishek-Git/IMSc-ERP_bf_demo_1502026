@@ -73,6 +73,9 @@ class BudgetAllocation extends Model
             ->where('fin_year', $FinalYear)
             ->get();
     }
+    public static function ShowRevenueBudgetAllocationDataFinYear($GiaIdList,$FinYear){
+        return self::whereIn('gia_id',$GiaIdList)->where('fin_year', $FinYear)->where('active', 1)->get();
+    }
     
     // public static function GetSanctionDetiails($ObjHeadMode,$ObjHeadId,$ObjSubProjId,$GetGiaId){
     //     if(filled($ObjHeadMode) && $ObjHeadMode ='OHSC' && filled($ObjSubProjId)){

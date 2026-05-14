@@ -263,13 +263,58 @@
 			const form = document.createElement("form");
 			form.method = "POST";
 			form.action = routes[ProjectOption];
-			form.innerHTML = `
+			if(ProjectOption == 'ROHC'){
+				let currentYear = new Date().getFullYear();
+				let startYear = 2026;
+				let OptionStr = '<div class="row">';
+				OptionStr += '<div class="div2 label">Financial Year</div>';
+				OptionStr += '<div class="div7 label">';
+				OptionStr += '<select class="tboxsmclass" name="cmb_modal_financial_year" id="cmb_modal_financial_year">';
+				OptionStr += '<option value=""> --- Select --- </option>';
+				for(let i = startYear; i < currentYear+2; i++){
+					let startYear = i;
+					let endYear = (i + 1);
+					let fy = startYear + '-' + endYear;
+					OptionStr += `<option value="${fy}">${fy}</option>`;
+				}
+				OptionStr += '</select>';
+				BootstrapDialog.show({
+					title: 'Financial Year',
+					message: OptionStr,
+					buttons: [{
+						label: 'Next',
+						action: function(dialogRef) {
+							let FinancialYear = $("#cmb_modal_financial_year").val();
+							form.innerHTML = `
+							<input type="hidden" name="_token" value="{{ csrf_token() }}">
+							<input type="hidden" name="txt_budget_type" value="CRA">
+							<input type="hidden" name="txt_float_financial_year" value="${FinancialYear}">
+							<input type="hidden" name="btn_next_float" value="1">
+							`;
+							document.body.appendChild(form);
+							form.submit();
+							dialogRef.close();
+						}
+					},{
+						label: 'Close',
+						action: function(dialogRef) {
+							dialogRef.close();
+						}
+					}],
+					onshown: function(dialogRef){
+						$("#cmb_modal_financial_year").chosen();
+					}
+				});
+			}else{
+				form.innerHTML = `
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">
 				<input type="hidden" name="txt_budget_type" value="CRA">
 				<input type="hidden" name="btn_next_float" value="1">
-			`;
-			document.body.appendChild(form);
-			form.submit();
+				`;
+				document.body.appendChild(form);
+				form.submit();
+			}
+			
 		}
 		
 	});

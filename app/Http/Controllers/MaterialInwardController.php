@@ -78,7 +78,7 @@ class MaterialInwardController extends Controller
                 }
                 $SumbitMaterialInWardDetails = $this->MaterialInwardMaster->SumbitMaterialInWardDetails($TransactionId);
                 if($SumbitMaterialInWardDetails == TRUE){
-                    $message = 'Material Inward Submited Successfully';
+                    $message = 'Material Inward Submited ';
                 }else{
                     $message ='Error : Sorry Invalid Attempt';
                 }
@@ -529,7 +529,7 @@ class MaterialInwardController extends Controller
                 }
             }
             DB::commit();
-            $message = "Material Inward Details updated Successfully";
+            $message = "Material Inward Details updated ";
             Session::put('ALertMesage', $message);
             return redirect()->route('material.material-inward-creation');
         }catch (\Exception $e) { dd($e);
@@ -774,7 +774,7 @@ class MaterialInwardController extends Controller
                 }
             }
             DB::commit();
-            $message = "Delivery Challan Details Saved Successfully.";
+            $message = "Delivery Challan Details Saved .";
             return redirect()->route('material.material-inward-delivery-Challan-upload')->with('ALertMesage', $message);
         }catch (\Exception $e) { dd($e);
             DB::rollback();

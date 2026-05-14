@@ -257,8 +257,8 @@ class WorkFlowController extends Controller
             $ModTrans = new UserWorkLoad(); 
             $UpdateWfModuleData = $ModTrans->UpdateModuleRoles($WfModuleArr, $Id);    
             if($UpdateWfModuleData != NULL) {
-                Helper::CreateLog($request, "ModuleController || Work Flow Updated Successfully");
-                $message = "Work Flow Updated Successfully!";
+                Helper::CreateLog($request, "ModuleController || Work Flow Updated ");
+                $message = "Work Flow Updated !";
             }else{
                 $message = "Failed to update workflow.";
             }
@@ -278,8 +278,8 @@ class WorkFlowController extends Controller
             $UpdateWfModuleData = $ModTrans->UpdateModuleRoles($WfModuleArr, $Id);
     
             if ($UpdateWfModuleData != NULL) {
-                Helper::CreateLog($request, "ModuleController || Work Flow Target Roles Updated Successfully");
-                $message = "Work Flow Target Roles Updated Successfully!";
+                Helper::CreateLog($request, "ModuleController || Work Flow Target Roles Updated ");
+                $message = "Work Flow Target Roles Updated !";
             } else {
                 $message = "Failed to update workflow.";
             }

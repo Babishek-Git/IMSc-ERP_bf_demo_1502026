@@ -585,6 +585,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/MaterialInwardPaymentSubmission', 'MaterialInwardController@MaterialInwardPaymentSubmission')->name('material.material-inward-payment-submission');
 				Route::match(array('GET','POST'),'/MaterialInwardDeliveryChallanUpload', 'MaterialInwardController@MaterialInwardDeliveryChallanUpload')->name('material.material-inward-delivery-Challan-upload');
                 Route::match(array('GET','POST'),'/MaterialInwardDeliveryChallanQty', 'MaterialInwardController@MaterialInwardDeliveryChallanQty')->name('material.material-inward-delivery-Challan-qty');
+
 			});
 			Route::group(['prefix' => 'Material-pending-payement'], function() {
                 Route::match(array('GET','POST'),'/MaterialInwardPendingPaymentList', 'MaterialInwardPendingPaymentController@MaterialInwardPendingPaymentList')->name('material.material-inward-pending-payment');

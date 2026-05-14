@@ -85,7 +85,7 @@ class ExternalSanctionController extends Controller
                 $SaveEmployment= $this->budgetsanction->CreateBudgetSanction($SaveData);
             
                 DB::commit();
-                $message = "External Sanction Data Saved Successfully";
+                $message = "External Sanction Data Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

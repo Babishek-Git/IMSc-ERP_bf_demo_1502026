@@ -256,16 +256,22 @@ class ChangeLTCAdvClaimController extends Controller
             $Empdata       = $this->Employee->ShowEmployees($request,$EditClaimData->emp_no);
             $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EditClaimData->emp_no); 
             $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EditClaimData->emp_no); 
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', $EditClaimData->emp_no)
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
         }else{
             $Empdata       = $this->Employee->ShowEmployeeBySessionEmpNo();
             $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
             $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', session('WcmsEmpNo'))
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
             
         }
         $LeaveTypeData = $this->leavetype->ShowLeaveType();
     
         return view('change-request.ltcadvclaim.emp-ltc-adv-change-request')->with('data',compact('Empdata','EditClaimData',
-            'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds'));
+            'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds','existingFamilyIds'));
     } 
 
     public function EmpChangeLTCReqSelfServiceList(){
@@ -376,7 +382,9 @@ class ChangeLTCAdvClaimController extends Controller
         $Empdata       = $this->Employee->ShowEmployees($request,$EmpNo);
         $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EmpNo); 
         $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EmpNo); 
-
+        $existingFamilyIds = $this->LtcAdv->where('emp_no', $EmpNo)
+                            ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                            ])->pluck('family_ids')->toArray();
         $WorkFlowAction = NULL;
         $TargetRoles = $EditClaimData->target_roles;//collect($EditClaimData)->pluck('target_roles')->first() ?? NULL;
         $IsCompleted = $EditClaimData->is_completed;//collect($EditClaimData)->pluck('is_completed')->first();
@@ -392,7 +400,7 @@ class ChangeLTCAdvClaimController extends Controller
         }
         //dd($WorkFlowActionData);
         return view('change-request.ltcadvclaim.emp-ltc-adv-change-request-view')->with('data',compact('ApplicationId','Action','EditClaimData',
-            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds'));  
+            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds','existingFamilyIds'));  
 
     }
 
@@ -541,16 +549,21 @@ class ChangeLTCAdvClaimController extends Controller
             $Empdata       = $this->Employee->ShowEmployees($request,$EditClaimData->emp_no);
             $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EditClaimData->emp_no); 
             $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EditClaimData->emp_no); 
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', $EditClaimData->emp_no)
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
         }else{
             $Empdata       = $this->Employee->ShowEmployeeBySessionEmpNo();
             $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
             $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
-            
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', session('WcmsEmpNo'))
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
         }
         $LeaveTypeData = $this->leavetype->ShowLeaveType(); 
     
         return view('change-request.ltcsettlementclaim.emp-ltc-settlement-claim-request')->with('data',compact('Empdata','EditClaimData',
-        'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds'));
+        'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds','existingFamilyIds'));
     } 
 
     public function EmpChangeClaimReqSelfServiceList(){
@@ -661,7 +674,9 @@ class ChangeLTCAdvClaimController extends Controller
         $Empdata       = $this->Employee->ShowEmployees($request,$EmpNo);
         $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EmpNo); 
         $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EmpNo); 
-
+        $existingFamilyIds = $this->LtcAdv->where('emp_no', $EmpNo)
+                            ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                            ])->pluck('family_ids')->toArray();
         $WorkFlowAction = NULL;
         $TargetRoles = $EditClaimData->target_roles;//collect($EditClaimData)->pluck('target_roles')->first() ?? NULL;
         $IsCompleted = $EditClaimData->is_claim_completed;//collect($EditClaimData)->pluck('is_completed')->first();
@@ -677,7 +692,7 @@ class ChangeLTCAdvClaimController extends Controller
         }
         //dd($IsCompleted);
         return view('change-request.ltcsettlementclaim.emp-ltc-settlement-claim-view')->with('data',compact('ApplicationId','Action','EditClaimData',
-            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds'));  
+            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds','existingFamilyIds'));  
     }
     public function checkLtcStatus(){
         $Page        = 'REQ_STATUS'; 

@@ -16,6 +16,7 @@ use App\Models\ApexBudgetSanctionObjectHeadWise;
 use App\Models\ApexBudgetSanctionSubProjectWise;
 use App\Models\ApexBudgetSanctionObjectHeadFinYearWise;
 use App\Models\PaymentObjectHead;
+use App\Models\BudgetAllocation;
 
 
 use Helper;
@@ -40,6 +41,7 @@ class BudgetReportsController extends Controller
         $this->ApexBudgetSanctionSubProjectWise = new ApexBudgetSanctionSubProjectWise();
         $this->ApexBudgetSanctionObjectHeadFinYearWise = new ApexBudgetSanctionObjectHeadFinYearWise();
         $this->PaymentObjectHead = new PaymentObjectHead();
+        $this->BudgetAllocation = new BudgetAllocation();
     }
     public function BudgetReportsInitiate(Request $request){
         return view('budget-reports.budget-reports-initiate');
@@ -106,18 +108,24 @@ class BudgetReportsController extends Controller
     }
 
     public function RevenueObjectHeadConsolidated(Request $request){
+        if(isset($request->btn_next)){
+            $FinYear = $request->txt_float_financial_year;
+        }else{
+            $FinYear = Helper::GetCurrentFinYear(NULL);
+        } 
         $ToDate = date('Y-m-d');
         $GiaData = $this->Gia->ShowGia();
         $RevenueGiaArr = ['REG','RES'];
         $GiaData = $GiaData->whereIn('gia_code',$RevenueGiaArr);
+        $GiaIdList = $GiaData->pluck('gia_id')->toArray();
         $ObjectHeadData = $this->ObjectHead->ShowObjectHead(NULL);
         $ObjectHeadGiaMapData = $this->ObjectHeadGiaMapping->ShowObjectHeadGiaMapping(NULL);
         $ObjectHeadGiaMapgrpData = collect($ObjectHeadGiaMapData)->groupBy('gia_id'); 
         $ObjectHeadSubCataData = $this->ObjectHeadSubCategory->ShowObjectHeadSubCata(NULL);
         $ObjectHeadSubCataGrpData = collect($ObjectHeadSubCataData)->groupBy('object_head_id');
-        $ApexObjectHeadSanctionData = $this->ApexBudgetSanctionObjectHeadWise->ShowMultipleApexSanctionObjectHeadWise($ApexProjectIdList); 
-        $PaymentData = $this->PaymentObjectHead->ShowAPexProjectObjectHeadExpenditure(NULL,$ToDate); 
-        return view('budget-reports.apex-project-object-head-consolidated',  compact('ToDate','ApexSanctionGrpData','ApexObjectHeadSanctionData','PaymentData','GiaData','ObjectHeadData','ObjectHeadSubCataGrpData','ObjectHeadGiaMapgrpData','ParentProjectData','OBHLegerMappData'));
+        $RevenueObjectHeadSanctionData = $this->BudgetAllocation->ShowRevenueBudgetAllocationDataFinYear($GiaIdList,$FinYear); 
+        $PaymentData = $this->PaymentObjectHead->ShowRevenueObjectHeadExpenditure(NULL,$ToDate); 
+        return view('budget-reports.revenue-object-head-consolidated',  compact('ToDate','PaymentData','GiaData','ObjectHeadData','ObjectHeadSubCataGrpData','ObjectHeadGiaMapgrpData','RevenueObjectHeadSanctionData'));
     }
     
     

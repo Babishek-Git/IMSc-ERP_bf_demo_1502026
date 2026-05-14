@@ -23,6 +23,7 @@ use App\Models\ContractorGST;
 use App\Models\Ledger;
 use App\Models\LedgerGroup;
 use App\Models\ProjectMaster;
+use App\Models\SequenceNo;
 use Exception;
 use Helper;
 use Session;
@@ -54,6 +55,7 @@ class BillPaymentController extends Controller
         $this->Ledger       = new Ledger();
         $this->LedgerGroup  = new LedgerGroup();
         $this->Project  = new ProjectMaster();
+        $this->SequenceNo = new SequenceNo();
        
         $this->TransactionMappService = $TransactionMappService;
         $this->PaymentService = $PaymentService;
@@ -113,13 +115,29 @@ class BillPaymentController extends Controller
             }
             DB::beginTransaction();
             try {
+                $SeqIdData = Helper::GetAutoSequenceNo('BILL',$PaymentId,NULL); 
+                $SeqId = $SeqIdData->seqid; 
+                $SeqNoData = $this->SequenceNo->ShowSequenceNoBySeqId($SeqId); 
+                $BillProcessNo = NULL; 
+                if(filled($SeqNoData)){
+                    $SeqNo           = collect($SeqNoData)->pluck('sequence_no')->first();
+                    $FinYear         = collect($SeqNoData)->pluck('fin_year')->first();   
+                    if($ProcessMode == "AMC"){                     
+                        $BillProcessNo  = "IMSc/"."BILL/AMC/".$SeqNo."/".$FinYear; 
+                    }else if($ProcessMode == "PO"){                     
+                        $BillProcessNo  = "IMSc/"."BILL/PO/".$SeqNo."/".$FinYear; 
+                    }else{
+                        $BillProcessNo  = "IMSc/"."BILL/NA/".$SeqNo."/".$FinYear; 
+                    }
+                }
+                //dd($BillProcessNo);
                 $UpdateArr['gross_amount']      = $GrossAmount;
                 $UpdateArr['recovery_amount']   = $TotalDeduction;
                 $UpdateArr['net_amount']        = $NetAmount;
                 $UpdateArr['status']            = 'pending';
                 $UpdateArr['payment_to']        = 'VENDOR';
                 $UpdateArr['pay_vendor_id']     = $VendorId;
-                $UpdateArr['bill_no']           = $BillNo;
+                $UpdateArr['bill_no']           = $BillProcessNo;
                 $UpdateArr['bill_date']         = $BillDate;
                 $UpdateArr['bank_id']           = $VendorBankId;
                 $UpdateArr['bank_name']         = $VendorBankName;
@@ -172,7 +190,7 @@ class BillPaymentController extends Controller
                 }
 
                 DB::commit();
-                $message = "Payment data saved successfully"; 
+                $message = "Payment data saved. <br/>Bill Processing No. is : ".$BillProcessNo; 
             }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error : Payment data not saved. Please try again"; 
             }
@@ -338,7 +356,7 @@ class BillPaymentController extends Controller
                     }
                 }
                 DB::commit();
-                $message = "Payment data saved successfully"; 
+                $message = "Payment data saved"; 
             }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error : Payment data not saved. Please try again"; 
             }
@@ -477,7 +495,7 @@ class BillPaymentController extends Controller
                 $SaveEmployment= $this->budgetsanction->CreateBudgetSanction($SaveData);
             
                 DB::commit();
-                $message = "DAE Sanction Data Saved Successfully";
+                $message = "DAE Sanction Data Saved";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

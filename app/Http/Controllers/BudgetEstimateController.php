@@ -42,7 +42,7 @@ class BudgetEstimateController extends Controller
                         }
                     }
                     DB::commit();
-                    $message = "Object Heads - Ledger Mapping  Details Save Successfully";
+                    $message = "Object Heads - Ledger Mapping  Details Saved ";
                     Session::put('ALertMesage', $message);
                     return redirect()->route('budget-estimate.budget-estimate');
                 }catch (\Exception $e) { dd($e);

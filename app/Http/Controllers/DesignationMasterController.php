@@ -86,7 +86,7 @@ class DesignationMasterController extends Controller
                 }
                             
                 DB::commit();
-                $message = "Designation  Data Saved Successfully";
+                $message = "Designation  Data Saved";
             }catch (\Exception $e) {
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

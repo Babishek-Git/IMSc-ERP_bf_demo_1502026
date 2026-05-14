@@ -61,7 +61,7 @@
 													<td>{{Helper::DisplayDateFormat($ShowPoItemDetailsData->work_order_date)}}</td>
 													<td>{{ $ShowPoItemDetailsData->work_order_cost }}</td>
 													<td align="center">
-														<button type="button" name="btn_edit" id="btn_edit" class="btn btn-default teditbtn estEdit" onClick="window.location='{{route('bank.Bank', ['id' => encrypt($ShowPoItemDetailsData->id)])}}'" title="Click here to Edit" style="cursor: pointer;"><i class="fa fa-edit pt2"></i></button>
+														<button type="button" name="btn_edit" id="btn_edit" class="btn btn-default teditbtn estEdit" onClick="window.location='{{route('sdpo-entry.pg-entry', ['id' => encrypt($ShowPoItemDetailsData->sd_po_id)])}}'" title="Click here to Edit" style="cursor: pointer;"><i class="fa fa-edit pt2"></i></button>
 													</td>
 													<td align="center">
 														<button type="button" name="btn_delete" id="btn_delete" class="btn btn-default tdelbtn Delete" title="Click here to delete" style="cursor: pointer;"><i class="fa fa-trash-o pt2"></i></button>												

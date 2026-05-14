@@ -59,7 +59,7 @@ class IncomeTaxRateFixationController extends Controller
                     $SaveIncomeRate = $this->Itslab->CreateItSlab($SaveData); //dd($SaveEmployee);
                     
                     DB::commit();
-                    $message = "Income Tax Rate Request Form Data Saved Successfully";
+                    $message = "Income Tax Rate Request Form Data Saved ";
                     Session::put('ALertMesage', $message);
                 }catch (\Exception $e) { dd($e);
                     DB::rollback();

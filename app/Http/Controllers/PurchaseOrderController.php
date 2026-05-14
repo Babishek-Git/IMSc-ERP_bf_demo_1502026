@@ -74,7 +74,7 @@ class PurchaseOrderController extends Controller
                     if($IsssudePoOrder == TRUE){
                         $TransactionId = $PoId;
                         $SaveBudgetExpData = $this->SaveBudgetExpenditureDetails($request,$TransactionId,$IndentId,$CurrentStage);
-                        $message = 'Purchase Order Issued Successfully';
+                        $message = 'Purchase Order Issued ';
                     }else{
                         $message = 'Sorry, try again ....!';
                     }
@@ -286,10 +286,10 @@ class PurchaseOrderController extends Controller
             Session::put('ALertMesage', $message);
         }
         if(filled($PoEditId)){
-            $message   = 'Purchase Order Details Update Successfully';
+            $message   = 'Purchase Order Details Updated ';
             return redirect()->route('purchase-order.purchase-order_view')->with('ALertMesage', $message);
         }else{
-            $message   = 'Purchase Order Details Saved Successfully';
+            $message   = 'Purchase Order Details Saved ';
             return redirect()->route('purchase-order.purchase-order_form')->with('ALertMesage', $message);
         }
     }
@@ -340,11 +340,11 @@ class PurchaseOrderController extends Controller
         }
     }
     public function ViewPurchaseOrderForSD(Request $request) {
-        $ShowPoItemDetailsData  = $this->PurchaseOrder->showPurchaseOredrIssuedData(NULL);
+        $ShowPoItemDetailsData  = $this->PurchaseOrder->showSDPGIssuedData($request,'SD');
         return view('sdpo-entry.view-sd')->with('data',compact('ShowPoItemDetailsData'));
     }
     public function ViewPurchaseOrderForPG(Request $request) {
-        $ShowPoItemDetailsData  = $this->PurchaseOrder->showPurchaseOredrIssuedData(NULL);
+        $ShowPoItemDetailsData  = $this->PurchaseOrder->showSDPGIssuedData($request,'PG');
         return view('sdpo-entry.view-po')->with('data',compact('ShowPoItemDetailsData'));
     }
 }

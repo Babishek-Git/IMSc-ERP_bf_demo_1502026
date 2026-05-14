@@ -322,15 +322,15 @@ class WorkFlowProcessService
             $messagePerfix     = modules::where('module_code', $WorkFlowModuleCode)->pluck('message_prefix')->first() ?? '';
             DB::commit();
             if($WorkFlowAction == 'RJ'){
-                $message = $messagePerfix ." Application returned to the user successfully.";
+                $message = $messagePerfix ." File returned to the user ";
             }else if($WorkFlowAction == 'AP'){
-                $message = $messagePerfix ." Application approved successfully.";
+                $message = $messagePerfix ." File approved ";
             }else if($WorkFlowAction == 'SU'){
-                $message = $messagePerfix ." Application submitted successfully.";
+                $message = $messagePerfix ." File submitted ";
             }else if($WorkFlowAction == 'FW'){
-                $message = $messagePerfix ." Application forwarded / recommended successfully.";
+                $message = $messagePerfix ." File forwarded / recommended ";
             }else{
-                $message = $messagePerfix ." Work flow data saved successfully.";
+                $message = $messagePerfix ." Work flow data saved ";
             }
         } catch (\Exception $e) { dd($e);
             DB::rollback();

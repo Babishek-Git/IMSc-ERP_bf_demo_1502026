@@ -124,7 +124,7 @@ class EmployeeController extends Controller
                 $this->SaveEmpPanDetails($request);
                 // $this->SaveEmpDocumentDetails($request);
                 $this->SaveEmpPhysicallyChallangeDetails($request);
-                $message = "Employee information saved successfully"; 
+                $message = "Employee information saved"; 
             }else{
                 $message = "Error : Invalid ICNO & Check your ICNO"; 
             }
@@ -402,7 +402,7 @@ class EmployeeController extends Controller
                 }
             }
             DB::commit();
-            $message = "Employee Basic Details Saved Successfully";
+            $message = "Employee Basic Details Saved";
         }catch (\Exception $e) { dd($e);
             DB::rollback();
             $message = "Error : Sorry transaction not fully completed";
@@ -519,7 +519,7 @@ class EmployeeController extends Controller
                 $SaveData['created_by']         = 1; 
                 $SaveEmpBank = $this->EmployeePayBank->createEmployeePayBank($SaveData);
                 DB::commit();
-                $message = "Employee Bank Details Saved Successfully";
+                $message = "Employee Bank Details Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -563,7 +563,7 @@ class EmployeeController extends Controller
                     $SaveValues = $this->EmpEducationalDetails->CreateEmpEducationDetails($SaveData); 
                 }
                 DB::commit();
-                $message = "Educational Details Saved Successfully";
+                $message = "Educational Details Saved";
             }
             catch (\Exception $e) { dd($e);
                 DB::rollback();
@@ -597,7 +597,7 @@ class EmployeeController extends Controller
                 $SaveData['phy_challange_perc'] = $EmpPhyHandicappPerc;
                 $SaveEmpDiablityArr = $this->Employee->UpdateEmployee($SaveData,$EmpIcno);
                 DB::commit();
-                $message = "Employee Physically Challange Details Saved Successfully";
+                $message = "Employee Physically Challange Details Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -746,7 +746,7 @@ class EmployeeController extends Controller
                     $SaveData['created_by']             = session('WcmsEmpNo');
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded ";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();

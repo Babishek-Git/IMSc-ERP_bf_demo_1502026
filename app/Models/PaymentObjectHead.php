@@ -93,4 +93,25 @@ class PaymentObjectHead extends Model
             ->get();
         return $data;
     }
+    public static function ShowRevenueObjectHeadExpenditure($StartDate,$EndDate){
+        $data = DB::table('erp_payment_object_head as poh')
+            ->join('erp_payment as p', 'p.payment_id', '=', 'poh.payment_id')
+            //->whereBetween('p.voucher_dt', ['2026-01-01', '2026-01-31'])
+            ->whereDate('p.voucher_dt', '<=', $EndDate)
+            ->whereNull('poh.project_id')
+            ->whereNull('poh.parent_project_id')
+            ->select(
+                'poh.gia_id',
+                'poh.object_head_id',
+                'poh.object_head_sub_cata_id', 
+                DB::raw('SUM(poh.payment_oh_amount) as total_amount')
+            )
+            ->groupBy(
+                'poh.gia_id',
+                'poh.object_head_id',
+                'poh.object_head_sub_cata_id'
+            )
+            ->get(); 
+        return $data;
+    }
 }
