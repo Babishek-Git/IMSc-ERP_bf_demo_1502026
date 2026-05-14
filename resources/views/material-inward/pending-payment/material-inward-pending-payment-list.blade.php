@@ -1,20 +1,9 @@
 @extends('layouts.dashboard-master')
-
 @section('content') 
-
 @include('layouts.partials.messages')
-
 @php
-$showPurchaseOredrData = $data['showPurchaseOredrData'] ?? [];
-$SessionEmpSectionId   = $data['SessionEmpSectionId'] ?? [];
-$VendorArr = [];
-if(isset($data['Contractordata'])){
-	$ContData = $data['Contractordata'];
-	foreach($ContData as $Contvalue){
-		$VendorArr[$Contvalue->contid] = $Contvalue->name_contractor;
-	}
-}
-$Page = $data['Page'] ?? NULL;
+$PendingPaymentListArr = $data['PendingPaymentList'] ?? [];
+
 @endphp
 <form action="" method="post" enctype="multipart/form-data" name="form"> 
 	<div class="content">
@@ -67,30 +56,24 @@ $Page = $data['Page'] ?? NULL;
 										</tr>
 									</thead>
 									<tbody id="rm-tableBody">
-										@if(isset($data['VocherDetails']) && count($data['VocherDetails']) > 0)
-											@foreach($data['VocherDetails'] as $voucherData)
-												@php $MatInwardData = collect($data['ShowMaterialInwardData'] ?? [])->firstWhere('master_inward_id', $voucherData->transaction_id); @endphp
-												@if($MatInwardData) 
-													@php $PurchaseOredrData = collect($data['showPurchaseOredrData'] ?? [])->firstWhere('work_order_id', $MatInwardData->po_id);@endphp
-													@if($PurchaseOredrData && $PurchaseOredrData->po_issued == 'true')
-														@if($SessionEmpSectionId == $PurchaseOredrData->mat_cert_sect_id)
-															<tr>
-																<td></td>
-																<td>{{ $loop->iteration }}</td>
-																<td>{{ $PurchaseOredrData->work_order_no }}</td>
-																<td>{{ $PurchaseOredrData->work_name }}</td>
-																<td>{{ Helper::DisplayDateFormat($PurchaseOredrData->work_order_date) }}</td>
-																<td>{{ $VendorArr[$PurchaseOredrData->contid] ?? '' }}</td>
-																<td align="center">
-																	<button type="button" class="btn btn-default tuploadbtn"onclick="window.location='{{ route('material.material-inward-pending-payment', ['EditId' => encrypt($MatInwardData->master_inward_id)]) }}'"><i class='fa fa-edit'></i> Edit</button>
-																	@if($MatInwardData->is_pending_payment == true)
-																		<button type="button" class="xlbtndownload m-btm1"onclick="window.location='{{ route('material.material-inward-pending-payment', ['SubmitId' => encrypt($MatInwardData->master_inward_id)]) }}'"> <i class='fa fa-check'></i> View & Submit </button>
-																	@endif
-																</td>
-															</tr>
+										@if(count($PendingPaymentListArr) > 0)
+											@foreach($PendingPaymentListArr as $list)
+												<tr>
+													<td></td>
+													<td>{{ $loop->iteration }}</td>
+													<td>{{ $list->work_order_no }}</td>
+													<td>{{ $list->work_name }}</td>
+													<td>{{ Helper::DisplayDateFormat($list->work_order_date) }}</td>
+													<td>{{ $list->vendor_name }}</td>
+													<td align="center">
+														@if($list->is_pending_payment == true)
+															<button type="button"class="btn btn-default tuploadbtn" onclick="window.location='{{ route('material.material-inward-pending-payment', ['page'=>encrypt('EDIT'),'EditId' => encrypt($list->master_inward_id)]) }}'"><i class='fa fa-edit'></i> Edit</button>
+															<button type="button"class="xlbtndownload m-btm1"onclick="window.location='{{ route('material.material-inward-pending-payment-submission', ['page'=>encrypt('PROCESS'),'SubmitId' => encrypt($list->master_inward_id)]) }}'"><i class='fa fa-check'></i> View & Submit</button>
+														@else
+															<button type="button"class="btn btn-default tuploadbtn" onclick="window.location='{{ route('material.material-inward-pending-payment', ['page'=>encrypt('CREATE'),'EditId' => encrypt($list->master_inward_id)]) }}'"><i class='fa fa-edit'></i> Edit</button>
 														@endif
-													@endif
-												@endif
+													</td>
+												</tr>
 											@endforeach
 										@else
 										<tr>
@@ -109,6 +92,5 @@ $Page = $data['Page'] ?? NULL;
 	</div>
 </form>
 <script>
-
 </script>
 @endsection

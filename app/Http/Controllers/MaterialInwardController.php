@@ -66,43 +66,6 @@ class MaterialInwardController extends Controller
         $OutputArr              = array('DeliveryChallanQtyData'=>$DeliveryChallanQtyData,'DeliveryChallanDoc'=>$DeliveryChallanDocData);
         return $OutputArr;
     }
-    public function MaterialInwardPendingPaymentList(Request $request){
-        if(isset($request->EditId)){
-            try{
-                $MatInwardId            = decrypt($request->EditId);
-                $MaterialInwardData     = $this->MaterialInwardMaster->showMaterialInwardData(NULL,$MatInwardId);
-                $PurchaseId             = collect($MaterialInwardData)->pluck('po_id')->first();
-                $Contractordata        = $this->Contractor->ShowContractor();
-                $Empdata               = $this->Employee->ShowEmployees($request,NULL); 
-                $ShowPurchaseOrderData = $this->PurchaseOrder->showPurchaseOredrData(NULL,$PurchaseId); //dd($showPurchaseOredrData);
-                $ShowPoSoqData         = $this->PurchaseOrderSoqDetails->showPurchaseOredrSoqData(NULL,$PurchaseId); //dd($showPurchaseOredrData);
-                $MaxReceiptNo          = $this->MaterialInwardMaster->ShowMaxReceipNo($request);
-                $ShowMaterialUnit      = $this->UnitMaster->ShowMaterialUnit(NULL);
-                $ShowLoacationMasterData   = $this->LocationMaster->ShowLocationMaster();
-                $ShowMaterialInwardData    = $this->MaterialInwardMaster->GetMaterialInwardByPoId($PurchaseId);
-                $GetMaterialId             = collect($ShowMaterialInwardData)->pluck('master_inward_id')->first();
-                $MaterialInwardDetailData  = $this->MaterialInwardDetails->showMaterialInwardDetailsData(NULL,$MatInwardId); 
-                $VendorData                = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
-                $UnitDataArray             = collect($ShowMaterialUnit)->pluck('uom_name', 'uom_id')->toArray();
-                $IndentMasterData          = $this->Indent->ShowIndentDetails($request);
-                return view('material-inward.material-inward-pending-payment-creation')->with('data',compact('IndentMasterData','UnitDataArray','Contractordata','ShowMaterialUnit','ShowMaterialInwardData','MaterialInwardDetailData','ShowPurchaseOrderData','VendorData','Empdata','MaxReceiptNo','ShowPoSoqData','ShowLoacationMasterData'));
-            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-                $message = "Error: Sorry, invalid attempt.";
-            }
-            if(filled($message)){
-                Session::put('ALertMesage', $message);
-                return redirect()->route('material.material-inward-creation');
-            }
-        }
-        $Contractordata           = $this->Contractor->ShowContractor();
-        $showPurchaseOredrData    = $this->PurchaseOrder->showPurchaseOredrIssuedData($request,NULL);
-        $ShowSessionEmpdata       = $this->Employee->ShowEmployeeBySessionEmpNo(); 
-        $SessionEmpSectionId      = collect($ShowSessionEmpdata)->pluck('section_id')->first();
-        $Vocherdata               = $this->PaymentMaster->ShowCompletedPayment();
-        $VocherDetails           = collect($Vocherdata)->where('module_code','MAT_INWARD');
-        $ShowMaterialInwardData   = $this->MaterialInwardMaster->showMaterialInwardPendingPaymentData(); 
-        return view('material-inward.material-inward-pending-payment-list')->with('data',compact('SessionEmpSectionId','showPurchaseOredrData','Contractordata','ShowMaterialInwardData','VocherDetails'));
-    }
     public function MaterialInwardCreation(Request $request){
         if($request->SubmitId){
             if(isset($request->SubmitApplication)){
