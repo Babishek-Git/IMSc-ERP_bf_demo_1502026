@@ -157,7 +157,7 @@ $isReadOnly = ($ICNo != session('WcmsEmpNo'));
 																		<td>{{ $Leaveexits->leave_type_code}}</td>
 																		<td>{{ \Carbon\Carbon::parse($Leaveexits->from_date)->format('d/m/Y') }}</td>
 																		<td>{{ \Carbon\Carbon::parse($Leaveexits->to_date)->format('d/m/Y') }}</td>
-																		<td>{{ $Leaveexits->applied_days}}</td>
+																		<td>{{ $Leaveexits->actual_days}}</td>
 																	</tbody>
 																</table>
 																<div class="row smclearrow"></div>

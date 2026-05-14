@@ -192,7 +192,7 @@ $isReadOnly = ($ICNo != session('WcmsEmpNo'));
 																		<td>{{ $Leaveexits->leave_type_code}}</td>
 																		<td>{{ \Carbon\Carbon::parse($Leaveexits->from_date)->format('d/m/Y') }}</td>
 																		<td>{{ \Carbon\Carbon::parse($Leaveexits->to_date)->format('d/m/Y') }}</td>
-																		<td>{{ $Leaveexits->applied_days}}</td>
+																		<td>{{ $Leaveexits->actual_days}}</td>
 																	</tbody>
 																</table>
 																<div class="row smclearrow"></div>
@@ -480,11 +480,8 @@ $isReadOnly = ($ICNo != session('WcmsEmpNo'));
 																$sanctionedAmount = 0;
 																$balance = 0;
 																$totalClaim = 0;
-
 																if (!empty($EditClaimData)) {
-
 																	$totalAmount = $EditClaimData->advance_amount ?? 0;
-
 																	if ($EditClaimData->is_adv_completed) {
 																		$sanctionedAmount = $EditClaimData->sanctioned_amount ?? 0;
 																		$balance = $totalAmount - $sanctionedAmount;
@@ -494,39 +491,36 @@ $isReadOnly = ($ICNo != session('WcmsEmpNo'));
 															@endphp
 															<tfoot>
 																<tr>
-																	<td colspan="10" style="text-align:right;"><b>Total (A) In Rupees</b></td>
+																	<td colspan="10" style="text-align:right;"><b>Total (A) In Rs.</b></td>
 																	<td>
 																		<input type="text" name="total_adv_amount" id="total_adv_amount"
 																			class="tboxsmclass" value="{{ $totalAmount }}" readonly>
 																	</td>
-																	<td></td>
 																</tr>
 
 																<tr>
-																	<td colspan="10" style="text-align:right;"><b>Sanctioned Amount (A) In Rupees</b></td>
+																	<td colspan="10" style="text-align:right;"><b>Sanctioned Amount (90% of advance request Rs. {{$totalAmount}})(B) Rs.</b>{{$sanctionedAmount}}</td>
 																	<td>
 																		<input type="text" name="sanctioned_amount" id="sanctioned_amount"
 																			class="tboxsmclass" value="{{ $sanctionedAmount }}" readonly>
 																	</td>
-																	<td></td>
 																</tr>
 
-																<tr>
+																<!-- <tr>
 																	<td colspan="10" style="text-align:right;"><b>Balance Amount (A) In Rupees</b></td>
 																	<td>
 																		<input type="text" name="balance_amount" id="balance_amount"
 																			class="tboxsmclass" value="{{ $balance }}" readonly>
 																	</td>
 																	<td></td>
-																</tr>
+																</tr> -->
 
 																<tr>
-																	<td colspan="10" style="text-align:right;"><b>Total Claim Amount (A) In Rupees</b></td>
+																	<td colspan="10" style="text-align:right;"><b>Total Claim Amount (A-B) In Rs.</b></td>
 																	<td>
 																		<input type="text" name="total_claim_amount" id="total_claim_amount"
 																			class="tboxsmclass" value="{{ $totalClaim }}" readonly>
 																	</td>
-																	<td></td>
 																</tr>
 															</tfoot>
 														</table>
@@ -692,6 +686,10 @@ $isReadOnly = ($ICNo != session('WcmsEmpNo'));
 	});
 
 	$(document).on('keyup', '[id^="txt_adv_amount_"]', function() {
+    	calculateAmount();
+	});
+
+	$(document).ready(function () {
     	calculateAmount();
 	});
 

@@ -134,7 +134,7 @@ class RolesController extends Controller
         Helper::CreateLogInTable($request,$LogData);
         
 
-        $data = $this->role->ShowRoleListByRoleIdArr();
+        $data = $this->role->ShowRoleList(NULL);
         if(session('WcmsRoleGroupCode') == "ACCADMUSER"){
             $data = collect($data)->where('role_group_code','ACCUSER');
         }else if(session('WcmsRoleGroupCode') == "ADMUSER"){

@@ -70,9 +70,9 @@
 																				<th class="colhead">Employee Name</th>
 																				<th class="colhead">Employee ICNo</th>
 																				<th class="colhead">Employee Designation</th>
-																				<th class="colhead">EB charge</br>( &#8377; )</th>	
 																				<th class="colhead">LF charge</br>( &#8377; )</th>	
 																				<th class="colhead">WC charge</br>( &#8377; )</th>
+																				<th class="colhead">EB charge</br>( &#8377; )</th>	
 																			</tr>
 																		</thead>
 																		<tbody>
@@ -80,6 +80,7 @@
 																		@if(isset($data['HouseData']))
 																			@foreach($data['HouseData'] as $HouseData)
 																			<tr>
+																				<input type="hidden" name="txt_house_id[]" value="{{$HouseData->house_id}}">
 																				<td align="center">{{$loop->iteration}}</td>
 																				<td>
 																					<input type="text" name="txt_house_address[]" class="house_address tboxclass" value="{{$HouseData->house_address}}" readonly>
@@ -92,7 +93,7 @@
 																					<select name="txt_emp_name_payslip[]" class="tboxclass employee_select" onchange="getEmployeeDetails(this)">
 																						<option value="">Select Employee</option>
 																						@foreach($data['EmployeeData'] as $employee)
-																							<option value="{{ $employee->emp_no }}">
+																							<option value="{{ $employee->emp_no }}" {{($HouseData->emp_no == $employee->emp_no) ? 'selected' : ''}}>
 																								{{ $employee->emp_name_payslip }}
 																							</option>
 																						@endforeach
@@ -104,12 +105,12 @@
 																				<td>
 																					<input type="text" name="txt_designation[]" class="designation tboxclass" readonly>
 																				</td>
-																				<td><input type="text" name="txt_eb_charge[]" id="txt_eb_charge" class="tboxclass" value="{{$HouseData->eb_amount}}" readonly></td>
 																				</td>
 																				<td><input type="text" name="txt_lf_charge[]" id="txt_lf_charge" class="tboxclass" value="{{$HouseData->lf_amount}}" readonly></td>
 																				</td>
 																				<td><input type="text" name="txt_wc_charge[]" id="txt_wc_charge" class="tboxclass" value="{{$HouseData->wc_amount}}" readonly></td>
 																				</td>
+																				<td><input type="text" name="txt_eb_charge[]" id="txt_eb_charge" class="tboxclass" value="{{$HouseData->eb_amount}}" readonly></td>
 																			</tr>
 																			@endforeach
 																		@endif
@@ -189,6 +190,14 @@
 		responsive: true,
 		paging: true, 
 	});	
+
+	window.onload = function () {
+        document.querySelectorAll('.employee_select').forEach(function(select) {
+            if(select.value !== '') {
+                getEmployeeDetails(select);
+            }
+        });
+    };
 
 	function getEmployeeDetails(element) {
 		let empNo = element.value;

@@ -121,6 +121,11 @@ class PurchaseOrder extends Model
             return PurchaseOrder::where('work_order_id', $PoId)->update(['po_issued' => true]);
         }
     }
+    public static function SavesdIssued($PoId){
+        if(filled($PoId)){
+            return PurchaseOrder::where('work_order_id', $PoId)->update(['sd_received' => true]);
+        }
+    }
     public static function showPurchaseOredrIssuedData($request){
         return PurchaseOrder::where('po_issued',true)->where('active',1)->get();
     }
@@ -137,16 +142,31 @@ class PurchaseOrder extends Model
         }
     }
 
-    public static function showSdRecievedData(){
-        return PurchaseOrder::where(function ($query) {
-            $query->where('sd_received', false)->orWhereNull('sd_received');
-        })->where('active', 1)->get();
+    public static function showSdRecievedData($request, $purchaseId)
+    {
+        $query = PurchaseOrder::where('po_issued',true)->where('active', 1);
+        if (filled($purchaseId)) {
+            $query->where(function ($q) {
+                $q->where('sd_received', true)->orWhereNull('sd_received');
+            })->where('work_order_id', $purchaseId);
+        } else {
+            $query->where(function ($q) {
+                $q->where('sd_received', false)->orWhereNull('sd_received');
+            });
+        }
+
+        return $query->get();
     }
 
     public static function showPoRecievedData(){
         return PurchaseOrder::where(function ($query) {
             $query->where('pg_received', false)->orWhereNull('pg_received');
         })->where('active', 1)->get();
+    }
+
+    public static function showSDPGIssuedData($request,$sdrpo){
+        return PurchaseOrder::join('erp_sd_po','erp_sd_po.po_id','=','erp_po_order.work_order_id')
+        ->where('erp_sd_po.sd_po','=',$sdrpo)->where('sd_received',true)->where('erp_po_order.active',1)->get();
     }
     
    /*  public function CheckBank($BankArr){

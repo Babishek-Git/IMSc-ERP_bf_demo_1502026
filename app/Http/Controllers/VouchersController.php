@@ -137,6 +137,42 @@ class VouchersController extends Controller
         $ModuleDataList = filled($ModuleData) ? collect($ModuleData)->keyBy('wf_module_code') : [];  
         return view('vouchers.creation-list', compact('PaymentList','ModuleDataList','PaymentObjectHeadList','ObjectHeadList','ObjectHeadSubCataList','GiaList','LedgerList','LedgerGroupList','ProjectList'));
     }
+
+    public function VoucherViewList(Request $request){ 
+        
+        $PaymentList = $this->Payment->ShowCompletedPayment();  
+        $ModuleCodeList = filled($PaymentList) ? collect($PaymentList)->pluck('module_code')->toArray() : [];  
+        $PaymentIdList = filled($PaymentList) ? collect($PaymentList)->pluck('payment_id')->toArray() : [];
+        $ModuleData = $this->WorkFlowModule->ShowMultipleWorkFlowModulesByModuleCode($ModuleCodeList);
+        $PaymentObjectHeadData = $this->PaymentObjectHead->ShowMultiplePaymentObjectHead($PaymentIdList);
+        $PaymentObjectHeadList = filled($PaymentObjectHeadData) ? collect($PaymentObjectHeadData)->groupBy('payment_id') : [];
+        
+        $ObjectHeadIdList = filled($PaymentObjectHeadData) ? collect($PaymentObjectHeadData)->pluck('object_head_id')->toArray() : [];
+        $ObjectHeadSubCataIdList = filled($PaymentObjectHeadData) ? collect($PaymentObjectHeadData)->pluck('object_head_sub_cata_id')->toArray() : [];
+        $ProjectIdList = filled($PaymentObjectHeadData) ? collect($PaymentObjectHeadData)->pluck('project_id')->toArray() : [];
+        $GiaIdList = filled($PaymentObjectHeadData) ? collect($PaymentObjectHeadData)->pluck('gia_id')->toArray() : [];
+        $LedgerIdList = filled($PaymentObjectHeadData) ? collect($PaymentObjectHeadData)->pluck('ledger_id')->toArray() : [];
+        $LedgerGroupIdList = filled($PaymentObjectHeadData) ? collect($PaymentObjectHeadData)->pluck('ledger_group_id')->toArray() : [];
+
+        $ObjectHeadData = $this->ObjectHead->ShowMultipleObjectHeadById($ObjectHeadIdList);
+        $ObjectHeadSubCataData = $this->ObjectHeadSubCategory->ShowMultipleObjectHeadSubCataById($ObjectHeadSubCataIdList);
+        $GiaData = $this->Gia->ShowMultipleGiaById($GiaIdList);
+        $LedgerData = $this->Ledger->ShowMultipleLedgerById($LedgerIdList);
+        $LedgerGroupData = $this->LedgerGroup->ShowLedgerGroup(NULL,$LedgerGroupIdList);
+        $ProjectData = $this->ProjectMaster->ShowMultipleProjectById($ProjectIdList);
+
+        $ObjectHeadList = filled($ObjectHeadData) ? collect($ObjectHeadData)->keyBy('object_head_id') : [];
+        $ObjectHeadSubCataList = filled($ObjectHeadSubCataData) ? collect($ObjectHeadSubCataData)->keyBy('object_head_sub_cata_id') : [];
+        $GiaList = filled($GiaData) ? collect($GiaData)->keyBy('gia_id') : [];
+        $LedgerList = filled($LedgerData) ? collect($LedgerData)->keyBy('ledger_id') : [];
+        $LedgerGroupList = filled($LedgerGroupData) ? collect($LedgerGroupData)->keyBy('ledger_group_id') : [];
+        $ProjectList = filled($ProjectData) ? collect($ProjectData)->keyBy('project_id') : [];
+
+        $ModuleDataList = filled($ModuleData) ? collect($ModuleData)->keyBy('wf_module_code') : [];  
+        return view('vouchers.view-list', compact('PaymentList','ModuleDataList','PaymentObjectHeadList','ObjectHeadList','ObjectHeadSubCataList','GiaList','LedgerList','LedgerGroupList','ProjectList'));
+    }
+
+
     public function Vouchers(Request $request) {
 
         $IMScData   = $this->ImscAccount->ShowImscAccount();

@@ -190,6 +190,7 @@
                                     }
                                   }
                                 }
+                                $ProjectTotalAmount = 0;
                                 @endphp
 
                                 <div class="lom-proj-hdr">
@@ -214,17 +215,17 @@
                                             </div>
                                             <div class="div4 no-margin pd-lr-1">
                                               <div class="lboxlabel c-case">Sanction Date</div>
-                                              <input type="text" name="txt_sanction_date[]" id="txt_sanction_date_{{ $ProjectGrantparentId }}" class="tboxsmclass datepicker" value="{{ isset($ApexSanctionDate) ? Helper::DisplayDateFormat($ApexSanctionDate) : '' }}">
+                                              <input type="text" name="txt_sanction_date[]" id="txt_sanction_date_{{ $ProjectGrantparentId }}" class="tboxsmclass datepicker Project" value="{{ isset($ApexSanctionDate) ? Helper::DisplayDateFormat($ApexSanctionDate) : '' }}">
                                             </div>
                                             <div class="div4 no-margin pd-lr-1">
                                               <div class="lboxlabel c-case">Sanction Amount ( &#8377; In Lakhs )</div>
-                                              <input type="number" name="txt_sanction_amount[]" id="txt_sanction_amount_{{ $ProjectGrantparentId }}" class="tboxsmclass" value="{{ isset($ApexSanctionAmt) ? $ApexSanctionAmt : '' }}">
+                                              <input type="number" name="txt_sanction_amount[]" data-id="{{ $ProjectGrantparentId }}" id="txt_sanction_amount_{{ $ProjectGrantparentId }}" class="tboxsmclass right-align Project" value="{{ isset($ApexSanctionAmt) ? $ApexSanctionAmt : '' }}">
                                             </div>
                                           </div>
                                         </th>
                                       </tr>
                                       <tr>
-                                        <th>S.No.</th><th>Object Head</th><th>Over All Sanction Amount ( &#8377; )</th>
+                                        <th>S.No.</th><th>Object Head</th><th nowrap="">Over All Sanction Amount ( &#8377; In Lakhs )</th>
                                       </tr>
                                     </thead>
                                     <tbody>
@@ -257,7 +258,7 @@
                                               @php $i = 1; @endphp
                                               @foreach($SubCataData as $ObjectHeadSubCata)
                                                 @php
-                                                  $ObjectHeadSanctionAmt = '';
+                                                  $ObjectHeadSanctionAmt = 0;
                                                   if(isset($ApexObjectHeadSanctionData)){
                                                     $ObjeadHeadSancData = $ApexObjectHeadSanctionData
                                                       ->where('gia_id', $Gia->gia_id)
@@ -268,13 +269,14 @@
                                                       $ObjectHeadSanctionAmt = collect($ObjeadHeadSancData)->pluck('oh_sanctioned_amount')->first();
                                                     }
                                                   }
+                                                  $ProjectTotalAmount = $ProjectTotalAmount + $ObjectHeadSanctionAmt;
                                                   $Index++;
                                                 @endphp
                                                 <tr class="lom-tr-sub">
                                                   <td class="lom-td-sno"><span class="lom-sno-rom">({{ Helper::toRoman($i) }})</span></td>
                                                   <td class="lom-td-obj lom-td-obj--sub">{{ $ObjectHeadSubCata->oh_sub_cata_name }}</td>
                                                   <td class="lom-td-led">
-                                                    <input type="number" class="tboxsmclass SanctionAmount" name="txt_oh_sanction_amount[]" id="txt_oh_sanction_amount_{{ $Index }}" value="{{ isset($ObjectHeadSanctionAmt) ? $ObjectHeadSanctionAmt : '' }}">
+                                                    <input type="number" class="tboxsmclass SanctionAmount right-align SubProject{{ $ProjectGrantparentId }}" name="txt_oh_sanction_amount_{{ $ProjectGrantparentId }}[]" id="txt_oh_sanction_amount_{{ $Index }}" value="{{ isset($ObjectHeadSanctionAmt) ? $ObjectHeadSanctionAmt : '' }}">
                                                     <input type="hidden" class="tboxsmclass" name="txt_project_grant_parent_id_{{ $ProjectGrantparentId }}[]" id="txt_project_grant_parent_id_{{ $Index }}" value="{{ $ProjectGrantparentId }}">
                                                     <input type="hidden" class="tboxsmclass" name="txt_gia_id_{{ $ProjectGrantparentId }}[]" id="txt_gia_id_{{ $Index }}" value="{{ $Gia->gia_id }}">
                                                     <input type="hidden" class="tboxsmclass" name="txt_object_head_id_{{ $ProjectGrantparentId }}[]" id="txt_object_head_id_{{ $Index }}" value="{{ $ObjectHead->object_head_id }}">
@@ -285,7 +287,7 @@
                                               @endforeach
                                             @else
                                               @php
-                                                $ObjectHeadSanctionAmt = '';
+                                                $ObjectHeadSanctionAmt = 0;
                                                 if(isset($ApexObjectHeadSanctionData)){
                                                   $ObjeadHeadSancData = $ApexObjectHeadSanctionData
                                                     ->where('gia_id', $Gia->gia_id)
@@ -295,13 +297,14 @@
                                                     $ObjectHeadSanctionAmt = collect($ObjeadHeadSancData)->pluck('oh_sanctioned_amount')->first();
                                                   }
                                                 }
+                                                $ProjectTotalAmount = $ProjectTotalAmount + $ObjectHeadSanctionAmt;
                                                 $Index++;
                                               @endphp
                                               <tr>
                                                 <td class="lom-td-sno"><span class="lom-sno-num">{{ $Sno }}</span></td>
                                                 <td class="lom-td-obj">{{ $ObjectHead->object_head_name }}</td>
                                                 <td class="lom-td-led">
-                                                    <input type="number" class="tboxsmclass SanctionAmount" name="txt_oh_sanction_amount_{{ $ProjectGrantparentId }}[]" id="txt_oh_sanction_amount_{{ $Index }}" value="{{ isset($ObjectHeadSanctionAmt) ? $ObjectHeadSanctionAmt : '' }}">
+                                                    <input type="number" class="tboxsmclass SanctionAmount right-align SubProject{{ $ProjectGrantparentId }}" name="txt_oh_sanction_amount_{{ $ProjectGrantparentId }}[]" id="txt_oh_sanction_amount_{{ $Index }}" value="{{ isset($ObjectHeadSanctionAmt) ? $ObjectHeadSanctionAmt : '' }}">
                                                     <input type="hidden" class="tboxsmclass" name="txt_project_grant_parent_id_{{ $ProjectGrantparentId }}[]" id="txt_project_grant_parent_id_{{ $Index  }}" value="{{ $ProjectGrantparentId }}">
                                                     <input type="hidden" class="tboxsmclass" name="txt_gia_id_{{ $ProjectGrantparentId }}[]" id="txt_gia_id_{{ $Index  }}" value="{{ $Gia->gia_id }}">
                                                     <input type="hidden" class="tboxsmclass" name="txt_object_head_id_{{ $ProjectGrantparentId }}[]" id="txt_object_head_id_{{ $Index  }}" value="{{ $ObjectHead->object_head_id }}">
@@ -312,6 +315,15 @@
                                             @php $Sno++; @endphp
                                           @endif
                                         @endforeach
+                                        <thead>
+                                          <tr>
+                                            <th class="lom-td-sno"></th>
+                                            <th class="lom-td-obj">TOTAL</th>
+                                            <th class="lom-td-led">
+                                              <input type="number" class="tboxsmclass right-align ProjectTotalAmt{{ $ProjectGrantparentId }}" style="font-weight:bold" name="txt_project_total_amount_{{ $ProjectGrantparentId }}[]" id="txt_project_total_amount_{{ $ProjectGrantparentId }}" value="{{ isset($ProjectTotalAmount) ? $ProjectTotalAmount : '' }}" readonly>
+                                            </th>
+                                          </tr>
+                                        </thead>
                                       @else
                                         <tr><td colspan="3" class="lom-empty-state">No object heads found.</td></tr>
                                       @endif
@@ -365,6 +377,38 @@
 // ─────────────────────────────────────────────────────────────────────────────
 $(".ChosenInput").chosen();
 var KillEvent = 0;
+$("body").on("change", ".SanctionAmount", function () {
+    let AmtErr = 0;
+    $(".Project").each(function () {
+			let ProjectAmount  = $(this).val();
+      let Id  = $(this).attr('data-id');
+      let TotalSubProjectAmount = 0; let TotalSubProjectAmount2 = 0;
+			if(ProjectAmount !== "") {
+        if($(".SubProject"+Id).length){
+          $(".SubProject"+Id).each(function () {
+            let SubProjectAmount = $(this).val();
+            if(SubProjectAmount !== "") {
+              TotalSubProjectAmount = TotalSubProjectAmount + Number(SubProjectAmount);
+              if(Number(TotalSubProjectAmount) <= Number(ProjectAmount)){ 
+                TotalSubProjectAmount2 = TotalSubProjectAmount2 + Number(SubProjectAmount);
+              }
+            }
+          });
+        }
+			}
+      $("#txt_project_total_amount_"+Id).val(TotalSubProjectAmount2);
+      if(Number(TotalSubProjectAmount) > Number(ProjectAmount)){
+        AmtErr++;
+      }
+		});
+    
+    if(AmtErr > 0){
+      BootstrapDialog.alert("Sub Project total amount should be less than or equal Apex project sanctioned amount");
+      $(this).val(0);
+    }
+});
+
+
 $("body").on("click", "#btnSave", function () {
 	if(KillEvent == 0){
 		let AmountErr = 0; let NegativeAmountErr = 0;

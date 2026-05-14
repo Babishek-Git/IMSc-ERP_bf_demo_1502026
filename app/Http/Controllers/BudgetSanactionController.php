@@ -12,6 +12,7 @@ use App\Models\ObjectHeadGiaMapping;
 use App\Models\BudgetAllocationReceived;
 use App\Models\PaymentObjectHead;
 use App\Models\Payment;
+use App\Models\ApexBudgetSanctionSubProjectWise;
 
 
 use App\Models\Gia;
@@ -36,14 +37,16 @@ class BudgetSanactionController extends Controller
         $this->BudgetReceived          = new BudgetAllocationReceived();
         $this->PaymentObjectHead       = new PaymentObjectHead();
         $this->Payment                 = new Payment();
+        $this->ApexBudgetSanctionSubProjectWise = new ApexBudgetSanctionSubProjectWise();
     }
     public function BudgetSanction(Request $request){
         if($request->btn_next_float){
             $BudgetType = $request->txt_budget_type;
         }else{
             $BudgetType = NULL;
-        }
+        } 
         if($request->btn_save){//dd($request);
+            $BudgetType           = $request->input('txt_budget_type'); 
             $GrantAidId           = $request->input('cmb_gia'); 
             $SanactionNo          = $request->input('sanction_no'); 
             $FinalYear            = $request->input('curr_final_year'); 
@@ -103,6 +106,11 @@ class BudgetSanactionController extends Controller
                 $message = "Error : Sorry transaction not fully completed";
                 Session::put('ALertMesage', $message);
             }
+            if($BudgetType == 'CRA'){
+                 return redirect()->route('budget.project-budget-sanction-initiate');
+            }else{
+                return redirect()->route('budget.sanction-entry');
+            }
         }
         $ProjectHeadGroupData = $this->project->AllLeafNodesOnly();//$this->project->ShowAllParentChild(NULL); 
         $GrandDetails         = $this->GiaMaster->ShowGia();
@@ -122,14 +130,17 @@ class BudgetSanactionController extends Controller
             $ProjectId                   = $request->ProjectId;
             $ProjectParentId             = $request->ProjectParentId;
             $ParentIdParentIds           = $this->project->getGrandParentData($ProjectParentId);
-            $ObjHeadProjectMappDataData  = $this->ObjectHeadGiaMapping->ShowObjectHeadDataByGiaIdAndProjId($GetGiaId,$ParentIdParentIds);
+            $GrandParentId               = filled($ParentIdParentIds) ? $ParentIdParentIds[0] : NULL;
+            $ObjHeadProjectMappDataData  = $this->ObjectHeadGiaMapping->ShowObjectHeadDataByGiaIdAndProjId($GetGiaId,$ParentIdParentIds); 
             $AllObectHead                = $this->ObjectHead->ShowObjectHead(NULL);
             $AllObectHeadSubCata         = $this->ObjectHeadSubCategory->ShowObjectHeadSubCata(NULL);
             $AllObectHeadSubCataGrpData  = filled($AllObectHeadSubCata) ? collect($AllObectHeadSubCata)->groupBy('object_head_id') : [];
             $BudgetAllocationData        = $this->BudgetAllocation->ShowBudgetAllocationData($GetGiaId,$FinancialYear);//dd($ObjHeadProjectMappDataData);
             $AllObjAllocatedIds          = collect($BudgetAllocationData)->pluck('budget_allocation_id')->toArray();
-           $GetClaimDataByAllocatedIds  = $this->BudgetAllocationClaimed->GetClaimDataByAllocatedIds($AllObjAllocatedIds,$ClaimMode_Type);
-            $RetunArr = array('ClaimData'=>$GetClaimDataByAllocatedIds,'AllObjHeadData'=>$AllObectHead,'AllObjSubCatData'=>$AllObectHeadSubCata,'AllObjHeadSubCatGroupByData'=>$AllObectHeadSubCataGrpData,'AllObectHeadGaiMappingData' => $ObjHeadProjectMappDataData,'BudgetAllocationData'=>$BudgetAllocationData);
+            $GetClaimDataByAllocatedIds  = $this->BudgetAllocationClaimed->GetClaimDataByAllocatedIds($AllObjAllocatedIds,$ClaimMode_Type);
+            $SubProjectAllocationData   = $this->ApexBudgetSanctionSubProjectWise->ShowApexSanctionByProjectSubProjectWise($GetGiaId,$ProjectId,$GrandParentId);
+            //dd($SubProjectAllocationData);
+            $RetunArr = array('ClaimData'=>$GetClaimDataByAllocatedIds,'AllObjHeadData'=>$AllObectHead,'AllObjSubCatData'=>$AllObectHeadSubCata,'AllObjHeadSubCatGroupByData'=>$AllObectHeadSubCataGrpData,'AllObectHeadGaiMappingData' => $ObjHeadProjectMappDataData,'BudgetAllocationData'=>$BudgetAllocationData,'SubProjectAllocationData'=>$SubProjectAllocationData);
             return $RetunArr;
         }else{
             $AllObectHead                = $this->ObjectHead->ShowObjectHead(NULL);
@@ -190,6 +201,7 @@ class BudgetSanactionController extends Controller
             $BudgetType = NULL;
         }
          if($request->btn_save){
+            $BudgetType           = $request->input('txt_budget_type'); 
             $ClaimDate               = $request->claim_date;
             $ClaimPeriod             = $request->cmb_month ?? $request->cmb_quarter;
             $BudgetAllocationIdArray = $request->input('bud_allocted_id'); 
@@ -224,6 +236,11 @@ class BudgetSanactionController extends Controller
                 $message = "Error : Sorry transaction not fully completed";
                 Session::put('ALertMesage', $message);
             }
+            if($BudgetType == 'CRA'){
+                 return redirect()->route('budget.project-budget-sanction-initiate');
+            }else{
+                return redirect()->route('budget.budget-claim-entry');
+            }
         }
         $AllObectHead                    = $this->ObjectHead->ShowObjectHead(NULL);
         $AllObectHeadSubCata             = $this->ObjectHeadSubCategory->ShowObjectHeadSubCata(NULL);
@@ -247,6 +264,7 @@ class BudgetSanactionController extends Controller
             $BudgetType = NULL;
         }
         if($request->btn_save){
+            $BudgetType               = $request->input('txt_budget_type'); 
             $RecivedDate              = $request->rece_date;
             $BudgetClaimIdArray       = $request->input('bud_claim_id'); 
             $RecivedAmountArray       = $request->input('recived_amount'); 
@@ -278,6 +296,11 @@ class BudgetSanactionController extends Controller
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
                 Session::put('ALertMesage', $message);
+            }
+            if($BudgetType == 'CRA'){
+                 return redirect()->route('budget.project-budget-sanction-initiate');
+            }else{
+                return redirect()->route('budget.budget-received-entry');
             }
         }
         $AllObectHead                    = $this->ObjectHead->ShowObjectHead(NULL);

@@ -108,7 +108,6 @@ class LtcAdvances extends Model
                 });
             });
         })->get();
-        // dd($RequsetData);
         return $RequsetData;
     }
 
@@ -131,8 +130,7 @@ class LtcAdvances extends Model
         ->whereExists(function ($query) {
             $query->select(DB::raw(1))->from('erp_payment')
             ->whereColumn('erp_payment.pay_emp_no', 'erp_emp_ltc_advances.emp_no')->where('erp_payment.module_code', 'LTCADV')
-            ->whereNotNull('erp_payment.voucher_no')->whereNotNull('erp_payment.bill_no')
-            ->where('erp_payment.is_completed', true);
+            ->whereNotNull('erp_payment.voucher_no')->where('erp_payment.is_completed', true);
         })->when($EmpNo, function ($query) use ($EmpNo) {
             return $query->where('erp_emp_ltc_advances.emp_no', $EmpNo);
         })->where('erp_emp_ltc_advances.module_code',$ModuleCode) 

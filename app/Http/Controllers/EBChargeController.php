@@ -36,17 +36,25 @@ class EBChargeController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
+                    if (!empty($request->txt_house_id[$key])) {
 
+                        DB::table('erp_house_master')->where('house_id', $request->txt_house_id[$key])
+                        ->update([
+                            'emp_no' => $request->txt_emp_no[$key],
+                            'updated_at' => now()
+                        ]);
+                    }
                     $this->Eb->createEBCharges($saveData);
                 }
                 DB::commit();
                 return redirect()->back()->with('success', 'Saved successfully');
+                Session::put('ALertMesage', $message);
             } catch (\Exception $e) {
                 DB::rollback();
                 dd($e);
                 return redirect()->back()->with('error', $e->getMessage());
             }
-            Session::put('ALertMesage', $message);
+            
             return redirect()->route('EbTrariffMaster.EBTariffMaster');
         }
       

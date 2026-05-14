@@ -46,6 +46,8 @@
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Purchase Order Name<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Purchase Order Date<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Purchase Order Cost<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
+										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">SD Received Date<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
+										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">SD Amount<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<!-- <th class="rm-sortable" data-col="name"><div class="rm-th-inner">Is Employee Portal Access <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th> -->
 										<th style="width:80px; text-align:center;">Edit</th>
 										<th style="width:80px; text-align:center;">Delete</th>
@@ -60,8 +62,10 @@
 													<td>{{ $ShowPoItemDetailsData->work_name }}</td>
 													<td>{{Helper::DisplayDateFormat($ShowPoItemDetailsData->work_order_date)}}</td>
 													<td>{{ $ShowPoItemDetailsData->work_order_cost }}</td>
+													<td>{{ Helper::DisplayDateFormat($ShowPoItemDetailsData->sdpo_received_date) }}</td>
+													<td>{{ $ShowPoItemDetailsData->sd_po_amount }}</td>
 													<td align="center">
-														<button type="button" name="btn_edit" id="btn_edit" class="btn btn-default teditbtn estEdit" onClick="window.location='{{route('bank.Bank', ['id' => encrypt($ShowPoItemDetailsData->id)])}}'" title="Click here to Edit" style="cursor: pointer;"><i class="fa fa-edit pt2"></i></button>
+														<button type="button" name="btn_edit" id="btn_edit" class="btn btn-default teditbtn estEdit" onClick="window.location='{{route('sdpo-entry.sd-entry', ['id' => encrypt($ShowPoItemDetailsData->work_order_id)])}}'" title="Click here to Edit" style="cursor: pointer;"><i class="fa fa-edit pt2"></i></button>
 													</td>
 													<td align="center">
 														<button type="button" name="btn_delete" id="btn_delete" class="btn btn-default tdelbtn Delete" title="Click here to delete" style="cursor: pointer;"><i class="fa fa-trash-o pt2"></i></button>												

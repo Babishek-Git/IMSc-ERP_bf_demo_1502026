@@ -55,6 +55,8 @@ class SdAndPgEntryController extends Controller
                 $SaveData['updated_at']          = NOW();
                 $SaveData['updated_by']          = session('WcmsEmpNo');
                 $SaveData = $this->SdAndPo->CreateSdPo($SaveData);
+                $PoId=$SaveData->po_id;
+                $SaveData1 = $this->PurchaseOrder->SavesdIssued($PoId);
                 DB::commit();
                 $message = "SD Entry Saved Successfully";
                 Session::put('ALertMesage', $message); 
@@ -64,9 +66,27 @@ class SdAndPgEntryController extends Controller
                 Session::put('ALertMesage', $message); 
             }
         }
-        $PODatas    = $this->PurchaseOrder->showSdRecievedData();
-
-        return view('sdpo-entry.sd-entry')->with('data',compact('PODatas'));  
+        
+        $EditSDData=NULL;
+        $PODetails=NULL;
+        if(isset($request->id)){ 
+            try {
+                $EditId = decrypt($request->id);
+            }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                $data = "Error : Sorry Invalid Attempt";
+                return redirect()->back();
+            }
+            $EditSDData   = $this->SdAndPo->ShowPgSdData($EditId);
+            $PODetails    = $this->PurchaseOrder->showPurchaseOredrData(NULL,$EditId);
+            
+        }
+        if(isset($request->id)){ 
+            $PODatas  = $this->PurchaseOrder->showSdRecievedData(NULL,$EditId);
+        }else{
+            $PODatas  = $this->PurchaseOrder->showSdRecievedData($request,NULL);
+        }
+       
+        return view('sdpo-entry.sd-entry')->with('data',compact('PODatas','EditSDData','PODetails'));  
     }
 
     public function POentyForm(Request $request){ 
@@ -136,4 +156,5 @@ class SdAndPgEntryController extends Controller
         $OutputArr              = array('PGSDVALUES' => $PurchaseOrderPgSdData);
         return $OutputArr;
     }
+       
 }

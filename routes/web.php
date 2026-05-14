@@ -311,6 +311,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
 			Route::group(['prefix' => 'EbTrariffMaster'], function() {
 				Route::match(array('GET','POST'),'/EBTariffCharge', 'EBChargeController@EBCharge')->name('EbTrariffMaster.EBTariffMaster');
+				Route::match(array('GET','POST'),'/get-employee-details', 'EBChargeController@getEmployeeDetails')->name('EbTrariffMaster.get-employee-details');
 			});
 			Route::group(['prefix' => 'HouseMaster'], function() {
 				Route::match(array('GET','POST'),'/HouseMaster', 'HouseMasterController@HouseMaster')->name('HouseMaster.HouseMaster');
@@ -348,7 +349,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 			Route::group(['prefix' => 'SdAndPO'], function() {
 				Route::match(array('GET','POST'),'/sd-entry', 'SdAndPgEntryController@SDentyForm')->name('sdpo-entry.sd-entry');
 				Route::match(array('GET','POST'),'/pg-entry', 'SdAndPgEntryController@POentyForm')->name('sdpo-entry.pg-entry');
-				Route::match(array('GET','POST'),'/get-sd-percentage', 'SdAndPgEntryController@getSdPercentage');
+				Route::match(array('GET','POST'),'/get-sd-percentage', 'SdAndPgEntryController@getSdPercentage')->name('SdAndPO.get-sd-percentage');
 				Route::match(array('GET','POST'),'/po-sd-pg', 'SdAndPgEntryController@PoSDPGData')->name('sdpo.po-sd-pg');
 				Route::match(array('GET','POST'),'/sd-view', 'PurchaseOrderController@ViewPurchaseOrderForSD')->name('sdpo-entry.view-sd');
 				Route::match(array('GET','POST'),'/pg-view', 'PurchaseOrderController@ViewPurchaseOrderForPG')->name('sdpo-entry.view-pg');
@@ -522,6 +523,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/get-transaction-data', 'VouchersController@GetTransactionData')->name('Voucher.get-transaction-data');
 				Route::match(array('GET','POST'),'/get-transaction-mapping-data', 'VouchersController@GetTransactionMappingData')->name('Voucher.get-transaction-mapping-data');
 				Route::match(array('GET'),'/get-paydata-ledger-group', 'VouchersController@GetLegderGroupPayData')->name('Voucher.get-paydata-ledger-group');
+				Route::match(array('GET','POST'),'/voucher-view-list', 'VouchersController@VoucherViewList')->name('Voucher.voucher-view-list');
 			});
 			Route::group(['prefix' => 'payment'], function() { 
 				Route::match(array('GET','POST'),'/salary-payment-creation-list', 'SalaryPaymentController@SalaryPaymentCreationList')->name('payment.salary-payment-creation-list');

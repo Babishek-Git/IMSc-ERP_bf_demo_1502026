@@ -46,7 +46,7 @@
 															@php 
 																$SelStr = "";
 																if(isset($data['RoleData'])){
-																	if($data['RoleData']->section_id == $Office->office_id){
+																	if($data['RoleData']->group_id == $Office->office_id){
 																		$SelStr = 'selected="selected"';
 																	} 
 																}

@@ -7,7 +7,7 @@ $ProjectHeadMapArray = $data['ProjectHeadMapArray'] ?? [];
 @endphp
 
 <body class="page1" id="top" oncontextmenu="return false"onload="noBack();" onpageshow="if (event.persisted) noBack();" onUnload="">
-	<form action="" method="post" enctype="multipart/form-data" name="form">
+	<form action="" method="post" enctype="multipart/form-data" name="form" autocomplete="off">
 		<div class="content">
 			<div class="title"></div>
 			<div class="container_12">
@@ -22,6 +22,11 @@ $ProjectHeadMapArray = $data['ProjectHeadMapArray'] ?? [];
 										<div class="row row-fluid line-control-menu-bar formtitlebar" style="border:none">
 										<div class="btn-group floatr">
 											<button type="submit" class="step-btn" name="btn_save" id="btn_save" value="Save">Save</button>
+											@if(isset($data['BudgetType']))
+											@if($data['BudgetType'] == "CRA")
+												&nbsp;<input type="button" class="backbutton" name="back" id="back" value=" Back " onclick="window.location='{{ route('budget.project-budget-sanction-initiate') }}'" />
+											@endif
+											@endif
 											<input type="button" class="backbutton" name="home" id="home" value=" Home " onclick="window.location='{{ route('dashboard.index') }}'" />
 										</div>
 									</div>
@@ -101,6 +106,7 @@ $ProjectHeadMapArray = $data['ProjectHeadMapArray'] ?? [];
 												<div class="div-12" align="center">
                                                     <!-- <input type="button" name="btn_back" id="btn_back" class="backbutton" value=" Back "> -->
 													<input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
+													<input type="hidden" name="txt_budget_type" id="txt_budget_type" value="{{ $data['BudgetType'] }}" />
 												</div>		
 											</div>
 											<div class="row smclearrow"></div>  
@@ -207,14 +213,14 @@ $(document).ready(function () {
 				var BudgetClaimData              = data.ClaimData ?? [];
 				var GetRecivedData               = data.RecivedData ?? [];
 				var SancationTable = '';
-					SancationTable += '<table class="formtable" align="center" id="RelationshipTable" width="100%">';
+					SancationTable += '<table class="attTable" align="center" id="RelationshipTable" width="100%">';
 					SancationTable += '<thead>';
 					SancationTable += '<tr>';
 					SancationTable += '<th>Object Head</th>';
 					// SancationTable += '<th>Proposed Amount (Rs.)</th>';
-					SancationTable += '<th>Allocation Amount (Rs.) <br>' + FinancialYear + '</th>';
-					SancationTable += '<th>' + LabelText + '<br>Claim Amount (Rs.)</th>';
-					SancationTable += '<th>' + LabelText + '<br>Received Amount (Rs.)</th>';
+					SancationTable += '<th style="vertical-align:middle; text-align:center;">Allocation Amount (₹ in Lakhs) <br>' + FinancialYear + '</th>';
+					SancationTable += '<th style="vertical-align:middle; text-align:center;">' + LabelText + '<br>Claim Amount (₹ in Lakhs)</th>';
+					SancationTable += '<th style="vertical-align:middle; text-align:center;">' + LabelText + '<br>Received Amount (₹ in Lakhs)</th>';
 					SancationTable += '</tr>';
 					SancationTable += '</thead>';
 					SancationTable += '<tbody>';

@@ -41,5 +41,8 @@ class ApexBudgetSanctionSubProjectWise extends Model
     public function ShowMultipleApexSanctionSubProjectWise($ApexProjectIdList){
         return self::whereIn('apex_project_id', $ApexProjectIdList)->get();    
     }
+    public function ShowApexSanctionByProjectSubProjectWise($GiaId,$ProjectId,$ParentProjectId){
+        return self::where('gia_id', $GiaId)->where('apex_project_id', $ParentProjectId)->where('project_id', $ProjectId)->get();    
+    }
 
 }

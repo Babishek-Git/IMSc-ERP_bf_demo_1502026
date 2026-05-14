@@ -187,6 +187,69 @@
   }
 
 
+  .hideText{
+  max-width: 650px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.rtable td{
+  overflow: visible !important;
+}
+
+.rtable-container{
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.lom-tbl{
+  overflow: visible !important;
+}
+
+
+.tooltipCell{
+  position: relative;
+  overflow: visible !important;
+  width: 650px;
+  min-width: 650px;
+  max-width: 650px;
+}
+
+.tooltipText{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+.ellipsisText{
+  display: inline-block;
+  max-width: 520px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* TOOLTIP */
+.tooltipText:hover::after{
+  content: attr(data-title);
+  position: absolute;
+  left: 0;
+  top: -34px;
+  background: #222;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 999999;
+  font-size: 12px;
+}
+
+
 
 </style>
 <body class="page1" id="top" oncontextmenu="return false"onload="noBack();" onpageshow="if (event.persisted) noBack();" onUnload="">
@@ -215,7 +278,7 @@
 
                       $GroupedProjects = collect($Projects)->groupBy('project_parentid');
 
-                      function renderTree($parentId, $GroupedProjects, $level = 0, $GrandParent = 0, $OtherParam)
+                      function renderTree($parentId, $GroupedProjects, $level = 0, $GrandParent = 0, $OtherParam, &$HorizontalTotalAmtArr)
                       {
                           if(isset($GroupedProjects[$parentId]))
                           {
@@ -240,7 +303,7 @@
                                           <tbody>
                                       ';
                                       $GrandParent = $project->project_id;
-
+                                      $HorizontalTotalArr = []; 
                                       if(isset($OtherParam['ObjectHeadGiaMapgrpData'])){
                                         $ObjectHeadGiaMapgrpData = $OtherParam['ObjectHeadGiaMapgrpData'];
                                         $ObjectHeadSubCataGrpData = $OtherParam['ObjectHeadSubCataGrpData'];
@@ -261,6 +324,9 @@
                                                       echo '<td class="lom-td-obj oh-title" nowrap="">Title &nbsp;';
                                                       echo $ObjectHeadSubCataValue->oh_sub_cata_name;
                                                       echo ' (&#8377;)</td>';
+                                                      $TempIndex = $GrandParent."_".$ObjectHeadId."_".$ObjectHeadSubCataValue->oh_sub_cata_id;
+                                                      $TempArr = ['KEY'=>$TempIndex,'OH'=>$ObjectHeadId,'OHSC'=>$ObjectHeadSubCataValue->oh_sub_cata_id,'OHNAME'=>$ObjectHeadSubCataValue->oh_sub_cata_name];
+                                                      $HorizontalTotalArr[] = $TempArr;
                                                     }
                                                   }
                                                 }
@@ -273,9 +339,13 @@
                                                 echo '<td class="lom-td-obj oh-title" nowrap="">';
                                                 echo $ObjectHeadName;
                                                 echo ' (&#8377;)</td>';
+                                                $TempIndex = $GrandParent."_".$ObjectHeadId."_0";
+                                                $TempArr = ['KEY'=>$TempIndex,'OH'=>$ObjectHeadId,'OHSC'=>0,'OHNAME'=>$ObjectHeadName];
+                                                $HorizontalTotalArr[] = $TempArr;
                                               }
                                               
                                             }
+                                            echo '<td class="lom-td-obj oh-title" nowrap="">Total Amount (&#8377;)</td>';
                                             echo '</tr>';
                                           }
                                         }
@@ -285,31 +355,16 @@
 
                                   echo '<tr class="'.$rowClass.'">';
 
-                                      echo '<td class="lom-td-obj hideText"
-                                              style="padding-left:'.($level * 30).'px;">';
-
-                                          if($level == 0)
-                                          {
-                                              echo '
-                                                  <span style="
-                                                      font-size:13px;
-                                                      color:rgba(255,255,255,.7)
-                                                  ">📁</span>
-
-                                                  <span class="lom-proj-name">'
-                                                      .$project->project_name.
-                                                  '</span>
-                                              ';
-                                          }
-                                          else
-                                          {
-                                              echo '
-                                                  <span class="lom-step">↳</span>
-                                                  '.$project->project_name
-                                              ;
-                                          }
-
+                                      echo '<td class="lom-td-obj tooltipCell" style="padding-left:'.($level * 30).'px;">';
+                                      echo '<span class="tooltipText" data-title="'.$project->project_name.'">';
+                                      if($level == 0){
+                                          echo '<span style="font-size:13px;color:rgba(255,255,255,.7)">📁</span><span class="lom-proj-name">'.$project->project_name.'</span>';
+                                      }else{
+                                          echo '<span class="lom-step">↳</span><span class="ellipsisText">'.$project->project_name.'</span>';
+                                      }
+                                      echo '</span>';
                                       echo '</td>';
+                                      $SubProjectOHTotalAmt = 0;
                                       if(isset($OtherParam['ApexObjectHeadSanctionData'])){
                                         $SubprojectSanctionData = $OtherParam['ApexObjectHeadSanctionData'];
                                       }
@@ -334,7 +389,7 @@
                                                     foreach($ObjectHeadSubCata as $ObjectHeadSubCataValue){
                                                       
                                                       if($isLeaf){
-                                                        $ObjectHeadSanctionAmt = '';
+                                                        $ObjectHeadSanctionAmt = 0;
                                                         if(isset($SanctionIndexed)){
                                                           /*$ObjeadHeadSancData = $SubprojectSanctionData
                                                             ->where('gia_id', $ProjectObjectHeadValue->gia_id)
@@ -350,10 +405,12 @@
                                                                   ($ObjectHeadSubCataValue->oh_sub_cata_id ?? 0) . '_' .
                                                                   ($project->project_id ?? 0) . '_' .
                                                                   ($GrandParent ?? 0);
-                                                          $ObjectHeadSanctionAmt = $SanctionIndexed[$key] ?? '';
+                                                          $ObjectHeadSanctionAmt = $SanctionIndexed[$key] ?? 0;
 
                                                         }
-                                                        
+                                                        $SubProjectOHTotalAmt = $SubProjectOHTotalAmt + $ObjectHeadSanctionAmt;
+                                                        $TempIndex2 = $GrandParent."_".$ProjectObjectHeadValue->object_head_id."_".$ObjectHeadSubCataValue->oh_sub_cata_id;
+                                                        $HorizontalTotalAmtArr[$TempIndex2] = ($HorizontalTotalAmtArr[$TempIndex2] ?? 0) + $ObjectHeadSanctionAmt;                                                        
 
                                                         echo '<td class="lom-td-obj">';
                                                         echo '<input class="tboxsmclass SanctionAmount" type="text" name="txt_oh_sanction_amount[]" value="'.$ObjectHeadSanctionAmt.'">';
@@ -383,7 +440,7 @@
                                                 //echo $ObjectHeadName;
                                                 //echo '</td>';
                                                 if($isLeaf){
-                                                  $ObjectHeadSanctionAmt = '';
+                                                  $ObjectHeadSanctionAmt = 0;
                                                   if(isset($SanctionIndexed)){
                                                     /*$ObjeadHeadSancData = $SubprojectSanctionData
                                                       ->where('gia_id', $GiaId)
@@ -398,8 +455,12 @@
                                                             (0) . '_' .
                                                             ($project->project_id ?? 0) . '_' .
                                                             ($GrandParent ?? 0);
-                                                    $ObjectHeadSanctionAmt = $SanctionIndexed[$key] ?? '';
+                                                    $ObjectHeadSanctionAmt = $SanctionIndexed[$key] ?? 0;
                                                   }
+                                                  $SubProjectOHTotalAmt = $SubProjectOHTotalAmt + $ObjectHeadSanctionAmt;
+                                                  $TempIndex2 = $GrandParent."_".$ObjectHeadId."_0";
+                                                  $HorizontalTotalAmtArr[$TempIndex2] = ($HorizontalTotalAmtArr[$TempIndex2] ?? 0) + $ObjectHeadSanctionAmt; 
+                                                  
                                                   echo '<td class="lom-td-obj">';
                                                   echo '<input class="tboxsmclass SanctionAmount" type="text" name="txt_oh_sanction_amount[]" value="'.$ObjectHeadSanctionAmt.'">';
                                                   echo '<input class="tboxsmclass" type="hidden" name="txt_gia_id[]" value="'.$GiaId.'">';
@@ -417,7 +478,12 @@
                                           }
                                         }
                                       }
-
+                                      if($isLeaf){
+                                        echo '<td align="right"><input class="tboxsmclass SanctionAmount" type="text" name="txt_oh_project_tot_amount[]" value="'.$SubProjectOHTotalAmt.'"></td>';
+                                      }else{
+                                        echo '<td class="lom-td-obj">&nbsp;</td>';
+                                      }
+                                      
                                   echo '</tr>';
 
                                   // CHILD RECURSION
@@ -426,12 +492,31 @@
                                       $GroupedProjects,
                                       $level + 1,
                                       $GrandParent,
-                                      $OtherParam
+                                      $OtherParam,
+                                      $HorizontalTotalAmtArr
                                   );
 
                                   // END TABLE FOR EACH ROOT PARENT
                                   if($level == 0)
                                   {
+                                      echo '<tr>';
+                                      echo '<td class="lom-td-obj label oh-title" align="right">TOTAL</td>';
+                                      $HorizontalTotalProjectAmt = 0;
+                                      if(filled($HorizontalTotalArr)){ 
+                                        foreach($HorizontalTotalArr as $HorizontalTotal){
+                                          $IndexKey = $HorizontalTotal['KEY'];
+                                          $HorizontalTotalAmt = $HorizontalTotalAmtArr[$IndexKey] ?? 0;
+                                          $HorizontalTotalProjectAmt = $HorizontalTotalProjectAmt + $HorizontalTotalAmt;
+                                          echo '<td class="lom-td-obj label oh-title" align="right">';
+                                          echo '<input class="tboxsmclass SanctionAmount" type="text" name="txt_oh_project_horiz_tot_amount[]" value="'.$HorizontalTotalAmt.'">';
+                                          echo '</td>';
+                                        }
+                                      }
+                                      
+                                      echo '<td class="lom-td-obj label oh-title" align="right">';
+                                      echo '<input class="tboxsmclass SanctionAmount" type="text" name="txt_oh_project_horiz_tot_amount[]" value="'.$HorizontalTotalProjectAmt.'">';
+                                      echo '</td>';
+                                      echo '</tr>';
                                       echo '
                                           </tbody>
                                       </table>
@@ -446,8 +531,8 @@
                       $ApexObjectHeadSanctionData = $ApexObjectHeadSanctionData ?? [];
                       $SanctionIndexed = $SanctionIndexed ?? [];
                       $OtherParam = ['ObjectHeadGiaMapgrpData'=>$ObjectHeadGiaMapgrpData,'ObjectHeadSubCataGrpData'=>$ObjectHeadSubCataGrpData,'ObjectHeadGrpData'=>$ObjectHeadGrpData,'ApexObjectHeadSanctionData'=>$ApexObjectHeadSanctionData,'SanctionIndexed'=>$SanctionIndexed];
-
-                      renderTree(0, $GroupedProjects, 0, 0, $OtherParam);
+                      $HorizontalTotalAmtArr = ["X"=>15];
+                      renderTree(0, $GroupedProjects, 0, 0, $OtherParam,$HorizontalTotalAmtArr);
 
                       @endphp
 											

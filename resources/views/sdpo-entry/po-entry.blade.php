@@ -114,7 +114,7 @@
 
         if (poAmount) {
             $.ajax({
-                url: '/SdAndPO/get-sd-percentage',
+                url: "{{route('SdAndPO.get-sd-percentage')}}",
                 type: 'GET',
                 data: {
                     amount: poAmount,
