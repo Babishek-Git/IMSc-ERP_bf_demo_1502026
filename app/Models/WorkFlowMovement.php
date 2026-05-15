@@ -44,6 +44,9 @@ class WorkFlowMovement extends Model
     public static function ShowLatestWorkMovement($request,$TransactionId,$ModuleCode){
         return self::where('active',1)->where('transaction_id',$TransactionId)->where('wf_module_code',$ModuleCode)->orderBy('work_move_id','DESC')->limit(1)->get();
     }
+    public static function WorkFlowReturnData($GetTranscationIds,$ModuleCode){
+        return self::where('active',1)->whereIn('transaction_id',$GetTranscationIds)->where('wf_module_code',$ModuleCode)->orderBy('work_move_id','DESC')->limit(1)->get();
+    }
   public static function ShowAllMaxWorkMovement($request, $ModuleCode){
     if (filled($ModuleCode)) {
         return self::where('active', 1)

@@ -19,6 +19,7 @@ if(isset($data['ShowMatrialInwardSubmitData'])){
 	$CurrentStatus = collect($PoMatData)->pluck('status')->first();
 	$IndentId      = collect($PoMatData)->pluck('indent_id')->first();
 	$POId          = collect($PoMatData)->pluck('po_id')->first();
+	$IsPendingPay  = collect($PoMatData)->pluck('is_pending_payment')->first();
     $invoiceArray  = json_decode($InvoiceNos, true);
     $InvoiceString = is_array($invoiceArray) ? implode(', ', $invoiceArray) : $InvoiceNos;
     $VendorName    = $VendorArr[$ContId];
@@ -33,7 +34,7 @@ $InvoicesDocArr         = $data['InvoicesDocData'] ?? [];
 $IndentCreateEmpNameArr = $data['IndentCreateEmpName'] ?? [];
 $IndentCreateEmpName    = $IndentCreateEmpNameArr[$IndentId] ?? '';
 $DeliveryChallDocArr    = $data['DeliveryChallanWithDocs'] ?? [];
-
+$TotalAccPercArr        = $data['TotalAccPerc'] ?? [];
 @endphp
 <form action="" method="post" enctype="multipart/form-data" name="form">
     <div class="content">
@@ -222,6 +223,13 @@ $DeliveryChallDocArr    = $data['DeliveryChallanWithDocs'] ?? [];
 																			<input type="hidden" name="txt_item_payment_amt[]" id="txt_item_payment_amt_{{$Sno}}" data-index ='{{$Sno}}' class="tboxsmclass payamount" style="width:100%; text-align:right" readonly value="{{ $MatValue->total_payment_amout ? $MatValue->total_payment_amout : '' }}" >
 																			<td align="right">{{$MatValue->total_payment_amout}}</td>
                                                                             @if($IsPaymentEdit == 'Y')
+                                                                                @php
+                                                                                    $TotalTotalPayPercentage = '';
+                                                                                    if (isset($TotalAccPercArr)) {
+                                                                                        $TotalTotalPayPercentage = $TotalAccPercArr[$MatValue->item_no] ?? '';
+                                                                                    }
+                                                                                @endphp
+																			    <input type="hidden" name="total_pay_perc[]" id="total_pay_perc_{{$Sno}}" data-index ='{{$Sno}}'   value="{{$TotalTotalPayPercentage}}" ></td>
                                                                             	<td align="right"><input type="text" name="txt_acc_item_pay_perc[]" id="txt_acc_item_pay_perc_{{$Sno}}" data-index ='{{$Sno}}' class="tboxsmclass decimalnum accpercvalue" style="width:100%; text-align:right"  value="{{ $MatValue->acc_payment_perc ? $MatValue->acc_payment_perc : '' }}" ></td>
 																			    <td align="right"><input type="text" name="txt_acc_item_payment_amt[]" id="txt_acc_item_payment_amt_{{$Sno}}" data-index ='{{$Sno}}' class="tboxsmclass accpayamount" style="width:100%; text-align:right" readonly value="{{ $MatValue->acc_total_payment_amt ? $MatValue->acc_total_payment_amt : '' }}" ></td>
                                                                             @else

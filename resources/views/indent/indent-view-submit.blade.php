@@ -601,10 +601,10 @@ if(isset($BudgetFiledAcessData)){
 																	</tr>
 																	<tr>
 																		<th style="text-align:center;">Sanction No.</th>
-																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>
+																		<th style="text-align:center;">Allocation  Amount <br>Rs.</th>
 																		<th style="text-align:center;">Up to date utilized Amount <br>Rs.</th>
 																		<th style="text-align:center;">Balance Amount <br>Rs.</th>
-																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>
+																		<th style="text-align:center;">Sanction  Amount <br>Rs.</th>
 																		<th style="text-align:center;">Up to date utilized Amount <br>Rs.</th>
 																		<th style="text-align:center;">Balance Amount <br>Rs.</th>
 																	</tr>
@@ -661,7 +661,7 @@ if(isset($BudgetFiledAcessData)){
 																	</tr>
 																	<tr>
 																		<th style="text-align:center;">Sanction No.</th>
-																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>
+																		<th style="text-align:center;">Allocation  Amount <br>Rs.</th>
 																		<th style="text-align:center;">Up to date utilized Amount <br>Rs.</th>
 																		<th style="text-align:center;">Balance Amount <br>Rs.</th>
 																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>

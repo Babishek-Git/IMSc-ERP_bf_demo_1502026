@@ -238,7 +238,7 @@ $FromPage         = $data['FromPage'] ?? '';
                                                                                     @endif
                                                                                 </select>
                                                                             </td>
-                                                                            <td><input type="text" name="txt_remarks[]" id="txt_remarks_{{$Index}}"data-index ='{{$Index}}'  class="tboxsmclass" style="width:100%;" value ='{{ $MatInwardData->item_remarks }}'></td>
+                                                                            <td><input type="text" name="txt_remarks[]" id="txt_remarks_{{$Index}}"data-index ='{{$Index}}'  class="tboxsmclass" style="width:100%;" value =''></td>
                                                                         </tr>
                                                                         @php $Index++;
                                                                             $GrantTotal += $MatInwardData->total_cost;

@@ -72,5 +72,17 @@ class PaymentService
     public function GetIndentData($IndentId){
         return Indent::where('indent_id',$IndentId)->get();
     }
-
+    
+    public static function GetMaterialInwardDetailsData($paymentId){
+        return DB::table('erp_payment as p')
+            ->join('erp_material_inward_master as mi', 'mi.master_inward_id', '=', 'p.transaction_id')
+            ->join('erp_material_inward_detail as mid', 'mid.master_inward_id', '=', 'mi.master_inward_id')
+            ->where('p.payment_id', $paymentId)
+            ->select(
+                'mid.*',
+                'mi.po_id',
+                'mi.master_inward_id'
+            )
+            ->get();
+    }
 }

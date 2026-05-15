@@ -207,7 +207,7 @@ $DeliveryChallanArr = $data['GetDeliveryChallanMasterData'] ?? [];
                                                         <table class="formtable" disabled width="100%">
                                                             <thead>
                                                                 <tr>
-                                                                    <th style="text-align:center; width:60%">Invoice  Description</th>  
+                                                                    <th style="text-align:center; width:60%">Invoice / Supporting Document Description</th>  
                                                                     <th style="text-align:center; width:30%">Date</th>  
                                                                     <th style="text-align:center; width:30%">Upload</th>  
                                                                     <th style="text-align:center; width:10%"> Action</th>  

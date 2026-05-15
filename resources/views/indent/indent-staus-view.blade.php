@@ -37,6 +37,16 @@
 		$EmpName        = $EmpDataArr[$IndentEmpNo];
 		$EmpDesignation = $EmpDesignArr[$IndentEmpNo];
 	}
+	if(isset($data['GetMatInwardData'])){
+		$MatInwardDetails       = $data['GetMatInwardData']; //dd($MatInwardDetails);
+		$MatInwardToRole 	    = collect($MatInwardDetails)->pluck('to_role')->first();
+		$MatInwardFromRole 	    = collect($MatInwardDetails)->pluck('from_role')->first();
+		$MatInwardSatus         = collect($MatInwardDetails)->pluck('status')->first();
+		$MatInwardFromEmpNo     = collect($MatInwardDetails)->pluck('from_emp_no')->first();
+		$MatInwardToEmpNo       = collect($MatInwardDetails)->pluck('to_emp_no')->first();
+		$IsMatInwardSubmit      = collect($MatInwardDetails)->pluck('mat_inward_submit')->first();
+	}
+	
 	if(isset($EmpDataArr[$ToEmpNo])) {
 		$ToEmpName = $EmpDataArr[$ToEmpNo];
 	}
@@ -63,6 +73,10 @@
 	}else{
 		$BackUrl ='indent.indent-staus';
 	}	
+	$MatInwardWorkTransArr = $data['MatInwardWorkTransData'] ?? [];
+	$GetPoDataArr          = $data['GetPoData'] ?? [];
+    $PoExists              = count($GetPoDataArr); 
+	$poIssued 	           = collect($GetPoDataArr)->pluck('po_issued')->first();
 @endphp
 <style>
 	.nborder td{
@@ -524,6 +538,7 @@
 									</div>
 								</div>
 							</div>
+							
 							<div class="div12" style="padding:2px; margin-top:8px;">
 								<div class="mbtable">
 									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="left">&emsp;Indent Sanction Processing 
@@ -583,6 +598,285 @@
 															@endif
 														</table>
 														<div class="row smclearrow"></div>
+                                    					<div class="row smclearrow"></div>
+														<!-- <div class="row" align="center">
+                                        					<input type="button" class="backbutton" name="back" id="back" value=" Back " onClick="window.location='{{route($BackUrl)}}'" />
+                                  						</div> -->
+													</div>
+												</b> 
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row smclearrow"></div>
+							<div class="row smclearrow"></div>
+							<div class="card" style="margin-top:15px; border-radius:10px; overflow:hidden; border:1px solid #e5e5e5;">
+								{{-- HEADER --}}
+								<div style="background:#0b3a6a; color:#fff; padding:10px 15px; font-weight:600;">
+									Purchase Order Status
+								</div>
+								{{-- STEPPER BODY --}}
+								<div style="padding:24px 20px; display:flex; align-items:flex-start; justify-content:center;">
+									@if(isset($IndentSatus))
+										@if($IndentSatus == "approved")
+											{{-- APPROVED: Green --}}
+											<div style="text-align:center; flex:1; max-width:130px;">
+												<div style="width:40px; height:40px; border-radius:50%;
+													background:#1d9e75; color:#fff;
+													display:flex; align-items:center; justify-content:center;
+													font-size:18px; margin:auto;">&#10003;</div>
+												<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Indent Approved</div>
+												<div style="font-size:11px; color:#999; margin-top:3px;">Completed</div>
+											</div>
+										@else
+											{{-- NOT APPROVED: Grey --}}
+											<div style="text-align:center; flex:1; max-width:130px;">
+												<div style="width:40px; height:40px; border-radius:50%;
+													background:#eee; color:#aaa;
+													border:1.5px solid #ccc;
+													display:flex; align-items:center; justify-content:center;
+													font-size:14px; font-weight:600; margin:auto;">1</div>
+												<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Indent Approved</div>
+												<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
+											</div>
+										@endif
+									@endif
+									{{-- CONNECTOR 1→2 --}}
+									<div style="flex:1; height:2px; margin-top:19px;
+										background:{{ $ProcessTrancationData ? '#1d9e75' : '#ddd' }};"></div>
+									{{-- STEP 2: Sanction Process --}}
+									<div style="text-align:center; flex:1; max-width:130px;">
+										@if($ProcessTrancationData->isNotEmpty() && $PoExists)
+											{{-- COMPLETED: Green --}}
+											<div style="width:40px; height:40px; border-radius:50%;
+												background:#1d9e75; color:#fff;
+												display:flex; align-items:center; justify-content:center;
+												font-size:18px; margin:auto;">&#10003;</div>
+											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Sanction Process</div>
+											<div style="font-size:11px; color:#999; margin-top:3px;">Completed</div>
+										@else
+											{{-- PENDING: Grey --}}
+											<div style="width:40px; height:40px; border-radius:50%;
+												background:#eee; color:#aaa;
+												border:1.5px solid #ccc;
+												display:flex; align-items:center; justify-content:center;
+												font-size:14px; font-weight:600; margin:auto;">2</div>
+											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Sanction Process</div>
+											<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
+										@endif
+									</div>
+									{{-- CONNECTOR 2→3 --}}
+									<div style="flex:1; height:2px; margin-top:19px;
+										background:{{ $PoExists ? '#1d9e75' : '#ddd' }};"></div>
+									{{-- STEP 3: PO Created --}}
+									<div style="text-align:center; flex:1; max-width:130px;">
+										<div style="width:40px; height:40px; border-radius:50%;
+											background:{{ $PoExists ? '#1d9e75' : '#eee' }};
+											color:{{ $PoExists ? '#fff' : '#aaa' }};
+											border:{{ $PoExists ? 'none' : '1.5px solid #ccc' }};
+											display:flex; align-items:center; justify-content:center;
+											font-size:{{ $PoExists ? '18px' : '14px' }}; font-weight:600; margin:auto;">
+											{{ $PoExists ? '✔' : '3' }}
+										</div>
+										<div style="margin-top:8px; font-size:12px; font-weight:600;
+											color:{{ $PoExists ? '#0f6e56' : '#aaa' }};">PO Created</div>
+										<div style="font-size:11px; color:#999; margin-top:3px;">
+											{{ $PoExists ? 'Completed' : 'Pending' }}
+										</div>
+									</div>
+									{{-- CONNECTOR 3→4 --}}
+									<div style="flex:1; height:2px; margin-top:19px;
+										background:{{ $poIssued ? '#1d9e75' : '#ddd' }};"></div>
+									{{-- STEP 4: PO Issued --}}
+									<div style="text-align:center; flex:1; max-width:130px;">
+										<div style="width:40px; height:40px; border-radius:50%;
+											background:{{ $poIssued ? '#1d9e75' : '#eee' }};
+											color:{{ $poIssued ? '#fff' : '#aaa' }};
+											border:{{ $poIssued ? 'none' : '1.5px solid #ccc' }};
+											display:flex; align-items:center; justify-content:center;
+											font-size:{{ $poIssued ? '18px' : '14px' }}; font-weight:600; margin:auto;">
+											{{ $poIssued ? '✔' : '4' }}
+										</div>
+										<div style="margin-top:8px; font-size:12px; font-weight:600;
+											color:{{ $poIssued ? '#0f6e56' : '#aaa' }};">PO Issued</div>
+										<div style="font-size:11px; color:#999; margin-top:3px;">
+											{{ $poIssued ? 'Completed' : 'Pending' }}
+										</div>
+									</div>
+									{{-- CONNECTOR 4→5 --}}
+									<div style="flex:1; height:2px; margin-top:19px; background:{{ $IsMatInwardSubmit ? '#1d9e75' : '#ddd' }};"></div>
+									{{-- STEP 5: Material Inward Certification --}}
+									<div style="text-align:center; flex:1; max-width:130px;">
+										@if($IsMatInwardSubmit)
+											{{-- SUBMITTED: Green --}}
+											<div style="width:40px; height:40px; border-radius:50%;
+												background:#1d9e75; color:#fff;
+												display:flex; align-items:center; justify-content:center;
+												font-size:18px; margin:auto;">&#10003;</div>
+											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Material Inward Certification</div>
+											<div style="font-size:11px; color:#999; margin-top:3px;">Submitted</div>
+										@else
+											{{-- NOT SUBMITTED: Grey --}}
+											<div style="width:40px; height:40px; border-radius:50%;
+												background:#eee; color:#aaa;
+												border:1.5px solid #ccc;
+												display:flex; align-items:center; justify-content:center;
+												font-size:14px; font-weight:600; margin:auto;">5</div>
+											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Material Inward Certification</div>
+											<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
+										@endif
+									</div>
+								</div>
+							</div>
+							<div class="div12" style="padding:2px; margin-top:8px;">
+								<div class="mbtable">
+									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="left">&emsp;Material Inward  Certification File Transaction</div></div></div>
+									<div class="card-body padding-1 ChartCard" id="CourseChart">
+										<div class="divrowbox innerdiv pad-0-top"> 
+											<div class="row" align="left">
+												<b>
+													<div class="row namebox">
+														<div class="row smclearrow"></div>
+														<table class="formtable" width="100%">
+															<tr>
+																<th class="lboxlabel">SNo.</th>
+																<th class="lboxlabel" nowrap="">File From </th>
+																<th class="lboxlabel" nowrap="">File  To </th>
+																<th class="lboxlabel">Action</th>
+																<!-- <th class="lboxlabel">Action Done By</th> -->
+																<th class="lboxlabel" nowrap="">Action Done On</th>
+																<th class="lboxlabel">Remarks</th>
+																<!-- <th class="lboxlabel"></th> -->
+															</tr>
+															@if(isset($MatInwardWorkTransArr) && $MatInwardWorkTransArr !=NULL)
+															@foreach($MatInwardWorkTransArr as $WorkMoveDataKey => $WorkMoveDataValue)
+															<tr>
+																<td class="cboxlabel unitarr" >{{$loop->iteration}}</td>
+																<td class="lboxlabel">
+																	@php
+																	if($WorkMoveDataValue->wf_from_role != NULL){
+																		if(isset($RoleDataArr[$WorkMoveDataValue->wf_from_role])){
+																			$Roles = $RoleDataArr[$WorkMoveDataValue->wf_from_role];
+																			if(isset($Roles)){
+																				echo $Roles;
+																			}
+																		}
+																	}
+																	if(isset($EmpDataArr[$WorkMoveDataValue->wf_from_emp_no])) {
+																		echo "<div style='color:green; font-weight:bold; bottom:0px;'>(" . $EmpDataArr[$WorkMoveDataValue->wf_from_emp_no] . ")</div>";
+																	}
+																	@endphp
+																</td>
+																<td class="lboxlabel">
+																	@php
+																	if($WorkMoveDataValue->wf_to_role != NULL){
+																		if(isset($RoleDataArr[$WorkMoveDataValue->wf_to_role])){
+																			$ToRoles = $RoleDataArr[$WorkMoveDataValue->wf_to_role];
+																			if(isset($Roles)){
+																				echo $ToRoles;
+																			}
+																		}
+																	}
+																	if(isset($EmpDataArr[$WorkMoveDataValue->wf_to_emp_no])) {
+																		echo "<div style='color:green; font-weight:bold; vertical-align:bottom;'>(" . $EmpDataArr[$WorkMoveDataValue->wf_to_emp_no] . ")</div>";
+																	}
+																	@endphp
+																</td>
+																<td class="lboxlabel" style="text-align:center">
+																	@php
+																		if($WorkMoveDataValue->action_flag != NULL){
+																			if(($WorkMoveDataValue->action_flag == "SU") && ($WorkMoveDataValue->status != "AP")){
+																				echo "File Forwarded to " . ($ToRoles ?? '');
+																			}else if(($WorkMoveDataValue->action_flag == "FW") && ($WorkMoveDataValue->status != "AP")){
+																				echo "File Forwarded to " . ($ToRoles ?? '');
+																			}else if(($WorkMoveDataValue->action_flag == "RJ") && ($WorkMoveDataValue->status != "AP")){
+																				echo "Indent Return Back With Reason" ;
+																			}else if(($WorkMoveDataValue->action_flag == "FW") && ($WorkMoveDataValue->status == "approved")){
+																				@endphp <div style="background-color:#7bd19f; border:1px solid #151e26"> @php echo "Approved"; @endphp </div> @php
+																			}else if(($WorkMoveDataValue->action_flag == NULL) && ($WorkMoveDataValue->status != "AP")){
+																				echo "Pulled Back";
+																			}else if($WorkMoveDataValue->status == "approved"){
+																				@endphp <div style="background-color:#66D42B; border:1px solid #151e26"> @php echo "Approved"; @endphp </div> @php
+																			}else{
+																				echo "";
+																			}
+																		}
+																		else{
+																			echo "Pulled Back";
+																		}
+																	@endphp
+																</td>
+																<!-- <td class="lboxlabel">
+																	@php
+																	if(isset($EmpArr[$WorkMoveDataValue->created_by])) {
+																		echo $EmpArr[$WorkMoveDataValue->created_by];
+																	}else if($WorkMoveDataValue->created_by != NULL){
+																		echo $WorkMoveDataValue->created_by;
+																	}
+																	@endphp
+																</td> -->
+																<td class="cboxlabel">
+																	@php
+																	if($WorkMoveDataValue->created_at != NULL){
+																		$CreatedAt = explode(" ", $WorkMoveDataValue->created_at);
+																		$CreatedAt[0] = Helper::DisplayDateFormat($CreatedAt[0]);
+																		$CreatedAt = implode(" ", $CreatedAt);
+																		echo $CreatedAt;
+																	}
+																	@endphp
+																</td>
+																<td class="lboxlabel">
+																	@php
+																	if($WorkMoveDataValue->remarks != NULL){
+																		echo $WorkMoveDataValue->remarks;
+																	}
+																	@endphp
+																</td>
+																<!-- <td align="center">
+																	<div class="btn-group" align="center">
+																		<button type="button" class="btn btn-default btnprimary ViewHistory" data-id="{{$IndentId}}"  title="View" style="cursor: pointer;"><i class="fa fa-tv pt2"></i></button>
+																	</div>
+																</td> -->
+															</tr>
+															@endforeach
+															@endif
+														</table>
+														<div class="row smclearrow"></div>
+																<div class="indent-status">
+																<span class ="lboxlabel">Current Status : </span>
+																@php
+																	if(isset($MatInwardSatus)){
+																		if($MatInwardSatus == "approved"){
+																			echo '<span class="blink indent-status-value">Material Inward Certification approved</span>';
+																		} else if($MatInwardSatus == "submitted" ||  $MatInwardSatus  =='recommended'){
+																			if(isset($MatInwardToRole) && isset($RoleDataArr[$MatInwardToRole])){
+																				$Roles = $RoleDataArr[$MatInwardToRole];
+																				$ToEmpNameStr = isset($ToEmpName) ? '('.$ToEmpName.')' : '';
+																				if(isset($Roles)){
+																					echo '<span class="blink indent-status-value" >  Waiting in '.$Roles.' Desk </span>';
+																				}
+																			} else if(isset($MatInwardFromRole) && $MatInwardFromRole != ''){
+																				if(isset($RoleDataArr[$MatInwardFromRole])){
+																					$Roles = $RoleDataArr[$MatInwardFromRole];
+																					$FromEmpNameStr = isset($FromEmpName) ? '('.$FromEmpName.')' : '';
+																					echo '<span class="blink indent-status-value" >  Waiting in '.$Roles.' Desk </span>';
+																				}
+																			}
+																		}else if($MatInwardSatus == "rejected"){
+																			if(isset($MatInwardFromRole) && isset($RoleDataArr[$MatInwardFromRole])){
+																				$RejRoles = $RoleDataArr[$MatInwardFromRole];
+																				$ToEmpNameStr = isset($ToEmpName) ? '('.$ToEmpName.')' : '';
+																				if(isset($RejRoles)){
+																					echo '<span class="blink indent-status-value" > Material Inward Certification Return Back by '.$RejRoles.' Desk </span>';
+																				}
+																			} 
+																		}else{
+																			echo '<span class="blink indent-status-value" >Not yet submitted</span>';
+																		}
+																	}
+																@endphp
+															</div>
                                     					<div class="row smclearrow"></div>
 														<div class="row" align="center">
                                         					<input type="button" class="backbutton" name="back" id="back" value=" Back " onClick="window.location='{{route($BackUrl)}}'" />

@@ -319,7 +319,7 @@ class WorkFlowProcessService
             }
             $this->SaveWorkFlowMovement($SaveMovementData);
             $this->SaveApplicationData($TransactionId,$ModelClassName,$SaveApplicationData);
-            $messagePerfix     = modules::where('module_code', $WorkFlowModuleCode)->pluck('message_prefix')->first() ?? '';
+            $messagePerfix     = modules::where('module_code', $WorkFlowModuleCode)->pluck('message_prefix')->filter()->first() ?? '';
             DB::commit();
             if($WorkFlowAction == 'RJ'){
                 $message = $messagePerfix ." File returned to the user ";

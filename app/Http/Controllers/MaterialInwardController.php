@@ -346,6 +346,16 @@ class MaterialInwardController extends Controller
             $VendorData                    = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
             $ShowMatrialInwardSubmitData   = $this->MaterialInwardMaster->GetMatInwardSubmitData(NULL,$MatInwardId);
             $MaterialInwardDetailData      = $this->MaterialInwardDetails->showMaterialInwardDetailsData(NULL,$MatInwardId); 
+            $GetPoId                       = collect($ShowMatrialInwardSubmitData)->pluck('po_id')->first();
+            $ShowMaterialInwardData        = $this->MaterialInwardMaster->GetMaterialInwardByPoId($GetPoId);
+            $MasterInwardIds               = collect($ShowMaterialInwardData)->pluck('master_inward_id');
+            $MaterialInwardDetailsData     = $this->MaterialInwardDetails->ShowMaterialInwardData($MasterInwardIds);
+            $TotalAccPerc                  = collect($MaterialInwardDetailsData)
+                                            ->groupBy('item_no')
+                                            ->map(function ($items) {
+                                                return $items->sum('acc_payment_perc');
+                                            })
+                                            ->toArray();
             $ShowMaterialUnit              = $this->UnitMaster->ShowMaterialUnit(NULL);
             $UnitDataArray                 = collect($ShowMaterialUnit)->pluck('uom_name', 'uom_id')->toArray();
             $ShowLoacationMasterData       = $this->LocationMaster->ShowLocationMaster();
@@ -373,7 +383,7 @@ class MaterialInwardController extends Controller
             $IndentCreateEmpName       = collect($IndentEmpData)->pluck('emp_name_payslip','indent_id')->toArray();
             $DeliveryChallanId         = collect($ShowMatrialInwardSubmitData)->pluck('delivery_challan_id')->first();
             $DeliveryChallanWithDocs   = $this->DeliveryChallanMaster->GetDeliveryChallanWithDocuments($DeliveryChallanId);
-            return view('material-inward.material-inward-payment-submit')->with('data',compact('IndentCreateEmpName','DeliveryChallanWithDocs','InvoicesDocData','SessionWiseFiledAcessData','ShowMatrialInwardSubmitData','UnitDataArray','FromPage','VendorData','MaterialInwardDetailData','WorkFlowActionData','ShowMaterialUnit','ShowLoacationMasterData'));
+            return view('material-inward.material-inward-payment-submit')->with('data',compact('IndentCreateEmpName','TotalAccPerc','DeliveryChallanWithDocs','InvoicesDocData','SessionWiseFiledAcessData','ShowMatrialInwardSubmitData','UnitDataArray','FromPage','VendorData','MaterialInwardDetailData','WorkFlowActionData','ShowMaterialUnit','ShowLoacationMasterData'));
         }
     }
     public function MaterialInwardDeliveryChallanUpload(Request $request){

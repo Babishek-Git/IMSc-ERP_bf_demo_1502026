@@ -31,6 +31,7 @@ use App\Models\BudgetAllocationReceived;
 use App\Models\Materialgroup;
 use App\Models\IndentProcessTransaction;
 use App\Models\SupportingDocument;
+use App\Models\MaterialInwardMaster;
 
 
 
@@ -81,6 +82,7 @@ class IndentController extends Controller
         $this->MaterialgroupMaster       = new Materialgroup();
         $this->IndentProcessMaster       = new IndentProcessTransaction();
         $this->SupportingDocMaster       = new SupportingDocument();
+        $this->MaterialInwardMaster      = new MaterialInwardMaster();
 
 
 
@@ -279,7 +281,13 @@ class IndentController extends Controller
         return view('indent.indent-creation')->with('data',compact('OHMappData','AllObectHead','GetMatCategoryData','AllObectHeadSubCata','AllObectHeadSubCataGrpData','MaterialTypeData','ShowEmpSessiondata','ShowMaterialUnit','ShowMaxIndentSuffNo','EmpProjectDetails','IsProjApplicable'));
     }
      public function IndentView(Request $request) {
-        $Indentdata = $this->Indent->ShowIndent(null,null); 
+        $Indentdata         = $this->Indent->ShowIndent(null,null);
+        $Empdata            = $this->Employee->ShowEmployees($request,NULL); 
+        $Empdetails         = collect($Empdata)->pluck('emp_name_payslip','emp_no')->toArray();
+        $RoleData           = $this->EmpRole->ShowRoles($request,NULL);
+        $RoleDetails        = collect($RoleData)->pluck('role_name','roleid')->toArray();
+        $GetTranscationIds  = collect($Indentdata)->pluck('indent_id')->toArray();
+        $WrkFlowTransData   = $this->WorkFlowMovementDet->WorkFlowReturnData($GetTranscationIds,'INDENT');
         return view('indent.indent-view')->with('data',compact('Indentdata'));
     }
     // public function IndentForward(Request $request) {
@@ -318,6 +326,7 @@ class IndentController extends Controller
     public function IndentStatus(Request $request) {
         if(isset($request->id)){
             try{
+                $GetMatInwardId  = '';
                 $IndentId        = decrypt($request->id);
                 $ModuleCode      = decrypt($request->modulecode);
                 $Empdata         = $this->Employee->ShowEmployees($request,NULL); 
@@ -329,8 +338,17 @@ class IndentController extends Controller
                 $ProjectDetailsData      = $this->ProjectMaster->GetAllProjectData(NULL);
                 $ProjectDetailsDataArray = collect($ProjectDetailsData)->pluck('project_name','project_id')->toArray();
                 $GetMatCategoryData      = $this->MaterialgroupMaster->ShowMatCategoryAllParentChild();
-                $ProcessTrancationData    = $this->IndentProcessMaster->GetIndentTranscationData($IndentId);
-                return view('indent.indent-staus-view')->with('data',compact('ProcessTrancationData','IndentId','Empdata','EditIndentData','RoleData','WorkFlowData','WorkTransData','LastWorkTransData','ProjectDetailsDataArray'));
+                $ProcessTrancationData   = $this->IndentProcessMaster->GetIndentTranscationData($IndentId);
+                $GetPoData               = $this->PurchaseOrderMaster->GetPoIdByIndentId($IndentId);
+                $GetMatInwardId         = $this->PurchaseOrderMaster->GetMatIdBYIndentId($IndentId);
+                if(filled($GetMatInwardId) && $GetMatInwardId !=NULL){
+                    $MatInwardWorkTransData  = $this->WorkFlowMovementDet->ShowWorkMovement(NULL,$GetMatInwardId,'MAT_INWARD');
+                    $GetMatInwardData        = $this->MaterialInwardMaster->showMaterialInwardData(NULL,$GetMatInwardId) ?? ''; 
+                }else{
+                    $MatInwardWorkTransData  = '';
+                    $GetMatInwardData        = '';
+                }
+                return view('indent.indent-staus-view')->with('data',compact('ProcessTrancationData','GetPoData','GetMatInwardData','MatInwardWorkTransData','IndentId','Empdata','EditIndentData','RoleData','WorkFlowData','WorkTransData','LastWorkTransData','ProjectDetailsDataArray'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
             }
@@ -392,7 +410,6 @@ class IndentController extends Controller
                 $AllObectHeadSubDetails   = collect($AllObectHeadSubCata)->pluck('oh_sub_cata_name','AllObectHeadSubCata')->toArray();
                 $ProjectDataView          = $this->ProjectMaster->ShowAllParentChild();
                 $EmpProjectDetails        = collect($ProjectDataView)->pluck('full_heads', 'project_id')->toArray() ?? [];
-                $ShowMaterialUnit         = $this->UnitMaster->ShowMaterialUnit(NULL);
                 $ShowMaterialUnit         = $this->UnitMaster->ShowMaterialUnit(NULL);
                 return view('indent.indent-sanction-approval')->with('data',compact('EmpProjectDetails','ShowMaterialUnit','ShowIndentDetials','GetMatCategoryData','AllObectHeadSubDetails','AllObectHeadDetails','GetIndentData','Empdata','IndentDetails','ProjectDetailsDataArray','MaterialTypeDrtailsArray'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
@@ -543,6 +560,7 @@ class IndentController extends Controller
     public function IndentAllStatus(Request $request) {
         if(isset($request->id)){
             try{
+                $GetMatInwardId  = '';
                 $IndentId        = decrypt($request->id);
                 $ModuleCode      = decrypt($request->modulecode);
                 $Empdata         = $this->Employee->ShowEmployees($request,NULL); 
@@ -555,7 +573,16 @@ class IndentController extends Controller
                 $ProjectDetailsDataArray = collect($ProjectDetailsData)->pluck('project_name','project_id')->toArray();
                 $FromPage                ='ALLSTATUSVIEW';//dd($FromPage);
                 $ProcessTrancationData   = $this->IndentProcessMaster->GetIndentTranscationData($IndentId);
-                return view('indent.indent-staus-view')->with('data',compact('IndentId','Empdata','ProcessTrancationData','EditIndentData','RoleData','WorkFlowData','WorkTransData','LastWorkTransData','ProjectDetailsDataArray','FromPage'));
+                $GetMatInwardId          = $this->PurchaseOrderMaster->GetMatIdBYIndentId($IndentId);
+                $GetPoData               = $this->PurchaseOrderMaster->GetPoIdByIndentId($IndentId);
+                if(filled($GetMatInwardId) && $GetMatInwardId !=NULL){
+                    $MatInwardWorkTransData  = $this->WorkFlowMovementDet->ShowWorkMovement(NULL,$GetMatInwardId,'MAT_INWARD');
+                    $GetMatInwardData        = $this->MaterialInwardMaster->showMaterialInwardData(NULL,$GetMatInwardId) ?? ''; 
+                }else{
+                    $MatInwardWorkTransData  = '';
+                    $GetMatInwardData        = '';
+                }
+                return view('indent.indent-staus-view')->with('data',compact('IndentId','Empdata','GetPoData','ProcessTrancationData','MatInwardWorkTransData','GetMatInwardData','EditIndentData','RoleData','WorkFlowData','WorkTransData','LastWorkTransData','ProjectDetailsDataArray','FromPage'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
             }
@@ -663,7 +690,13 @@ class IndentController extends Controller
         $ObjHeadGiaMappDetails       = $this->ObjHeadGiaMappingMaster->ShowObjectHeadDataByGiaIdAndOHId($OHId);
         $GetGiaId                    = collect($ObjHeadGiaMappDetails)->where('object_head_id',$OHId)->pluck('gia_id')->first();
         $ShowBudgetSanaction         = $this->BudgetAllocationMaster->GetSanctionDetiails(NULL,$OHId,$OHSubCataId,$GetGiaId,$FinYear);
-        $SancationNo                 = collect($ShowBudgetSanaction)->when('oh_sub_cata_id',$OHSubCataId)->where('object_head_id',$OHId)->pluck('budget_sanction_no')->first();
+       // $SancationNo                 = collect($ShowBudgetSanaction)->when('oh_sub_cata_id',$OHSubCataId)->where('object_head_id',$OHId)->pluck('budget_sanction_no')->first();
+        $SancationNo = collect($ShowBudgetSanaction ?? [])
+        ->when($OHSubCataId, function ($collection) use ($OHSubCataId) {
+            return $collection->where('oh_sub_cata_id', $OHSubCataId);
+        })
+        ->pluck('budget_sanction_no')
+        ->first();
         $GetOHAllocationIds          = collect($ShowBudgetSanaction)->pluck('budget_allocation_id')->toArray();
         $GetOHAllocationClaimData    = $this->BudgetClaimMaster->GetClaimDataByAllocatedIds($GetOHAllocationIds,NULL);
         $GetAllOHClaimIds            = collect($GetOHAllocationClaimData)->pluck('budget_claimed_id')->toArray();

@@ -115,7 +115,7 @@ $DeliveryChallDocArr = $data['DeliveryChallanWithDocs'] ?? [];
                                                             </tr>
                                                         </thead>
                                                         <tbody id="supp_doc_tbody">	
-                                                            @if(isset($DeliveryChallDocArr))
+                                                            @if(isset($DeliveryChallDocArr)  && !empty($DeliveryChallDocArr) && $DeliveryChallDocArr->count() > 0)
                                                                 @foreach($DeliveryChallDocArr as $DocValue)
                                                                 <tr>
                                                                     <td>
@@ -152,7 +152,7 @@ $DeliveryChallDocArr = $data['DeliveryChallanWithDocs'] ?? [];
                                                             </tr>
                                                         </thead>
                                                         <tbody id="supp_doc_tbody">	
-                                                            @if(isset($InvoicesDocArr))
+                                                            @if(isset($InvoicesDocArr)  && !empty($InvoicesDocArr) && $InvoicesDocArr->count() > 0)
                                                                 @foreach($InvoicesDocArr as $DocValue)
                                                                 <tr>
                                                                     <td>

@@ -24,6 +24,7 @@ use App\Models\Ledger;
 use App\Models\LedgerGroup;
 use App\Models\ProjectMaster;
 use App\Models\SequenceNo;
+use App\Models\MaterialUnit;
 use Exception;
 use Helper;
 use Session;
@@ -56,6 +57,8 @@ class BillPaymentController extends Controller
         $this->LedgerGroup  = new LedgerGroup();
         $this->Project  = new ProjectMaster();
         $this->SequenceNo = new SequenceNo();
+        $this->UnitMaster   = new MaterialUnit();
+
        
         $this->TransactionMappService = $TransactionMappService;
         $this->PaymentService = $PaymentService;
@@ -262,9 +265,12 @@ class BillPaymentController extends Controller
                     $MaterialTypeId = $PoPaymentData->pluck('mat_type_id')->first(); 
                 }
             }
-            $VendorBankData = $this->ContractorDetail->ShowContractorBank($VendorId); 
-            $VendorGstData = $this->ContractorGST->ShowContractorGstByContId($VendorId); //dd($PoPaymentData);
-            return view('payment.po-amc-bill.create-po-bill', compact('PoAmcBudgetData','Ledger','DeductionLedger','LedgerGroupList','LedgerData','PoPaymentData','RecoveryData','VendorBankData','VendorGstData','BudgetObjectHeadData','AllObectHead','AllObectHeadSubCataGrpData','ProcessMode'));
+            $VendorBankData      = $this->ContractorDetail->ShowContractorBank($VendorId); 
+            $VendorGstData       = $this->ContractorGST->ShowContractorGstByContId($VendorId); //dd($PoPaymentData);
+            $GetMatInwardDetails = $this->PaymentService->GetMaterialInwardDetailsData($ApplicationId);
+            $ShowMaterialUnit    = $this->UnitMaster->ShowMaterialUnit(NULL);
+            $UnitData            = collect($ShowMaterialUnit)->pluck('uom_name','uom_id')->toArray();
+            return view('payment.po-amc-bill.create-po-bill', compact('PoAmcBudgetData','Ledger','UnitData','GetMatInwardDetails','DeductionLedger','LedgerGroupList','LedgerData','PoPaymentData','RecoveryData','VendorBankData','VendorGstData','BudgetObjectHeadData','AllObectHead','AllObectHeadSubCataGrpData','ProcessMode'));
         }else{
             return redirect()->route('payment.indent-bill-payment-creation-list');
         }

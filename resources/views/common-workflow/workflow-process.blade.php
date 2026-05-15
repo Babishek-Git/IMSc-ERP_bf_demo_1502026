@@ -90,9 +90,10 @@
 						}
 					}
 					/////// THIS IS FOR INDENT BUDGET CERTIFICATION PART ///////
-					var BudgetVerfi = $('#hidd_buget_apr').val();
-					var FunCertifi  = $('input[name="rad_Basis"]:checked').val();
-					if(BudgetVerfi =='Y'){
+					var BudgetVerfi  = $('#hidd_buget_apr').val();
+					var IsBudgetEdit = $('#hidd_is_budget_edit').val();
+					var FunCertifi   = $('input[name="rad_Basis"]:checked').val();
+					if (BudgetVerfi === 'Y' && (IsBudgetEdit === 'true' || IsBudgetEdit === '1' || IsBudgetEdit === 1)) {
 						if (!FunCertifi) {
 							BootstrapDialog.alert("Please confirm whether DCA certification is available (Yes or No).");
 							event.preventDefault();

@@ -100,6 +100,7 @@ $ExeTotalGrossAmount = 0;
 $ExeTotalNetAmount = 0;
 $CurrentFinYear = Helper::GetCurrentFinYear(NULL);
 $BillProcessNo = "IMSc/BILL/PO/XXXX/".$CurrentFinYear;
+$TotalPaymentAmount = 0;
 @endphp
 
 <form action="" method="post" enctype="multipart/form-data" name="form">
@@ -241,6 +242,94 @@ $BillProcessNo = "IMSc/BILL/PO/XXXX/".$CurrentFinYear;
                                                     <div class="row smclearrow"></div>
                                                 </div>
                                             </fieldset>
+                                             <div class="row smclearrow"></div>
+                                            <div class="row smclearrow"></div>
+
+                                            {{-- ── Object Head Information Table ── --}}
+                                            <div class="table-container">
+                                                <div class="table-wrapper" style="margin-bottom:10px;">
+                                                    <div class="section-header">
+                                                        <span>Item Wise Bill Pay Information</span>
+                                                    </div>
+
+                                                    <table class="attTable">
+                                                        <thead>
+                                                            <tr>
+                                                                
+                                                                <th>
+                                                                    {{-- Pure CSS Accordion --}}
+                                                                    <div class="acc-wrapper">
+
+                                                                        <div class="acc-item">
+                                                                            <input type="checkbox" id="acc-toggle-1" class="acc-checkbox">
+                                                                            <label for="acc-toggle-1" class="acc-header">
+                                                                                Click Here to view Item Wise Bill Pay Information
+                                                                                <span class="acc-icon"></span>
+                                                                            </label>
+                                                                            <div class="acc-body">
+                                                                                <div class="acc-content">
+                                                                                    <table class="attTable">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th>SNo.</th>
+                                                                                                <th nowrap="">Item Description</th>
+                                                                                                <th nowrap="">Unit</th>
+                                                                                                <th>Po Qty</th>
+                                                                                                <th>Previous Received Qty</th>
+                                                                                                <th>Received Now Qty</th>
+                                                                                                <th>Balance Qty</th>
+                                                                                                <th>Received Rate (Rs.)</th>
+                                                                                                <th>Total  Cost (Rs.)</th>
+                                                                                                <th>DCA Certified Payment(%)</th>
+                                                                                                <th>DCA Certified Total Payment Amount (Rs.)</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody id="attendanceTableBody">
+                                                                                            @if(isset($GetMatInwardDetails))
+                                                                                            @foreach($GetMatInwardDetails as $MatInwardValue)
+                                                                                            <tr>
+                                                                                                <td align="center">{{ $MatInwardValue->item_no }}</td>
+                                                                                                <td align="center">{{ $MatInwardValue->item_description }}</td>
+                                                                                                <td>{{ $UnitData[$MatInwardValue->item_unit] }}</td>
+                                                                                                <td>{{ $MatInwardValue->po_quantity }}</td>
+                                                                                                <td>{{ $MatInwardValue->previously_received_qty }}</td>
+                                                                                                <td align="right">{{ $MatInwardValue->received_qty }}</td>
+                                                                                                <td align="right">{{ $MatInwardValue->balance_qty }}</td>
+                                                                                                <td align="right">{{ $MatInwardValue->unit_rate }}</td>
+                                                                                                <td align="right">{{ $MatInwardValue->total_cost }}</td>
+                                                                                                <td align="right">{{ $MatInwardValue->acc_payment_perc }}</td>
+                                                                                                <td align="right">{{ $MatInwardValue->acc_total_payment_amt }}</td>
+                                                                                                    @php
+                                                                                                        $TotalPaymentAmount += $MatInwardValue->acc_total_payment_amt;
+                                                                                                    @endphp
+                                                                                                @endforeach
+                                                                                                @endif
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td colspan="10" align="right">Total Payment Amount (Rs.)</td>
+                                                                                                <td align="right">{{ $TotalPaymentAmount }}</td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        
+                                                    </table>
+
+                                                    {{-- Eligibility warning panel --}}
+                                                    <div id="eligibilityWarning"
+                                                         style="display:none; color:#c0392b; padding:8px; margin-top:6px; background:#fdecea; border-radius:4px;">
+                                                    </div>
+
+                                                </div>
+                                            </div>
 
                                             <div class="row smclearrow"></div>
                                             <div class="row smclearrow"></div>

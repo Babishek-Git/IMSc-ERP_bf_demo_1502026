@@ -193,7 +193,15 @@ class PurchaseOrder extends Model
                 }
             })->where('erp_sd_po.sd_po','=',$sdrpo)->where('erp_po_order.active',1)->get();
     }
-    
+    public static function GetMatIdBYIndentId($IndentId){
+        return \DB::table('erp_po_order as po')
+        ->join('erp_material_inward_master as mi', 'mi.po_id', '=', 'po.work_order_id')
+        ->where('po.indent_id', $IndentId)
+        ->pluck('mi.master_inward_id');
+    }
+    public static function GetPoIdByIndentId($IndentId){
+        return self::where('active',1)->where('indent_id',$IndentId)->get(); 
+    }
    /*  public function CheckBank($BankArr){
         return BankMaster::select('bank_name')
                     ->whereRaw("REGEXP_REPLACE(REGEXP_REPLACE(bank_name, '[^a-zA-Z0-9]+', '', 'g'), ' ', '', 'g') ILIKE ?", [$BankArr['bank_name']])  
