@@ -685,7 +685,21 @@ class IndentController extends Controller
             //     });
             $ProjUptoUtilizedAmt   = collect($GetProjectExpDetaials)->where('is_current',true)->sum(function ($item) {return $item['current_utilized_amt'] ?? 0;});
             $ProjBalanceAmt        = $TotalSanctionAmount - $ProjUptoUtilizedAmt ?? '';
+        }else{
+            $FinYear                     = Helper::GetCurrentFinYear(NULL);
+            $ObjHeadGiaMappDetails       = $this->ObjHeadGiaMappingMaster->ShowObjectHeadDataByGiaIdAndOHId($OHId);
+            $GetGiaId                    = collect($ObjHeadGiaMappDetails)->where('object_head_id',$OHId)->pluck('gia_id')->first();
+            $ShowBudgetSanaction         = $this->BudgetAllocationMaster->ShowBudgetAllocationData($GetGiaId,$FinYear);
+            $GetOHAllocationIds          = collect($ShowBudgetSanaction)->pluck('budget_allocation_id')->toArray();
+            $GetOHAllocationClaimData    = $this->BudgetClaimMaster->GetClaimDataByAllocatedIds($GetOHAllocationIds,NULL);
+            $GetAllOHClaimIds            = collect($GetOHAllocationClaimData)->pluck('budget_claimed_id')->toArray();
+            $GetOHAllocationRecivedData  = $this->BudgetRecivedMaster->ShowBudegetReceivedByClaim($GetAllOHClaimIds);
+            $TotalSanctionAmount         = $GetOHAllocationRecivedData->sum('received_amount') * 100000 ?? '';
+            $GetOHExpDetaials            = $this->BudSanExpMaster->GetBudgetExpDataBYOHIds($OHId,$OHSubCataId);
+            $ProjUptoUtilizedAmt         = collect($GetOHExpDetaials)->where('is_current',true)->sum(function ($item) {return $item['current_utilized_amt'] ?? 0;});
+            $ProjBalanceAmt              = $TotalSanctionAmount   - $ProjUptoUtilizedAmt ?? '';
         }
+         
         $FinYear                     = Helper::GetCurrentFinYear(NULL);
         $ObjHeadGiaMappDetails       = $this->ObjHeadGiaMappingMaster->ShowObjectHeadDataByGiaIdAndOHId($OHId);
         $GetGiaId                    = collect($ObjHeadGiaMappDetails)->where('object_head_id',$OHId)->pluck('gia_id')->first();

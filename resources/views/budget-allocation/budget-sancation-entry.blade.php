@@ -266,7 +266,8 @@ $(document).ready(function () {
 							if(element){
 								if (mappelement.object_head_id == element.object_head_id) {
 									var ObjHeadId              	= element.object_head_id;
-									var AllocationByObjHead    	= BudgetAllocationData.find(item =>item.object_head_id == ObjHeadId);
+									// var AllocationByObjHead    	= BudgetAllocationData.find(item =>item.object_head_id == ObjHeadId);
+									var AllocationByObjHead         = BudgetAllocationData.find(item => item.object_head_id == ObjHeadId && item.project_id == ProjectId );
 									var SubProjectSanctionByObjHead  = SubProjectAllocationData.find(item =>item.object_head_id == ObjHeadId);
 									var SubProjectSanctionAmt   = SubProjectSanctionByObjHead ? SubProjectSanctionByObjHead.sub_proj_sanctioned_amount : '';
 									var ProposedAmtByObjHead   	= AllocationByObjHead ? AllocationByObjHead.proposed_amount : '';
@@ -290,8 +291,8 @@ $(document).ready(function () {
 													SancationTable += '<input type="hidden" name ="obj_head_data_mode[]" id="obj_head_data_mode"class="tboxsmclass" value="OHSC">';
 													SancationTable += '<input type="hidden" name ="obj_head_sub_id[]" id="obj_head_sub_id"class="tboxsmclass" value="' + (val.oh_sub_cata_id ? val.oh_sub_cata_id : '') + '">';
 													SancationTable +='</td>';
-													SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" readonly name="proposed_amount[]" value ="' + SubProSanctionAmt + '"></td>';
-													SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" name="sanction_amount[]" value ="' + SanctionedAmt + '"></td>';
+													SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" readonly name="proposed_amount[]" value ="' + (SubProjectSanctionAmt ?? 0) + '"></td>';
+													SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" name="sanction_amount[]" value ="' + (SanctionedAmtByObjHead ?? 0)  + '"></td>';
 													SancationTable += '</tr>';
 												});
 											}
@@ -302,8 +303,8 @@ $(document).ready(function () {
 											SancationTable += '<input type="hidden" name ="obj_head_id[]" id="obj_head_id"class="tboxsmclass" value="' + (element.object_head_id ? element.object_head_id : '') + '">';
 											SancationTable += '<input type="hidden" name ="obj_head_data_mode[]" id="obj_head_data_mode"class="tboxsmclass" value="OH">';
 											SancationTable += '</td>';
-											SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" readonly name="proposed_amount[]" value ="' + SubProjectSanctionAmt + '"></td>';
-											SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" name="sanction_amount[]" value ="' + SanctionedAmtByObjHead + '"></td>';
+											SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" readonly name="proposed_amount[]" value ="' + (SubProjectSanctionAmt ?? 0) + '"></td>';
+											SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" name="sanction_amount[]" value ="' + (SanctionedAmtByObjHead ?? 0) + '"></td>';
 											SancationTable += '</tr>';
 										}
 									}else{
@@ -312,8 +313,8 @@ $(document).ready(function () {
 										SancationTable += '<input type="hidden" name ="obj_head_id[]" id="obj_head_id"class="tboxsmclass" value="' + (element.object_head_id ? element.object_head_id : '') + '">';
 										SancationTable += '<input type="hidden" name ="obj_head_data_mode[]" id="obj_head_data_mode"class="tboxsmclass" value="OH">';
 										SancationTable += '</td>';
-										SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" readonly name="proposed_amount[]" value ="' + SubProjectSanctionAmt + '"></td>';
-										SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" name="sanction_amount[]" value ="' + SanctionedAmtByObjHead + '"></td>';
+										SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" readonly name="proposed_amount[]" value ="' + (SubProjectSanctionAmt ?? 0) + '"></td>';
+										SancationTable += '<td><input type="text" class="tboxsmclass decimalnum" style="text-align:right;" name="sanction_amount[]" value ="' + (SanctionedAmtByObjHead ?? 0) + '"></td>';
 										SancationTable += '</tr>';
 									}
 								}	

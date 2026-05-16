@@ -95,7 +95,7 @@
 		border-radius:8px;
 		color:#fff;
 	}
-	.blink {
+	/* .blink {
 		animation: blinker 1s linear infinite;
 	}
 	.blinkslow {
@@ -104,6 +104,23 @@
 	@keyframes blinker {
 		50% {
 			opacity: 0;
+		}
+	} */
+	.blink {
+		animation: blinker 2s infinite ease-in-out;
+	}
+	.blinkslow {
+		animation: blinker 1s linear infinite;
+	}
+	@keyframes blinker {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.3;
+		}
+		100% {
+			opacity: 1;
 		}
 	}
 	.indent-wrapper {
@@ -155,6 +172,65 @@
 		font-weight:bold;
 		font-weight:bold;"
 		
+	}
+	/* @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+	@keyframes rotate-gradient {
+		0%   { --angle: 0deg; }
+		100% { --angle: 360deg; }
+	}
+
+	.approved-rainbow {
+		border: 3px solid transparent;
+		background-image: linear-gradient(#4a5bbf, #4a5bbf), 
+						conic-gradient(from var(--angle), #ff0000, #ff7700, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000);
+		background-origin: border-box;
+		background-clip: padding-box, border-box;
+		animation: rotate-gradient 2s linear infinite;
+		color: #fff;
+		text-align: center;
+	} */
+	@property --angle {
+		syntax: '<angle>';
+		initial-value: 0deg;
+		inherits: false;
+	}
+
+	@keyframes rotate-gradient {
+		0%   { --angle: 0deg; }
+		100% { --angle: 360deg; }
+	}
+
+	/* Default - no border */
+	.approved-rainbow {
+		border: 3px solid transparent;
+		color: #fff;
+		text-align: center;
+	}
+
+	/* Only rainbow border on hover */
+	/* .approved-rainbow{
+		background-image: linear-gradient(#25A5E6, #114F99), 
+						conic-gradient(from var(--angle), 
+							#4285f4, #ea4335, #fbbc05, #34a853, #4285f4);
+		background-origin: border-box;
+		background-clip: padding-box, border-box;
+		animation: rotate-gradient 3s linear infinite;
+	} */
+	.approved-rainbow:hover {
+		background-image: linear-gradient(#25A5E6, #114F99), 
+						conic-gradient(from var(--angle), 
+							#4285f4, #ea4335, #fbbc05, #34a853, #4285f4);
+		background-origin: border-box;
+		background-clip: padding-box, border-box;
+		animation: rotate-gradient 3s linear infinite;
+	}
+	.approved-rainbow {
+    background-color: #114F99; /* your chosen color */
 	}
 </style>
 <form name="form" method="post" action="{{ route('indent.indent-staus') }}">
@@ -443,11 +519,11 @@
 																			}else if(($WorkMoveDataValue->action_flag == "RJ") && ($WorkMoveDataValue->status != "AP")){
 																				echo "Indent Return Back With Reason" ;
 																			}else if(($WorkMoveDataValue->action_flag == "FW") && ($WorkMoveDataValue->status == "approved")){
-																				@endphp <div style="background-color:#7bd19f; border:1px solid #151e26"> @php echo "Approved"; @endphp </div> @php
+																				@endphp <div style="background-color:#4F63D8; border:1px solid #151e26"> @php echo "Approved"; @endphp </div> @php
 																			}else if(($WorkMoveDataValue->action_flag == NULL) && ($WorkMoveDataValue->status != "AP")){
 																				echo "Pulled Back";
 																			}else if($WorkMoveDataValue->status == "approved"){
-																				@endphp <div style="background-color:#66D42B; border:1px solid #151e26"> @php echo "Approved"; @endphp </div> @php
+																				@endphp <div class="rm-new-emp-btn pill-header-btn approved-rainbow"> @php echo "Approved"; @endphp </div> @php
 																			}else{
 																				echo "";
 																			}
@@ -538,7 +614,137 @@
 									</div>
 								</div>
 							</div>
-							
+							<div class="div12" style="padding:2px; margin-top:8px;">
+								<div class="mbtable">
+									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="left">&emsp;PO Processing & Material Inward Certification Status
+									</div></div></div>
+									<div class="card-body padding-1 ChartCard" id="CourseChart">
+										<div class="divrowbox innerdiv pad-0-top"> 
+											<div class="row" align="left">
+												<b>
+													<div class="row namebox">
+														<div class="row smclearrow"></div>
+														{{-- STEPPER BODY --}}
+														<div style="padding:24px 20px; display:flex; align-items:flex-start; justify-content:center;">
+															@if(isset($IndentSatus))
+																@if($IndentSatus == "approved")
+																	{{-- APPROVED: Green --}}
+																	<div style="text-align:center; flex:1; max-width:130px;">
+																		<div style="width:40px; height:40px; border-radius:50%;
+																			background:#1d9e75; color:#fff;
+																			display:flex; align-items:center; justify-content:center;
+																			font-size:18px; margin:auto;">&#10003;</div>
+																		<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Indent Approved</div>
+																		<div style="font-size:11px; color:#999; margin-top:3px;">Completed</div>
+																	</div>
+																@else
+																	{{-- NOT APPROVED: Grey --}}
+																	<div style="text-align:center; flex:1; max-width:130px;">
+																		<div style="width:40px; height:40px; border-radius:50%;
+																			background:#eee; color:#aaa;
+																			border:1.5px solid #ccc;
+																			display:flex; align-items:center; justify-content:center;
+																			font-size:14px; font-weight:600; margin:auto;">1</div>
+																		<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Indent Approved</div>
+																		<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
+																	</div>
+																@endif
+															@endif
+															{{-- CONNECTOR 1→2 --}}
+															<div style="flex:1; height:2px; margin-top:19px;
+																background:{{ $ProcessTrancationData ? '#1d9e75' : '#ddd' }};"></div>
+															{{-- STEP 2: Sanction Process --}}
+															<div style="text-align:center; flex:1; max-width:130px;">
+																@if($ProcessTrancationData->isNotEmpty() && $PoExists)
+																	{{-- COMPLETED: Green --}}
+																	<div style="width:40px; height:40px; border-radius:50%;
+																		background:#1d9e75; color:#fff;
+																		display:flex; align-items:center; justify-content:center;
+																		font-size:18px; margin:auto;">&#10003;</div>
+																	<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Sanction Process</div>
+																	<div style="font-size:11px; color:#999; margin-top:3px;">Completed</div>
+																@else
+																	{{-- PENDING: Grey --}}
+																	<div style="width:40px; height:40px; border-radius:50%;
+																		background:#eee; color:#aaa;
+																		border:1.5px solid #ccc;
+																		display:flex; align-items:center; justify-content:center;
+																		font-size:14px; font-weight:600; margin:auto;">2</div>
+																	<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Sanction Process</div>
+																	<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
+																@endif
+															</div>
+															{{-- CONNECTOR 2→3 --}}
+															<div style="flex:1; height:2px; margin-top:19px;
+																background:{{ $PoExists ? '#1d9e75' : '#ddd' }};"></div>
+															{{-- STEP 3: PO Created --}}
+															<div style="text-align:center; flex:1; max-width:130px;">
+																<div style="width:40px; height:40px; border-radius:50%;
+																	background:{{ $PoExists ? '#1d9e75' : '#eee' }};
+																	color:{{ $PoExists ? '#fff' : '#aaa' }};
+																	border:{{ $PoExists ? 'none' : '1.5px solid #ccc' }};
+																	display:flex; align-items:center; justify-content:center;
+																	font-size:{{ $PoExists ? '18px' : '14px' }}; font-weight:600; margin:auto;">
+																	{{ $PoExists ? '✔' : '3' }}
+																</div>
+																<div style="margin-top:8px; font-size:12px; font-weight:600;
+																	color:{{ $PoExists ? '#0f6e56' : '#aaa' }};">PO Created</div>
+																<div style="font-size:11px; color:#999; margin-top:3px;">
+																	{{ $PoExists ? 'Completed' : 'Pending' }}
+																</div>
+															</div>
+															{{-- CONNECTOR 3→4 --}}
+															<div style="flex:1; height:2px; margin-top:19px;
+																background:{{ $poIssued ? '#1d9e75' : '#ddd' }};"></div>
+															{{-- STEP 4: PO Issued --}}
+															<div style="text-align:center; flex:1; max-width:130px;">
+																<div style="width:40px; height:40px; border-radius:50%;
+																	background:{{ $poIssued ? '#1d9e75' : '#eee' }};
+																	color:{{ $poIssued ? '#fff' : '#aaa' }};
+																	border:{{ $poIssued ? 'none' : '1.5px solid #ccc' }};
+																	display:flex; align-items:center; justify-content:center;
+																	font-size:{{ $poIssued ? '18px' : '14px' }}; font-weight:600; margin:auto;">
+																	{{ $poIssued ? '✔' : '4' }}
+																</div>
+																<div style="margin-top:8px; font-size:12px; font-weight:600;
+																	color:{{ $poIssued ? '#0f6e56' : '#aaa' }};">PO Issued</div>
+																<div style="font-size:11px; color:#999; margin-top:3px;">
+																	{{ $poIssued ? 'Completed' : 'Pending' }}
+																</div>
+															</div>
+															{{-- CONNECTOR 4→5 --}}
+															<div style="flex:1; height:2px; margin-top:19px; background:{{ $IsMatInwardSubmit ? '#1d9e75' : '#ddd' }};"></div>
+															{{-- STEP 5: Material Inward Certification --}}
+															<div style="text-align:center; flex:1; max-width:130px;">
+																@if($IsMatInwardSubmit)
+																	{{-- SUBMITTED: Green --}}
+																	<div style="width:40px; height:40px; border-radius:50%;
+																		background:#1d9e75; color:#fff;
+																		display:flex; align-items:center; justify-content:center;
+																		font-size:18px; margin:auto;">&#10003;</div>
+																	<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Material Inward Certification</div>
+																	<div style="font-size:11px; color:#999; margin-top:3px;">Submitted</div>
+																@else
+																	{{-- NOT SUBMITTED: Grey --}}
+																	<div style="width:40px; height:40px; border-radius:50%;
+																		background:#eee; color:#aaa;
+																		border:1.5px solid #ccc;
+																		display:flex; align-items:center; justify-content:center;
+																		font-size:14px; font-weight:600; margin:auto;">5</div>
+																	<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Material Inward Certification</div>
+																	<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
+																@endif
+															</div>
+														</div>
+														<div class="row smclearrow"></div>
+                                    					<div class="row smclearrow"></div>
+													</div>
+												</b> 
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 							<div class="div12" style="padding:2px; margin-top:8px;">
 								<div class="mbtable">
 									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="left">&emsp;Indent Sanction Processing 
@@ -611,124 +817,6 @@
 							</div>
 							<div class="row smclearrow"></div>
 							<div class="row smclearrow"></div>
-							<div class="card" style="margin-top:15px; border-radius:10px; overflow:hidden; border:1px solid #e5e5e5;">
-								{{-- HEADER --}}
-								<div style="background:#0b3a6a; color:#fff; padding:10px 15px; font-weight:600;">
-									Purchase Order Status
-								</div>
-								{{-- STEPPER BODY --}}
-								<div style="padding:24px 20px; display:flex; align-items:flex-start; justify-content:center;">
-									@if(isset($IndentSatus))
-										@if($IndentSatus == "approved")
-											{{-- APPROVED: Green --}}
-											<div style="text-align:center; flex:1; max-width:130px;">
-												<div style="width:40px; height:40px; border-radius:50%;
-													background:#1d9e75; color:#fff;
-													display:flex; align-items:center; justify-content:center;
-													font-size:18px; margin:auto;">&#10003;</div>
-												<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Indent Approved</div>
-												<div style="font-size:11px; color:#999; margin-top:3px;">Completed</div>
-											</div>
-										@else
-											{{-- NOT APPROVED: Grey --}}
-											<div style="text-align:center; flex:1; max-width:130px;">
-												<div style="width:40px; height:40px; border-radius:50%;
-													background:#eee; color:#aaa;
-													border:1.5px solid #ccc;
-													display:flex; align-items:center; justify-content:center;
-													font-size:14px; font-weight:600; margin:auto;">1</div>
-												<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Indent Approved</div>
-												<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
-											</div>
-										@endif
-									@endif
-									{{-- CONNECTOR 1→2 --}}
-									<div style="flex:1; height:2px; margin-top:19px;
-										background:{{ $ProcessTrancationData ? '#1d9e75' : '#ddd' }};"></div>
-									{{-- STEP 2: Sanction Process --}}
-									<div style="text-align:center; flex:1; max-width:130px;">
-										@if($ProcessTrancationData->isNotEmpty() && $PoExists)
-											{{-- COMPLETED: Green --}}
-											<div style="width:40px; height:40px; border-radius:50%;
-												background:#1d9e75; color:#fff;
-												display:flex; align-items:center; justify-content:center;
-												font-size:18px; margin:auto;">&#10003;</div>
-											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Sanction Process</div>
-											<div style="font-size:11px; color:#999; margin-top:3px;">Completed</div>
-										@else
-											{{-- PENDING: Grey --}}
-											<div style="width:40px; height:40px; border-radius:50%;
-												background:#eee; color:#aaa;
-												border:1.5px solid #ccc;
-												display:flex; align-items:center; justify-content:center;
-												font-size:14px; font-weight:600; margin:auto;">2</div>
-											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Sanction Process</div>
-											<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
-										@endif
-									</div>
-									{{-- CONNECTOR 2→3 --}}
-									<div style="flex:1; height:2px; margin-top:19px;
-										background:{{ $PoExists ? '#1d9e75' : '#ddd' }};"></div>
-									{{-- STEP 3: PO Created --}}
-									<div style="text-align:center; flex:1; max-width:130px;">
-										<div style="width:40px; height:40px; border-radius:50%;
-											background:{{ $PoExists ? '#1d9e75' : '#eee' }};
-											color:{{ $PoExists ? '#fff' : '#aaa' }};
-											border:{{ $PoExists ? 'none' : '1.5px solid #ccc' }};
-											display:flex; align-items:center; justify-content:center;
-											font-size:{{ $PoExists ? '18px' : '14px' }}; font-weight:600; margin:auto;">
-											{{ $PoExists ? '✔' : '3' }}
-										</div>
-										<div style="margin-top:8px; font-size:12px; font-weight:600;
-											color:{{ $PoExists ? '#0f6e56' : '#aaa' }};">PO Created</div>
-										<div style="font-size:11px; color:#999; margin-top:3px;">
-											{{ $PoExists ? 'Completed' : 'Pending' }}
-										</div>
-									</div>
-									{{-- CONNECTOR 3→4 --}}
-									<div style="flex:1; height:2px; margin-top:19px;
-										background:{{ $poIssued ? '#1d9e75' : '#ddd' }};"></div>
-									{{-- STEP 4: PO Issued --}}
-									<div style="text-align:center; flex:1; max-width:130px;">
-										<div style="width:40px; height:40px; border-radius:50%;
-											background:{{ $poIssued ? '#1d9e75' : '#eee' }};
-											color:{{ $poIssued ? '#fff' : '#aaa' }};
-											border:{{ $poIssued ? 'none' : '1.5px solid #ccc' }};
-											display:flex; align-items:center; justify-content:center;
-											font-size:{{ $poIssued ? '18px' : '14px' }}; font-weight:600; margin:auto;">
-											{{ $poIssued ? '✔' : '4' }}
-										</div>
-										<div style="margin-top:8px; font-size:12px; font-weight:600;
-											color:{{ $poIssued ? '#0f6e56' : '#aaa' }};">PO Issued</div>
-										<div style="font-size:11px; color:#999; margin-top:3px;">
-											{{ $poIssued ? 'Completed' : 'Pending' }}
-										</div>
-									</div>
-									{{-- CONNECTOR 4→5 --}}
-									<div style="flex:1; height:2px; margin-top:19px; background:{{ $IsMatInwardSubmit ? '#1d9e75' : '#ddd' }};"></div>
-									{{-- STEP 5: Material Inward Certification --}}
-									<div style="text-align:center; flex:1; max-width:130px;">
-										@if($IsMatInwardSubmit)
-											{{-- SUBMITTED: Green --}}
-											<div style="width:40px; height:40px; border-radius:50%;
-												background:#1d9e75; color:#fff;
-												display:flex; align-items:center; justify-content:center;
-												font-size:18px; margin:auto;">&#10003;</div>
-											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#0f6e56;">Material Inward Certification</div>
-											<div style="font-size:11px; color:#999; margin-top:3px;">Submitted</div>
-										@else
-											{{-- NOT SUBMITTED: Grey --}}
-											<div style="width:40px; height:40px; border-radius:50%;
-												background:#eee; color:#aaa;
-												border:1.5px solid #ccc;
-												display:flex; align-items:center; justify-content:center;
-												font-size:14px; font-weight:600; margin:auto;">5</div>
-											<div style="margin-top:8px; font-size:12px; font-weight:600; color:#aaa;">Material Inward Certification</div>
-											<div style="font-size:11px; color:#999; margin-top:3px;">Pending</div>
-										@endif
-									</div>
-								</div>
-							</div>
 							<div class="div12" style="padding:2px; margin-top:8px;">
 								<div class="mbtable">
 									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="left">&emsp;Material Inward  Certification File Transaction</div></div></div>
