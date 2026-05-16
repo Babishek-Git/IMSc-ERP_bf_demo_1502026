@@ -94,7 +94,7 @@ class HostelMasterController extends Controller
                 dd($SaveHouse);
             
                 DB::commit();
-                $message = "House Master Data Saved Successfully";
+                $message = "House Master Data Saved ";
             }catch (\Exception $e) { dd($e);end;
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

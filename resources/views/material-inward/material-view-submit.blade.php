@@ -56,11 +56,12 @@ if(isset($data['FromPage'])){
 if(isset($data['WorkFlowActionData'])){
 	$WorkFlowActionData = $data['WorkFlowActionData'];
 }
-$IndentCreateName = $data['IndentCreateName'] ?? '';
-$BackUrl          ='material.material-inward-creation';
-$GrandTotal       = 0;
-$PayAmt           = 0;
-$InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
+$IndentCreateName    = $data['IndentCreateName'] ?? '';
+$BackUrl             ='material.material-inward-creation';
+$GrandTotal          = 0;
+$PayAmt              = 0;
+$InvoicesDocArr      = $data['InvoicesDocData'] ?? [];
+$DeliveryChallDocArr = $data['DeliveryChallanWithDocs'] ?? [];
 @endphp
 
 <form action="" method="post" enctype="multipart/form-data" name="form">
@@ -85,21 +86,21 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
                                                 <button type="button" class="btn btn-default btnprimary" title="Back" name="back" id="back" value=" BACK " onclick="window.location='{{ route($BackUrl) }}'" ><i class="fa fa-arrow-circle-o-left pt2"></i> Back</button>
                                             </div>
                                             <div class="btn-group floatr">
-                                                <button type="submit" id="SubmitApplication" name="SubmitApplication" data-flag="SU"  class="btn btn-default btninfo" value="SUBMIT" data-flag="SU"><i class="fa fa-arrow-circle-right pt2"></i> Submit Application </button>
+                                                <button type="submit" id="SubmitApplication" name="SubmitApplication" data-flag="SU"  class="btn btn-default btninfo" value="SUBMIT" data-flag="SU"><i class="fa fa-arrow-circle-right pt2"></i> Submit </button>
                                             </div>
                                         </div>
                                         <div class="form-step active">
                                                 {{-- ── Purchase order Information Fieldset ── --}}
                                         	    <div class="row smclearrow"></div>
 												<fieldset class="fieldbox">
-                                                    <legend class="fieldbox-legend">Purchase order / Receipt Details</legend>
+                                                    <legend class="fieldbox-legend">Purchase order</legend>
                                                     <div class="fieldbox-div">
                                                         <div class="div3"><div class="lboxlabel ">Purchase order No.</div><input type="text" name="txt_purchase_order_no" id="txt_purchase_order_no" class="tboxsmclass " readonly value="@php if(isset($PoNo)){ echo $PoNo; } @endphp" ></div>
                                                         <div class="div3"><div class="lboxlabel ">Purchase order Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="@php if(isset($PoDate)){ echo Helper::DisplayDateFormat($PoDate);} @endphp" ></div>
                                                         <div class="div3"><div class="lboxlabel ">Indent Creation By</div><input type="text" name="txt_indent_created_by" id="txt_indent_created_by" class="tboxsmclass " readonly value="@php if(isset($IndentCreateName)){ echo $IndentCreateName; } @endphp" ></div>
                                                         <div class="div3"><div class="lboxlabel ">Vendor Name</div><input type="text" name="txt_vendor_name" id="txt_vendor_name" class="tboxsmclass " readonly value="@php if(isset($PoContName)){ echo $PoContName; } @endphp" ></div>
-                                                        <div class="div3"><div class="lboxlabel ">Receipt No.</div><input type="text" name="txt_purchase_order_no" id="txt_purchase_order_no" class="tboxsmclass " readonly value="@php if(isset($ReceiptNo)){ echo $ReceiptNo; } @endphp" ></div>
-                                                        <div class="div3"><div class="lboxlabel ">Receipt Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="@php if(isset($ReceiptDate)){ echo Helper::DisplayDateFormat($ReceiptDate);} @endphp" ></div>
+                                                        <!-- <div class="div3"><div class="lboxlabel ">Receipt No.</div><input type="text" name="txt_purchase_order_no" id="txt_purchase_order_no" class="tboxsmclass " readonly value="@php if(isset($ReceiptNo)){ echo $ReceiptNo; } @endphp" ></div> -->
+                                                        <!-- <div class="div3"><div class="lboxlabel ">Receipt Date</div><input type="text" name="txt_purchase_order_date" id="txt_purchase_order_date" class="tboxsmclass " readonly value="@php if(isset($ReceiptDate)){ echo Helper::DisplayDateFormat($ReceiptDate);} @endphp" ></div> -->
                                                         <div class="row smclearrow"></div>
                                                         <div class="row smclearrow"></div>
                                                         <div class="row smclearrow"></div>
@@ -108,14 +109,51 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
                                             <div class="row smclearrow"></div>
                                             <div class="row smclearrow"></div>
                                             <div class="row smclearrow"></div>
-                                           {{-- ── MATERILA INWARD  SUPPORTING DOCUMENTS TABLE  ── --}}
+                                            {{-- ── MATERILA INWARD  DELIVERY CHALLAN DOCUMENTS TABLE  ── --}}
                                             <div class="table-container">
                                                 <div class="table-wrapper">
-                                                    <div class="section-header"><span>Invoice / Delivery  Documents Details</span></div>
+                                                    <div class="section-header"><span>Delivery Challan Documents / Receipt Details</span></div>
                                                     <table class="formtable" disabled width="100%">
                                                         <thead>
                                                             <tr>
-                                                                <th style="text-align:center; width:60%">Invoice / Delivery Challan Description</th>  
+                                                                <th style="text-align:center; width:60%">Receipt No. / GRN No.</th>  
+                                                                <th style="text-align:center; width:30%">Receipt Date</th>  
+                                                                <th style="text-align:center; width:30%">Download</th>  
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="supp_doc_tbody">	
+                                                            @if(isset($DeliveryChallDocArr))
+                                                                @foreach($DeliveryChallDocArr as $DocValue)
+                                                                <tr>
+                                                                    <td>
+                                                                        <input type="text"  style="width:100%" name="txt_supp_doc_desc[]" id="txt_sno" class="tboxsmclass" readonly value="{{$DocValue->receipt_no ?? ''}}">
+                                                                    </td>
+                                                                    <td><input type="text" name="txt_supp_doc_date[]" id="txt_supp_doc_date" class="tboxsmclass"  readonly value="{{ Helper::DisplayDateFormat($DocValue->receipt_date ?? $DocValue->receipt_date ?? '') }}"></td>
+                                                                    <td class="labelcenter" style="text-align:center;">
+                                                                        <button type="button"  id="btn_recpt_download" data-fileid="{{ encrypt($DocValue->sup_doc_id) }}" class="btn btn-default tuploadbtn" title="Click here to Download the File" style="cursor: pointer;"><i class="fa fa-download"></i> Download File</button>
+                                                                    </td>
+                                                                </tr>
+                                                                @endforeach
+                                                            @else
+                                                                <tr>
+                                                                    <td colspan='3'style="text-align:center;">No Records Found ..!</td>
+                                                                </tr> 
+                                                            @endif	
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="row smclearrow"></div>
+                                            <div class="row smclearrow"></div>
+                                            <div class="row smclearrow"></div>
+                                           {{-- ── MATERILA INWARD  SUPPORTING DOCUMENTS TABLE  ── --}}
+                                            <div class="table-container">
+                                                <div class="table-wrapper">
+                                                    <div class="section-header"><span>Invoice Documents Details</span></div>
+                                                    <table class="formtable" disabled width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="text-align:center; width:60%">Invoice Description</th>  
                                                                 <th style="text-align:center; width:30%">Date</th>  
                                                                 <th style="text-align:center; width:30%">Download</th>  
                                                             </tr>
@@ -293,12 +331,18 @@ $InvoicesDocArr   = $data['InvoicesDocData'] ?? [];
 </style>
 <script>
     $(document).on("click", "#btn_download", function(event) {
-		var SuppDocId = $(this).attr("data-fileid");
-		DownloadFile(SuppDocId);
-	});
-	function DownloadFile(SuppDocId) {
+		var SuppDocId     = $(this).attr("data-fileid");
         var ModuleCode    = 'MAT_INWARD';
         var ModuleSubCode = 'INVOICE';
+		DownloadFile(SuppDocId,ModuleCode,ModuleSubCode);
+	});
+    $(document).on("click", "#btn_recpt_download", function(event) {
+		var SuppDocId     = $(this).attr("data-fileid");
+        var ModuleCode    = 'MAT_INWARD';
+        var ModuleSubCode = 'DEL_CHALLAN';
+		DownloadFile(SuppDocId,ModuleCode,ModuleSubCode);
+	});
+    function DownloadFile(SuppDocId,ModuleCode,ModuleSubCode) {
 		window.open("{{ route('indent.sanction-document-download') }}?id=" + SuppDocId + "&module_code=" + ModuleCode + "&module_sub_code=" + ModuleSubCode, "_blank");
 	}
 </script>

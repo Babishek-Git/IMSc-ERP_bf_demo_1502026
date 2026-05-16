@@ -179,7 +179,7 @@ class ChangeMaritalRequestController extends Controller
                 }
                 //dd($SaveEmployee);
                 DB::commit();
-                $message = "Marital Status Update Request Form Data Saved Successfully";
+                $message = "Marital Status Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

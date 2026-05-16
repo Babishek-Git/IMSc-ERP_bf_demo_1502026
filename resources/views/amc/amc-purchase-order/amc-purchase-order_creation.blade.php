@@ -17,6 +17,10 @@ if(isset($ShowAMCPoMasterData)){
 		$AMCGstPerc       = $AMCPOMastData->gst_perc;
 		$AMCPoTotalAmt    = $AMCPOMastData->amc_po_total_amt;
 		$AMCTaxType       = $AMCPOMastData->cost_tax;
+		$WrkDuration      = $AMCPOMastData->work_duration;
+		$WrkDurationMode  = $AMCPOMastData->work_duration_mode;
+		$WrkStartDate     = $AMCPOMastData->work_starting_date;
+		$WrkEndDate       = $AMCPOMastData->work_completion_date;
 		$AMCLocIds        = json_decode($AMCPOMastData->location_id, true);
 		$AMCPOBillPayMode = $AMCPOMastData->bill_pay_mode;
 		$SelectedLocIds   = array_values(array_filter($AMCLocIds));
@@ -57,7 +61,7 @@ $BackUrl     = 'amc-purchase-order.amc-purchase-order-submission';
 													<fieldset class="fieldbox">
 														<legend class="fieldbox-legend">AMC Purchase Order  Details</legend>
 														<div class="fieldbox-div">
-															<div class="div2"><div class="lboxlabel ">Discipline<span class="reqindi">*</span></div>
+															<div class="div3"><div class="lboxlabel ">Discipline<span class="reqindi">*</span></div>
 																<select name="cmb_discipline" id="cmb_discipline" class="tboxsmclass ChosenInput">
 																	<option value="">-------------- Select -------------</option>
 																	@if(isset($data['MaterialCertifySecData']))
@@ -69,7 +73,7 @@ $BackUrl     = 'amc-purchase-order.amc-purchase-order-submission';
 																	@endif
 																</select>
 															</div>
-															<div class="div2"><div class="lboxlabel ">AMC Type<span class="reqindi">*</span></div>
+															<div class="div3"><div class="lboxlabel ">AMC Type<span class="reqindi">*</span></div>
 																<select name="cmb_amc_type" id="cmb_amc_type" class="tboxsmclass ChosenInput">
 																	<option value="">--Select --</option>
 																	@if(isset($data['AMCTypeData']))
@@ -81,7 +85,7 @@ $BackUrl     = 'amc-purchase-order.amc-purchase-order-submission';
 																	@endif
 																</select>
 															</div>
-															<div class="div2"><div class="lboxlabel ">AMC Bases On<span class="reqindi">*</span></div>
+															<div class="div3"><div class="lboxlabel ">AMC Bases On<span class="reqindi">*</span></div>
 																<select name="cmb_bases_on" id="cmb_bases_on" class="tboxsmclass ChosenInput">
 																	<option value="">-------------- Select -------------</option>
 																	@if(isset($data['AMCprovidedBaseOnData']))
@@ -93,10 +97,29 @@ $BackUrl     = 'amc-purchase-order.amc-purchase-order-submission';
 																	@endif
 																</select>
 															</div>
-															<div class="div3"><div class="lboxlabel ">AMC File Name<span class="reqindi">*</span></div><textarea name="txt_amc_file_name" id="txt_amc_file_name" class="tboxsmclass" rows="1" value="{{$AMCFileName ?? ''}}">{{$AMCFileName ?? ''}}</textarea></div>
-															<div class="div3"><div class="lboxlabel ">Description of Equipment<span class="reqindi">*</span></div><textarea name="txt_desc_equip" id="txt_desc_equip" class="tboxsmclass" rows="1" value="{{$AMCEqupdesc ?? ''}}">{{$AMCEqupdesc ?? ''}}</textarea></div>
+															<div class="div3"><div class="lboxlabel ">AMC File Name<span class="reqindi">*</span></div><textarea name="txt_amc_file_name" id="txt_amc_file_name" width:100% class="tboxsmclass" rows="1" value="{{$AMCFileName ?? ''}}">{{$AMCFileName ?? ''}}</textarea></div>
 															<div class="row smclearrow"></div>
-															<div class="div2"><div class="lboxlabel ">Vendor Name<span class="reqindi">*</span></div>
+															<div class="div3"><div class="lboxlabel ">Description of Equipment<span class="reqindi">*</span></div><textarea name="txt_desc_equip" id="txt_desc_equip" class="tboxsmclass" rows="1" width:100% value="{{$AMCEqupdesc ?? ''}}">{{$AMCEqupdesc ?? ''}}</textarea></div>
+															<div class="div2"><div class="lboxlabel">AMC Cost &#8377;<span class="reqindi">*</span></div><input type="text" name="txt_amsc_cost" id="txt_amsc_cost" class="tboxsmclass" value="{{$AMCCost ?? ''}}"></div>
+															<div class="div1"><div class="lboxlabel ">GST %<span class="reqindi">*</span></div><input type="text" name="txt_amsc_gst" id="txt_amsc_gst" class="tboxsmclass " value="{{$AMCGstPerc ?? ''}} "></div>
+															<div class="div3"><div class="lboxlabel ">Tax on Cost<span class="reqindi">*</span></div>
+																<div class="div5 no-margin">
+																	<div class="inputGroup paddlr2">
+																		<input id="rad_inc" name="rad_tax_inc" type="radio" value="INC" {{isset($AMCTaxType) && $AMCTaxType == 'INC' ? 'checked' : ''}}/>
+																		<label for="rad_inc" style="padding:3px 0px; width:100%"> &nbsp;Including</label>
+																	</div>
+																</div>
+																<div class="div5 no-margin">
+																	<div class="inputGroup paddlr2">
+																		<input id="rad_exc" name="rad_tax_inc" type="radio" value="EXC" {{isset($AMCTaxType) && $AMCTaxType == 'EXC' ? 'checked' : ''}}/>
+																		<label for="rad_exc" style="padding:3px 0px; width:100%"> &nbsp;Excluding</label>
+																	</div>
+																</div>
+															</div>
+															<div class="div3"><div class="lboxlabel">Total AMC Po Cost &#8377;<span class="reqindi">*</span></div><input type="text" name="hidden_total_po_amt" id="hidden_total_po_amt" class="tboxsmclass"readonly value="{{$AMCPoTotalAmt ?? ''}}"></div>
+															<input type='hidden' id='hidden_total_po_amt'  value =''>
+															<div class="row smclearrow"></div>
+															<div class="div3"><div class="lboxlabel ">Vendor Name<span class="reqindi">*</span></div>
 																<div style="display:flex; align-items:center; gap:8px;">
 																	<select name="cmb_vendor_name" id="cmb_vendor_name" class="tboxsmclass ChosenInput">
 																		<option value="">-------------- Select -------------</option>
@@ -111,26 +134,23 @@ $BackUrl     = 'amc-purchase-order.amc-purchase-order-submission';
 																	<i class="fa fa-plus-square sqadd  " id="AddNewVend"  style="font-size:24px; cursor:pointer; color:#10478A;"></i>
 																</div>
 															</div>
-															<div class="div1"><div class="lboxlabel">AMC Cost &#8377;<span class="reqindi">*</span></div><input type="text" name="txt_amsc_cost" id="txt_amsc_cost" class="tboxsmclass" value="{{$AMCCost ?? ''}}"></div>
-															<div class="div1"><div class="lboxlabel ">GST %<span class="reqindi">*</span></div><input type="text" name="txt_amsc_gst" id="txt_amsc_gst" class="tboxsmclass " value="{{$AMCGstPerc ?? ''}} "></div>
-															<div class="div2"><div class="lboxlabel ">Tax on Cost<span class="reqindi">*</span></div>
-																<div class="div5 no-margin">
-																	<div class="inputGroup paddlr2">
-																		<input id="rad_inc" name="rad_tax_inc" type="radio" value="INC" {{isset($AMCTaxType) && $AMCTaxType == 'INC' ? 'checked' : ''}}/>
-																		<label for="rad_inc" style="padding:3px 0px; width:100%"> &nbsp;Including</label>
-																	</div>
-																</div>
-																<div class="div5 no-margin">
-																	<div class="inputGroup paddlr2">
-																		<input id="rad_exc" name="rad_tax_inc" type="radio" value="EXC" {{isset($AMCTaxType) && $AMCTaxType == 'EXC' ? 'checked' : ''}}/>
-																		<label for="rad_exc" style="padding:3px 0px; width:100%"> &nbsp;Excluding</label>
-																	</div>
+															<div class="div3">
+																<div class="lboxlabel">Work Duration<span class="reqindi">*</span></div>
+																<div style="display:flex; gap:5px;">
+																	<input type="text" name="txt_work_duration" id="txt_work_duration" class="tboxsmclass" value="{{$WrkDuration ?? ''}}">
+																	<select name="cmb_work_duration" id="cmb_work_duration" class="tboxsmclass ChosenInput">
+																		<option value="">-- Select --</option>
+																		<option value="MONTH" {{isset($WrkDurationMode) && $WrkDurationMode == 'MONTH' ? 'selected' : ''}}>MONTH</option>
+																		<option value="YEAR" {{isset($WrkDurationMode) && $WrkDurationMode == 'YEAR' ? 'selected' : ''}}>YEAR</option>
+																		<option value="DAYS" {{isset($WrkDurationMode) && $WrkDurationMode == 'DAYS' ? 'selected' : ''}}>DAYS</option>
+																	</select>
 																</div>
 															</div>
-															<div class="div1"><div class="lboxlabel">Total AMC Po Cost &#8377;<span class="reqindi">*</span></div><input type="text" name="hidden_total_po_amt" id="hidden_total_po_amt" class="tboxsmclass"readonly value="{{$AMCPoTotalAmt ?? ''}}"></div>
-															<input type='hidden' id='hidden_total_po_amt'  value =''>
-															<div class="div2"><div class="lboxlabel ">Location<span class="reqindi">*</span></div>
-																<select name="cmb_loc_name[]" id="cmb_loc_name" class="tboxsmclass ChosenInput" multiple>
+															<div class="div3"><div class="lboxlabel ">Work Starting Date<span class="reqindi">*</span></div><input type="text" name="txt_start_date" id="txt_start_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($WrkStartDate ?? null) }}"></div>
+															<div class="div3"><div class="lboxlabel ">Work Completion Date<span class="reqindi">*</span></div><input type="text" name="txt_end_date" id="txt_end_date" class="tboxsmclass " value="{{Helper::DisplayDateFormat($WrkEndDate ?? null) }}" readonly></div>
+															<div class="row smclearrow"></div>
+															<div class="div3"><div class="lboxlabel ">Location<span class="reqindi">*</span></div>
+																<select name="cmb_loc_name[]" id="cmb_loc_name" class="tboxsmclass ChosenInput" multiple width:100%>
 																	<option value="0">-- Nil --</option>
 																	@if(isset($data['ShowLoacationMasterData']))
 																		@foreach($data['ShowLoacationMasterData'] as $locationdata)
@@ -276,7 +296,7 @@ $(document).ready(function(){
 		var AmcTotalCost     = parseFloat($('#txt_amsc_cost').val()) || 0;
 		var PoTaxValue       = 0;
     	var TotalPoAmt       = 0;
-		if(TaxType =='INC'){
+		if(TaxType =='EXC'){
 			PoTaxValue  = (AmcTotalCost * TaxPercent) / (100);
         	TotalPoAmt  = AmcTotalCost + PoTaxValue;
 		}else{
@@ -636,7 +656,37 @@ $("body").on("click","#ModalSave", function(event){
 		}
 	});
 });
+function calculateEndDate() {
+    var duration = parseInt($("#txt_work_duration").val());
+    var type = $("#cmb_work_duration").val();
+    var startDate = $("#txt_start_date").val();
 
+    if (!duration || !type || !startDate) return;
+
+    // 👉 convert DD/MM/YYYY to proper Date
+    var parts = startDate.split("/"); 
+    var date = new Date(parts[2], parts[1] - 1, parts[0]); // YYYY, MM, DD
+
+    if (type === "DAYS") {
+        date.setDate(date.getDate() + duration);
+    } else if (type === "MONTH") {
+        date.setMonth(date.getMonth() + duration);
+    } else if (type === "YEAR") {
+        date.setFullYear(date.getFullYear() + duration);
+    }
+
+    // 👉 format back to DD/MM/YYYY
+    var day = ("0" + date.getDate()).slice(-2);
+    var month = ("0" + (date.getMonth() + 1)).slice(-2);
+    var year = date.getFullYear();
+
+    $("#txt_end_date").val(day + "/" + month + "/" + year);
+}
+
+// trigger
+$("#txt_work_duration, #cmb_work_duration, #txt_start_date").on("input change", function () {
+    calculateEndDate();
+});
 	
 </script>
 @endsection

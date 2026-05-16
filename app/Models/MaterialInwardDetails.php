@@ -58,6 +58,10 @@ class MaterialInwardDetails extends Model
             $MatData = MaterialInwardDetails::where('master_inward_id',$MatId)->where('active',1)->get();
         }
         return $MatData;
-
+    }
+    public static function ShowMaterialInwardData($MatId){
+        if(filled($MatId)){
+            return self::whereIn('master_inward_id',$MatId)->where('active',1)->get();
+        }
     }
 }

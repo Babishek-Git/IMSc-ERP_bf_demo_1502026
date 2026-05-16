@@ -147,7 +147,7 @@ class ChangeAddressRequestController extends Controller
                 }
                 //dd($SaveEmployee);
                 DB::commit();
-                $message = "Address Update Request Form Data Saved Successfully";
+                $message = "Address Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -329,7 +329,7 @@ class ChangeAddressRequestController extends Controller
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                     //dd( $SaveEmployee);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();

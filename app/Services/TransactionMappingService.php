@@ -63,7 +63,6 @@ class TransactionMappingService
         $ObjectHeadSubCataId    = $LedgerObjHeadMapData->pluck('object_head_sub_cata_id')->first();
         $ProjectId              = $LedgerObjHeadMapData->pluck('project_id')->first(); // Actually this is Project parent Id
         $ProjectParentId        = $ProjectId;
-
         $GiaId                  = $LedgerObjHeadMapData->pluck('gia_id')->first();
         $ObjectHeadGiaMappId    = $LedgerObjHeadMapData->pluck('oh_gia_mapp_id')->first();
         $RetData['ObjectHeadLedgerMapId'] = $ObjectHeadLedgerMapId;
@@ -93,7 +92,6 @@ class TransactionMappingService
         $RetData['ObjectHeadSubCataName']   = $ObjectHeadSubCataName;
 
         $CurrentFinYear = Helper::GetCurrentFinYear(NULL);
-
         $BudgetAllocationData = $this->ShowBudegetAllocationFinYear($CurrentFinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId); 
         $BudgetSanctionedAmt = $BudgetAllocationData->pluck('sanctioned_amount')->first();
         if(isset($BudgetSanctionedAmt)){
@@ -115,8 +113,10 @@ class TransactionMappingService
         $RetData['BudgetReceivedAmount'] = $BudgetReceivedAmount;
         $UptoDateExpenditureAmt = $this->ShowBudegetActualExpenditure(NULL,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId);
         $RetData['UptoDtExpenditureAmt'] = $UptoDateExpenditureAmt;
+        
 
         
+
 
         /*if(filled($LedgerGroupId)){ 
             $BudgetHeadData = $this->GetBudgetGroupId($LedgerGroupId); 
@@ -201,15 +201,12 @@ class TransactionMappingService
         ->when($ProjectId, fn($q) => $q->where('project_id', $ProjectId))
         ->sum('payment_oh_amount');  
     }
-
     public function ShowLedgerForObjectHead($ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId){
-
         return BudgetHeadLedgerGroupMapping::where('active',1)
         ->when($GiaId, fn($q) => $q->where('gia_id', $GiaId))
         ->when($ObjectHeadSubCataId, fn($q) => $q->where('object_head_sub_cata_id', $ObjectHeadSubCataId))
         ->when($ObjectHeadId, fn($q) => $q->where('object_head_id', $ObjectHeadId))
         ->when($ProjectParentId, fn($q) => $q->where('project_id', $ProjectParentId))
-
         ->get();  
     }
     public function ShowBudegetClaimByAllocation($BudgetAllocationId){
@@ -225,9 +222,7 @@ class TransactionMappingService
     public function GetBudegetReceivedAmountByMultipleClaim($BudgetClaimId){
         return BudgetAllocationReceived::where('active', 1)->whereIn('budget_claimed_id',$BudgetClaimId)->sum('received_amount');     
     }
-
     public function ShowBudegetAllocationFinYear($FinYear,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId){
-
         return BudgetAllocation::where('fin_year', $FinYear)->where('active',1)
         ->when($GiaId, fn($q) => $q->where('gia_id', $GiaId))
         ->when($ObjectHeadSubCataId, fn($q) => $q->where('oh_sub_cata_id', $ObjectHeadSubCataId))
@@ -298,7 +293,6 @@ class TransactionMappingService
         $RetData['BudgetReceivedAmount'] = $BudgetReceivedAmount;
         $UptoDateExpenditureAmt = $this->ShowBudegetActualExpenditure($PaymentId,$ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$GiaId);
         $RetData['UptoDtExpenditureAmt'] = $UptoDateExpenditureAmt;
-
 
         $LedgerData = $this->ShowLedgerForObjectHead($ObjectHeadSubCataId,$ObjectHeadId,$ProjectId,$ProjectParentId,$GiaId); 
         if(filled($LedgerData)){

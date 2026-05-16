@@ -14,6 +14,9 @@ class HouseType extends Model
     protected $fillable = [
         'house_type_code',
         'house_type_name',
+        'eb_amount',
+        'lf_amount',
+        'wc_amount',
         'active',
         'created_at',
         'created_by',

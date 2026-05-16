@@ -195,7 +195,7 @@ class AttendanceController extends Controller
                     }
                 }
                 DB::commit();
-                $message = "Attendance details saved successfully"; 
+                $message = "Attendance details saved"; 
             
             } catch (\Exception $e) {  dd($e);
                 $message = "Error : Attendance details not saved. Please try again"; 

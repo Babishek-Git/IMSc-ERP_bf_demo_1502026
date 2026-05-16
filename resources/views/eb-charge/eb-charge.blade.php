@@ -11,13 +11,11 @@
 					<blockquote class="bq1" style="overflow:auto">
 						<div class="container">
 							<div class="row plr">
-								
-								<div class="div6">
+								<div class="div12">
 									<div class="form-box">
 										<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="center">Employee Electricity Charges Update</div></div></div>
 										<div class="card-body padding-1 ChartCard" id="CourseChart">
-											<div class="divrowbox innerdiv pt-2">
-																		
+											<div class="divrowbox innerdiv pt-2">				
 												<div class="row">     
 													<div class="div12"> 
 														<fieldset class="fieldbox">
@@ -67,11 +65,14 @@
 																		<thead>
 																			<tr>
 																				<th class="colhead" nowrap="nowrap">SNo</th>
+																				<th class="colhead">House Address</th>
+																				<th class="colhead">House Type</th>
 																				<th class="colhead">Employee Name</th>
 																				<th class="colhead">Employee ICNo</th>
 																				<th class="colhead">Employee Designation</th>
-																				<th class="colhead">EB Unit</th>	
-																				<th class="colhead">EB Charges</br>( &#8377; )</th>	
+																				<th class="colhead">LF charge</br>( &#8377; )</th>	
+																				<th class="colhead">WC charge</br>( &#8377; )</th>
+																				<th class="colhead">EB charge</br>( &#8377; )</th>	
 																			</tr>
 																		</thead>
 																		<tbody>
@@ -79,19 +80,37 @@
 																		@if(isset($data['HouseData']))
 																			@foreach($data['HouseData'] as $HouseData)
 																			<tr>
+																				<input type="hidden" name="txt_house_id[]" value="{{$HouseData->house_id}}">
 																				<td align="center">{{$loop->iteration}}</td>
-																				<td>{{$HouseData->emp_name_payslip}}</td>
-																				<input type="hidden" name="txt_emp_name_payslip[]" id="txt_emp_name_payslip{{$HouseData->emp_no}}" class="tboxclass" value="{{$HouseData->emp_no}}">
-
-																				<td>{{$HouseData->emp_no}}</td>
-																				<input type="hidden" name="txt_emp_no[]" id="txt_emp_no{{$HouseData->emp_no}}" class="tboxclass" value="{{$HouseData->emp_no}}">
-																				
-																				<td>{{$HouseData->designation_name}}</td>
-																				<input type="hidden" name="txt_designation[]" id="txt_designation{{$HouseData->designation_id}}" class="tboxclass" value="{{$HouseData->designation_id}}">
-																				
-																				<td><input type="text" name="txt_eb_unit[]" id="txt_eb_unit" class="tboxclass" value=""></td>
-																				<td><input type="text" name="txt_eb_charge[]" id="txt_eb_charge" class="tboxclass" value=""></td>
+																				<td>
+																					<input type="text" name="txt_house_address[]" class="house_address tboxclass" value="{{$HouseData->house_address}}" readonly>
 																				</td>
+																				<td>
+																					<input type="hidden" name="txt_house_type_id[]" class="house_type tboxclass" value="{{$HouseData->house_type_id}}">
+																					<input type="text" name="txt_house_type_name" class="house_type tboxclass" value="{{$HouseData->house_type_name}}" readonly>
+																				</td>
+																				<td>
+																					<select name="txt_emp_name_payslip[]" class="tboxclass employee_select" onchange="getEmployeeDetails(this)">
+																						<option value="">Select Employee</option>
+																						@foreach($data['EmployeeData'] as $employee)
+																							<option value="{{ $employee->emp_no }}" {{($HouseData->emp_no == $employee->emp_no) ? 'selected' : ''}}>
+																								{{ $employee->emp_name_payslip }}
+																							</option>
+																						@endforeach
+																					</select>
+																				</td>
+																				<td>
+																					<input type="text" name="txt_emp_no[]" class="emp_no tboxclass" readonly>
+																				</td>
+																				<td>
+																					<input type="text" name="txt_designation[]" class="designation tboxclass" readonly>
+																				</td>
+																				</td>
+																				<td><input type="text" name="txt_lf_charge[]" id="txt_lf_charge" class="tboxclass" value="{{$HouseData->lf_amount}}" readonly></td>
+																				</td>
+																				<td><input type="text" name="txt_wc_charge[]" id="txt_wc_charge" class="tboxclass" value="{{$HouseData->wc_amount}}" readonly></td>
+																				</td>
+																				<td><input type="text" name="txt_eb_charge[]" id="txt_eb_charge" class="tboxclass" value="{{$HouseData->eb_amount}}" readonly></td>
 																			</tr>
 																			@endforeach
 																		@endif
@@ -117,7 +136,7 @@
 										</div>	
 									</div>									
 								</div>
-								<div class="div6">
+								<!-- <div class="div6">
 									<div class="table-box">
 										<div class="row"><div class="div12" style="margin-top:0px;"><div class="row table-divhead" align="center"> Electicity Charges Update</div></div></div>
 										<div class="card-body padding-1 ChartCard" id="CourseChart">
@@ -155,7 +174,7 @@
 											</div>
 										</div>	
 									</div>									
-								</div> 
+								</div>  -->
 							</div>                           
 						</div>
 					</blockquote>
@@ -172,46 +191,70 @@
 		paging: true, 
 	});	
 
-	var KillEvent = 0;
-	$("body").on("click","#btn_save", function(event){
-		if(KillEvent == 0){
-			var RoleName   		= $("#txt_role_name").val();
-			var RoleDivision   	= $("#txt_division").val();
-			var RoleGroup 		= $("#txt_role_group").val();
+	window.onload = function () {
+        document.querySelectorAll('.employee_select').forEach(function(select) {
+            if(select.value !== '') {
+                getEmployeeDetails(select);
+            }
+        });
+    };
 
-			if(RoleName == ""){
-				BootstrapDialog.alert("Role Name should not be empty..!!");
-				event.preventDefault();
-				event.returnValue = false;
-			}else if(RoleDivision == ""){
-				BootstrapDialog.alert("Division Name should not be empty..!!");
-				event.preventDefault();
-				event.returnValue = false;
-			}else if(RoleGroup == ""){
-				BootstrapDialog.alert("User Group Name should not be empty..!!");
-				event.preventDefault();
-				event.returnValue = false;
-			}else{
-				event.preventDefault();
-				BootstrapDialog.confirm({
-					title: 'Confirmation Message',
-					message: 'Are you sure want to save Role ?',
-					closable: false, // <-- Default value is false
-					draggable: false, // <-- Default value is false
-					btnCancelLabel: 'Cancel', // <-- Default value is 'Cancel',
-					btnOKLabel: 'Ok', // <-- Default value is 'OK',
-					callback: function(result) {
-						if(result){
-							KillEvent = 1;
-							$("#btn_save").trigger( "click" );
-						}else {
-							KillEvent = 0;
-						}
-					}
-				});
+	function getEmployeeDetails(element) {
+		let empNo = element.value;
+		let row = $(element).closest('tr');
+		$.ajax({
+			url: "{{ route('EbTrariffMaster.get-employee-details') }}",
+			type: "GET",
+			data: {
+				emp_no: empNo
+			},
+			success: function(response) {
+				row.find('.emp_no').val(response.emp_no);
+				row.find('.designation').val(response.designation_name);
 			}
-		}
-	});
+		});
+	}
+
+	// var KillEvent = 0;
+	// $("body").on("click","#btn_save", function(event){
+	// 	if(KillEvent == 0){
+	// 		var RoleName   		= $("#txt_role_name").val();
+	// 		var RoleDivision   	= $("#txt_division").val();
+	// 		var RoleGroup 		= $("#txt_role_group").val();
+
+	// 		if(RoleName == ""){
+	// 			BootstrapDialog.alert("Role Name should not be empty..!!");
+	// 			event.preventDefault();
+	// 			event.returnValue = false;
+	// 		}else if(RoleDivision == ""){
+	// 			BootstrapDialog.alert("Division Name should not be empty..!!");
+	// 			event.preventDefault();
+	// 			event.returnValue = false;
+	// 		}else if(RoleGroup == ""){
+	// 			BootstrapDialog.alert("User Group Name should not be empty..!!");
+	// 			event.preventDefault();
+	// 			event.returnValue = false;
+	// 		}else{
+	// 			event.preventDefault();
+	// 			BootstrapDialog.confirm({
+	// 				title: 'Confirmation Message',
+	// 				message: 'Are you sure want to save Role ?',
+	// 				closable: false, // <-- Default value is false
+	// 				draggable: false, // <-- Default value is false
+	// 				btnCancelLabel: 'Cancel', // <-- Default value is 'Cancel',
+	// 				btnOKLabel: 'Ok', // <-- Default value is 'OK',
+	// 				callback: function(result) {
+	// 					if(result){
+	// 						KillEvent = 1;
+	// 						$("#btn_save").trigger( "click" );
+	// 					}else {
+	// 						KillEvent = 0;
+	// 					}
+	// 				}
+	// 			});
+	// 		}
+	// 	}
+	// });
 
 </script>
 @endsection

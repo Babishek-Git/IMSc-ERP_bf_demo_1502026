@@ -75,7 +75,7 @@ class PayComponentTypeController extends Controller
             }
                     
             DB::commit();
-            $message = "Employee Type Data Saved Successfully";
+            $message = "Employee Type Data Saved ";
         }catch (\Exception $e) {dd($e);
             DB::rollback();
             $message = "Error : Sorry transaction not fully completed";

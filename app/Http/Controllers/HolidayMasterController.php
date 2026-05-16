@@ -78,7 +78,7 @@ class HolidayMasterController extends Controller
                 $SaveEmployment= $this->HolidayMaster->CreateHolidayMaster($SaveData);
             
                 DB::commit();
-                $message = "Holiday Master Data Saved Successfully";
+                $message = "Holiday Master Data Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -158,7 +158,7 @@ class HolidayMasterController extends Controller
 //                 $SaveEmployment= $this->imscaccount->CreateImscAccount($SaveData);
 //                 //dd($SaveEmployment);
 //                 DB::commit();
-//                 $message = "Imsc Data Saved Successfully";
+//                 $message = "Imsc Data Saved ";
 //             }catch (\Exception $e) {dd($e); 
 //                 DB::rollback();
 //                 $message = "Error : Sorry transaction not fully completed";

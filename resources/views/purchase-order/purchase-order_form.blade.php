@@ -119,21 +119,23 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 														<legend class="fieldbox-legend">Purchase Order  Details</legend>
 														<div class="fieldbox-div">
 															<div class="row smclearrow"></div>
-															<div class="div4"><div class="lboxlabel ">Whether the indent is processed through the GeM Portal<span class="reqindi">*</span></div>
-																<div class="div6 no-margin" >  
+															<div class="div4">
+																<div class="lboxlabel ">Whether the indent is processed through the GeM Portal<span class="reqindi">*</span></div>
+																<div class="div3 no-margin" >  
 																	<div class="inputGroup paddlr2">
 																		<input id="rad_yes" name="rad_Basis" type="radio" value="YES" {{ isset($IsGemPortal) && $IsGemPortal == 'YES' ? 'checked' : '' }}/>
 																		<label for="rad_yes" style="padding:3px 0px; width:100%" > &nbsp;Yes</label>
 																	</div>
 																</div>
-																<div class="div6 no-margin">
+																<div class="div3 no-margin">
 																	<div class="inputGroup paddlr2">
 																		<input id="rad_no" name="rad_Basis" type="radio" value="NO" {{ isset($IsGemPortal) && $IsGemPortal == 'NO' ? 'checked' : '' }}/>
 																		<label for="rad_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
 																	</div>
 																</div>
+																<div class="div6  no-margin gemport" style="margin-top:1px"><input type="text" name="txt_gem_po_no" id="txt_gem_po_no" class="tboxsmclass" placeholder="GeM P.O. No." value="{{$GemPoNo ?? ''}}" ></div>
 															</div>
-															<div class="div3"><div class="lboxlabel ">PO. No. / WO. No.<span class="reqindi">*</span></div><input type="text" name="txt_pur_order_no" id="txt_pur_order_no" class="tboxsmclass " value="@if(isset($NewPONo)){{$NewPONo}}@endif" readonly></div>
+															<div class="div3"><div class="lboxlabel ">PO. No. / WO. No.<span class="reqindi">*</span></div><input type="text" name="txt_pur_order_no" id="txt_pur_order_no" class="tboxsmclass" value="@if(isset($NewPONo)){{$NewPONo}}@endif" readonly></div>
 															<div class="div4"><div class="lboxlabel ">PO. Name<span class="reqindi">*</span></div><textarea name="txt_pur_order_name" id="txt_pur_order_name" class="tboxsmclass" rows="1" value ='{{$PurchaseName ?? ""}}'>{{$PurchaseName ?? ''}}</textarea></div>
 															<div class="div1"><div class="lboxlabel ">PO. Date<span class="reqindi">*</span></div><input type="text" name="txt_pur_order_date" id="txt_pur_order_date" class="tboxsmclass datepicker" value="{{ Helper::DisplayDateFormat($PoDate ?? null) }}"></div>
 															<div class="row smclearrow"></div>
@@ -202,7 +204,7 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 															@endif
 															<div id="dynamic_section"></div>
 															<div class="row smclearrow"></div>
-															<div class="div1 label">Material Cert. By<span class="reqindi">*</span></div>
+															<div class="div2 label">Material Certified By <span class="reqindi">*</span></div>
 															<div class="div4 label">
 																@if(isset($data['MaterialCertifySecData']))
 																	@foreach($data['MaterialCertifySecData'] as $MaterialCertifySec)
@@ -211,7 +213,7 @@ $SancationIndentIds = $data['GetSancationIndentIds'] ?? [];
 																	@endforeach
 																@endif
 															</div> 
-															<div class="div4 gemport"><div class="lboxlabel">GeM Po.No.<span class="reqindi">*</span></div><input type="text" name="txt_gem_po_no" id="txt_gem_po_no" class="tboxsmclass " value="{{$GemPoNo ?? ''}}" ></div>
+															
 															<div class="row smclearrow"></div>
 														</div>
 													</fieldset>    
@@ -348,7 +350,9 @@ $(document).ready(function(){
 			pocmHtml += '</div>';
 		}
 		$('#dynamic_section').html(pocmHtml);
-		$('.datepicker').datepicker();
+		$('#dynamic_section .datepicker').datepicker({
+        	dateFormat: 'dd-mm-yy'
+    	});
 	});
 	// $("#txt_pur_amt").on("keyup change", function() {
 	// 	var PassOrderAmount = parseFloat($(this).val()) || 0;

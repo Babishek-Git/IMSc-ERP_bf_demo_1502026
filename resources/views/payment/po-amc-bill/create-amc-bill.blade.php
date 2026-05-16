@@ -98,6 +98,8 @@ if(isset($AllObectHead)){
 $DeductionArr = [];
 $ExeTotalGrossAmount = 0;
 $ExeTotalNetAmount = 0;
+$CurrentFinYear = Helper::GetCurrentFinYear(NULL);
+$BillProcessNo = "IMSc/BILL/AMC/XXXX/".$CurrentFinYear;
 @endphp
 
 <form action="" method="post" enctype="multipart/form-data" name="form">
@@ -256,7 +258,7 @@ $ExeTotalNetAmount = 0;
                                                                     <div class="row smclearrow"></div>
                                                                     <div class="div2 label no-margin">Bill Processing No.</div>
                                                                     <div class="div2 no-margin">
-                                                                        <input type="text" name="txt_bill_no" id="txt_bill_no" class="tboxsmclass" value="">
+                                                                        <input type="text" name="txt_bill_no" id="txt_bill_no" class="tboxsmclass disable" readonly value="{{ $BillProcessNo }}">
                                                                         <input type="hidden" name="txt_bill_date" id="txt_bill_date" class="tboxsmclass datepicker" value="">
                                                                     </div>
                                                                     <div class="div2 label no-margin pd-l-20">Bill Gross Amount</div>
@@ -275,14 +277,8 @@ $ExeTotalNetAmount = 0;
                                                                 </th>
                                                             </tr>
                                                             <tr>
-<<<<<<< Updated upstream
-                                                                
-                                                                <th style="width:200px;">Ledger Name</th>
-                                                                <th style="width:140px;">Object Head</th>
-=======
                                                                 <th style="width:140px;">Object Head</th>
                                                                 <th style="width:200px;">Ledger Name</th>
->>>>>>> Stashed changes
                                                                 <th nowrap="">Upto Date Received (&#8377;)</th>
                                                                 <th nowrap="">Upto Date Expenditure (&#8377;)</th>
                                                                 <th nowrap="">Current Expenditure (&#8377;)</th>
@@ -291,8 +287,6 @@ $ExeTotalNetAmount = 0;
                                                         </thead>
                                                         <tbody>
                                                             <tr id="inputRow">
-<<<<<<< Updated upstream
-=======
                                                                 <td width="350px">
                                                                     {{ collect([$ObjectHeadSubCataName, $ObjectHeadName])->filter()->implode(' / ') }}
                                                                     <!-- <select name="cmb_bill_object_head" id="cmb_bill_object_head" class="tboxsmclass ChosenInput">
@@ -302,7 +296,6 @@ $ExeTotalNetAmount = 0;
                                                                     <input type="hidden" name="txt_project_id" id="txt_project_id" value="{{ isset($ProjectId) ? $ProjectId : ''}}">
                                                                     <input type="hidden" name="txt_gia_id" id="txt_gia_id" value="{{ isset($GiaId) ? $GiaId : '' }}">
                                                                 </td>
->>>>>>> Stashed changes
                                                                 <td>
                                                                     <select name="cmb_bill_ledger" id="cmb_bill_ledger" class="tboxsmclass ChosenInput" style="width:100%">
 																		<option value=""> -- Select --</option>
@@ -315,19 +308,7 @@ $ExeTotalNetAmount = 0;
                                                                     <input type="hidden" name="txt_ledger_id" id="txt_ledger_id" value="{{ isset($LedgerId) ? $LedgerId : '' }}">
                                                                     <input type="hidden" name="txt_ledger_group_id" id="txt_ledger_group_id" value="{{ isset($LedgerGroupId) ? $LedgerGroupId : '' }}">
                                                                 </td>
-<<<<<<< Updated upstream
-                                                                <td width="350px">
-                                                                    {{ collect([$ObjectHeadSubCataName, $ObjectHeadName])->filter()->implode(' / ') }}
-                                                                    <!-- <select name="cmb_bill_object_head" id="cmb_bill_object_head" class="tboxsmclass ChosenInput">
-                                                                    </select> -->
-                                                                    <input type="hidden" name="txt_object_head_id" id="txt_object_head_id" value="{{ isset($ObjectHeadId) ? $ObjectHeadId : '' }}">
-                                                                    <input type="hidden" name="txt_object_head_subcata_id" id="txt_object_head_subcata_id" value="{{ isset($ObjectHeadSubCataId) ? $ObjectHeadSubCataId : '' }}">
-                                                                    <input type="hidden" name="txt_project_id" id="txt_project_id" value="{{ isset($ProjectId) ? $ProjectId : ''}}">
-                                                                    <input type="hidden" name="txt_gia_id" id="txt_gia_id" value="{{ isset($GiaId) ? $GiaId : '' }}">
-                                                                </td>
-=======
                                                                 
->>>>>>> Stashed changes
                                                                 <td align="right">
                                                                     <input type="text" class="tboxsmclass" id="txt_received_amt" name="txt_received_amt" value="{{ isset($BudgetReceivedAmount) ? $BudgetReceivedAmount : '' }}" readonly>
                                                                 </td>

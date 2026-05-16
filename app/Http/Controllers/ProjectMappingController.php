@@ -47,7 +47,7 @@ class ProjectMappingController extends Controller
                         }
                     }
                     DB::commit();
-                    $message = "Project Heads  Mapping  Details Save Successfully";
+                    $message = "Project Heads  Mapping  Details Save ";
                     Session::put('ALertMesage', $message);
                     return redirect()->route('project-mapping.project-mapping-create');
                 }catch (\Exception $e) { dd($e);

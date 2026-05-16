@@ -166,7 +166,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr); 
                 }
                 DB::commit();
-                $message = "Address Update Request Form Data Saved Successfully";
+                $message = "Address Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -342,7 +342,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                     //dd( $SaveEmployee);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();
@@ -417,7 +417,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr); 
                 }
                 DB::commit();
-                $message = "Contact Update Request Form Data Saved Successfully";
+                $message = "Contact Update Request Form Data Saved";
                 Session::put('ALertMesage', $message); 
                 return redirect()->route('change-request.empcontact-change-request');
             }catch (\Exception $e) { dd($e);
@@ -556,7 +556,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr); 
                 }
                 DB::commit();
-                $message = "Bank Details Update Request Form Data Saved Successfully";
+                $message = "Bank Details Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -658,7 +658,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                    // dd( $SaveEmployee);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();
@@ -752,7 +752,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr);
                 }
                 DB::commit();
-                $message = "Nominee Update Request Form Data Saved Successfully";
+                $message = "Nominee Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -898,7 +898,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr);
                 }
                 DB::commit();
-                $message = "Family Member  Update Request Form Data Saved Successfully";
+                $message = "Family Member  Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -1020,7 +1020,7 @@ class ChangeRequestController extends Controller
                 }
             //dd($SaveEmployee);
                 DB::commit();
-                $message = "Physical Update Request Form Data Saved Successfully";
+                $message = "Physical Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -1119,7 +1119,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                    // dd( $SaveEmployee);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();
@@ -1198,7 +1198,7 @@ class ChangeRequestController extends Controller
                 }
 
                 DB::commit();
-                $message = "ID Card Update Request Form Data Saved Successfully";
+                $message = "ID Card Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -1339,7 +1339,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr); 
                 }
                 DB::commit();
-                $message = "Address Update Request Form Data Saved Successfully";
+                $message = "Address Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -1439,7 +1439,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                    // dd( $SaveEmployee);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();
@@ -1516,7 +1516,7 @@ class ChangeRequestController extends Controller
                 $SaveEmployee= $this->ChangeRequest->CreateChangeRequest($SaveArr);
                // dd($SaveEmployee);
                 DB::commit();
-                $message = "PF Amount Update Request Form Data Saved Successfully";
+                $message = "PF Amount Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -1606,7 +1606,7 @@ class ChangeRequestController extends Controller
                 $SaveEmployee = $this->LtcAdv->createLtcAdvances($SaveArr);
                // dd($SaveEmployee);
                 DB::commit();
-                $message = "LTC Advanced  Request Form Data Saved Successfully";
+                $message = "LTC Advanced  Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -1688,7 +1688,7 @@ class ChangeRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr); 
                 }
                 DB::commit();
-                $message = "Home Town Update Request Form Data Saved Successfully";
+                $message = "Home Town Update Request Form Data Saved";
                 Session::put('ALertMesage', $message); 
                 return redirect()->route('change-request.home-town-request');
             }catch (\Exception $e) { dd($e);

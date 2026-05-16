@@ -218,9 +218,10 @@ if(isset($BudgetFiledAcessData)){
                                 <div class="row innerdiv">
                                     <div class="row">
 										@php
-											$RouteUrl   = 'indent.indent-creation';
-											$ModuleCode = 'INDENT';
-											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$WorkFlowActionData,$BackUrl,$IndentId,$RouteUrl,$ActionStatus,$ModuleCode);
+											$RouteUrl      = 'indent.indent-creation';
+											$ModuleCode    = 'INDENT';
+											$SubmitBtnName = 'Submit Indent';
+											$ForwRejApprButtonComponentArr = \Helper::Forward_Reject_Approve_Button(NULL,$SubmitBtnName,$WorkFlowActionData,$BackUrl,$IndentId,$RouteUrl,$ActionStatus,$ModuleCode);
 											$ButtonDetailsHTML = $ForwRejApprButtonComponentArr['HTMLSTR'];
 										@endphp
 											{!!$ButtonDetailsHTML!!}
@@ -583,7 +584,7 @@ if(isset($BudgetFiledAcessData)){
 													}
 												?>
 											 <input type="hidden" name ='hidd_buget_apr' id ='hidd_buget_apr' value='{{$data["BudegtFieldAccess"]}}'>
-											 <input type="hidden" name ='hidd_fund_avable' id ='hidd_buget_apr' value='{{$FundStatus}}'>
+											 <input type="hidden" name ='hidd_fund_avable' id ='hidd_fund_avable' value='{{$FundStatus}}'>
 												<div class="table-container">
 													<div class="table-wrapper">
 														<div class="section-header">
@@ -594,16 +595,16 @@ if(isset($BudgetFiledAcessData)){
 																<thead>
 																	<tr>
 																		<th rowspan="2">{{$TableHeadTittel ?? ''}}</th>  
-																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details</th>  
-																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details</th>  
+																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details <br>Financial Year {{$FinYear}}</th>  
+																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details<br>Financial Year {{$FinYear}}</th>  
 																		<th rowspan="2" style="text-align:center;">Object Head Wise<br>Fund Availability</th>
 																	</tr>
 																	<tr>
 																		<th style="text-align:center;">Sanction No.</th>
-																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>
+																		<th style="text-align:center;">Allocation  Amount <br>Rs.</th>
 																		<th style="text-align:center;">Up to date utilized Amount <br>Rs.</th>
 																		<th style="text-align:center;">Balance Amount <br>Rs.</th>
-																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>
+																		<th style="text-align:center;">Sanction  Amount <br>Rs.</th>
 																		<th style="text-align:center;">Up to date utilized Amount <br>Rs.</th>
 																		<th style="text-align:center;">Balance Amount <br>Rs.</th>
 																	</tr>
@@ -653,14 +654,14 @@ if(isset($BudgetFiledAcessData)){
 																<thead>
 																	<tr>
 																		<th rowspan="2">{{$TableHeadTittel ?? ''}}</th>  
-																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details</th>  
-																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details</th>  
+																		<th colspan="4" style="text-align:center;">Projectwise Budget Sanction Details<br>Financial Year {{$FinYear}}</th>  
+																		<th colspan="3" style="text-align:center;">Object Head Wise Sanction Details<br>Financial Year {{$FinYear}}</th>  
 																		<th rowspan="2" style="text-align:center;">Object Head Wise<br>Fund Availability</th>
 																		<th rowspan="2" style="text-align:center;">Project wise<br>Fund Availability</th>
 																	</tr>
 																	<tr>
 																		<th style="text-align:center;">Sanction No.</th>
-																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>
+																		<th style="text-align:center;">Allocation  Amount <br>Rs.</th>
 																		<th style="text-align:center;">Up to date utilized Amount <br>Rs.</th>
 																		<th style="text-align:center;">Balance Amount <br>Rs.</th>
 																		<th style="text-align:center;">Sanction Amount <br>Rs.</th>

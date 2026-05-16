@@ -14,11 +14,7 @@
 							<div class="row">
 								<div class="div12">
 									<div class="form-box">
-<<<<<<< Updated upstream
-										<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="center">PFMR - Employee Entry Form</div></div></div>
-=======
 										<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="center">PFMR - Employee View Form</div></div></div>
->>>>>>> Stashed changes
 										<div class="card-body padding-1 ChartCard" id="CourseChart">
 											<div class="divrowbox innerdiv pt-2">
 												<div class="table-container">
@@ -60,11 +56,7 @@
 												<div class="row">
 													<div class="div12" align="center">
 														<input type="button" class="backbutton" name="btn_view" id="btn_view" value=" Back " onClick="window.location='{{route($AddUrl)}}'" />
-<<<<<<< Updated upstream
-														<input type="submit" class="backbutton" name="btn_save" id="btn_save" value=" Save " />									
-=======
 														<!-- <input type="submit" class="backbutton" name="btn_save" id="btn_save" value=" Save " />									 -->
->>>>>>> Stashed changes
 														<input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
 														<input type="hidden" name="hid_roleid" id="hid_roleid" value="@if(isset($data['RoleData'])){{ encrypt($data['RoleData']->roleid) }}@endif" />
 													</div>		

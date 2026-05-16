@@ -76,7 +76,7 @@ class MaterialtypeController extends Controller
                 
                 //dd($SaveEmployment);
                 DB::commit();
-                $message = "Material Type  Data Saved Successfully";
+                $message = "Material Type  Data Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

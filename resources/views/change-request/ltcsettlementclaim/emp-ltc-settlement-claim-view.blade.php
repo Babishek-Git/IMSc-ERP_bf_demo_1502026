@@ -50,9 +50,29 @@ $ActionStatus = $data['Action'] ?? '';
 $ApplicationId = $data['ApplicationId'] ?? NULL;
 $Action = $data['Action'] ?? '';
 $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
+$existingFamilyIds    = $data['existingFamilyIds'];
+$isReadOnly = ($ICNo != session('WcmsEmpNo'));
+
 @endphp
 <style>
-	
+	.leaveType{
+		background-color:#ffe5e5;
+		border-left:5px solid #d9534f;
+		padding:10px 15px;
+		color:#a94442;
+		margin:10px 0;
+	}
+	.form-readonly {
+		pointer-events: none;
+		opacity: 0.9;
+	}
+
+	.form-readonly input,
+	.form-readonly select,
+	.form-readonly textarea {
+		background-color: #f5f5f5 !important;
+		cursor: not-allowed;
+	}
 </style>
 
 <form action="" method="post" enctype="multipart/form-data" name="form">
@@ -118,50 +138,6 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 													@endif
 												@endif
 											</div>
-<<<<<<< Updated upstream
-=======
-											@if(isset($data['Leaveexits']))
-												@foreach($data['Leaveexits'] as $Leaveexits)
-													@if($Leaveexits->leave_type_code == 'EL')
-														<fieldset class="fieldbox">
-															<legend class="fieldbox-legend">Leave Details</legend>
-															<div class="fieldbox-div">
-																<div class="row smclearrow"></div>
-																<div class="row smclearrow"></div>
-																<div class="row smclearrow"></div>
-																<div class="fieldbox-div">
-																	<table class="formtable" align="center" id="family_table" width="100%">
-																		<thead> 
-																			<tr>
-																				<th>#</th>
-																				<th>Leave type</th>
-																				<th>From</th>
-																				<th>To</th>
-																				<th>No of days</th>
-																			</tr>
-																		</thead>
-																		<tbody>
-																			<td>{{ $loop->iteration + 1}}</td>
-																			<td>{{ $Leaveexits->leave_type_code}}</td>
-																			<td>{{ $Leaveexits->from_date}}</td>
-																			<td>{{ $Leaveexits->to_date}}</td>
-																			<td>{{ $Leaveexits->applied_days}}</td>
-																		</tbody>
-																	</table>
-																	<div class="row smclearrow"></div>
-																	<div class="row smclearrow"></div>
-																	<div class="row smclearrow"></div>
-																</div>
-															</div>
-														</fieldset>
-													@else
-														<div class="leaveType">
-															Please apply EL for LTC. The applied leave type is {{$Leaveexits->leave_type_code}}.
-														</div>
-													@endif
-												@endforeach
-											@endif
->>>>>>> Stashed changes
 											<fieldset class="fieldbox">
 												<legend class="fieldbox-legend">Basic information</legend>
 												<div class="fieldbox-div">
@@ -192,26 +168,62 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 											<div class="row smclearrow"></div>
 											<div class="row smclearrow"></div>
 											<div class="row smclearrow"></div>
+											@if(isset($data['Leaveexits']))
+												@foreach($data['Leaveexits'] as $Leaveexits)
+													<fieldset class="fieldbox">
+														<legend class="fieldbox-legend">Leave Details</legend>
+														<div class="fieldbox-div">
+															<div class="row smclearrow"></div>
+															<div class="row smclearrow"></div>
+															<div class="row smclearrow"></div>
+															<div class="fieldbox-div">
+																<table class="formtable" align="center" id="family_table" width="100%">
+																	<thead> 
+																		<tr>
+																			<th>#</th>
+																			<th>Leave type</th>
+																			<th>From</th>
+																			<th>To</th>
+																			<th>No of days</th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<td>{{ $loop->iteration }}</td>
+																		<td>{{ $Leaveexits->leave_type_code}}</td>
+																		<td>{{ \Carbon\Carbon::parse($Leaveexits->from_date)->format('d/m/Y') }}</td>
+																		<td>{{ \Carbon\Carbon::parse($Leaveexits->to_date)->format('d/m/Y') }}</td>
+																		<td>{{ $Leaveexits->actual_days}}</td>
+																	</tbody>
+																</table>
+																<div class="row smclearrow"></div>
+																<div class="row smclearrow"></div>
+																<div class="row smclearrow"></div>
+															</div>
+														</div>
+													</fieldset>
+												@endforeach
+											@endif
+											<div class="row smclearrow"></div>
+											<div class="row smclearrow"></div>
+											<div class="row smclearrow"></div>
 											<fieldset class="fieldbox">
-<<<<<<< Updated upstream
-												<legend class="fieldbox-legend">Spouse & Concessions Details</legend>
-=======
 												<legend class="fieldbox-legend">Spouse Details</legend>
->>>>>>> Stashed changes
-												<div class="fieldbox-div">
+												<div class="fieldbox-div {{ $isReadOnly ? 'form-readonly' : '' }}">
 													<div class="div4 label label">
 														Whether spouse is employed ? <span class="reqindi">*</span>
 													</div>
 													<div class="div2 label">
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input {{!empty($EditClaimData) ? $EditClaimData->spouse_employed == "Y" ? "checked" : "" : ""}} id="rad_spouse_employed_yes" name="rad_spouse_employed" type="radio" value="Y"/>
+																<input {{!empty($EditClaimData) ? $EditClaimData->spouse_employed == "Y" ? "checked" : "" : ""}} id="rad_spouse_employed_yes" name="rad_spouse_employed" 
+																	type="radio" value="Y"/>
 																<label for="rad_spouse_employed_yes" style="padding:3px 0px; width:100%"> &nbsp;Yes</label>
 															</div>
 														</div>
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="rad_spouse_employed_no" name="rad_spouse_employed" type="radio" value="N" {{!empty($EditClaimData) ? $EditClaimData->spouse_employed == "N" ? "checked" : "" : ""}}/>
+																<input id="rad_spouse_employed_no" name="rad_spouse_employed" type="radio" value="N" 
+																	{{!empty($EditClaimData) ? $EditClaimData->spouse_employed == "N" ? "checked" : "" : ""}}/>
 																<label for="rad_spouse_employed_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
 															</div>
 														</div>
@@ -220,19 +232,19 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 													<div class="div3 SpouseLtc hide">
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="rad_entitle_LTC_yes" name="rad_entitle_LTC" type="radio" value="Y" {{!empty($EditClaimData) ? $EditClaimData->entitle_ltc == "Y" ? "checked" : "" : ""}}/>
+																<input id="rad_entitle_LTC_yes" name="rad_entitle_LTC" type="radio" value="Y" 
+																	{{!empty($EditClaimData) ? $EditClaimData->entitle_ltc == "Y" ? "checked" : "" : ""}}/>
 																<label for="rad_entitle_LTC_yes" style="padding:3px 0px; width:100%"> &nbsp;Yes</label>
 															</div>
 														</div>
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="rad_entitle_LTC_no" name="rad_entitle_LTC" type="radio" value="N" {{!empty($EditClaimData) ? $EditClaimData->entitle_ltc == "N" ? "checked" : "" : ""}}/>
+																<input id="rad_entitle_LTC_no" name="rad_entitle_LTC" type="radio" value="N" 
+																	{{!empty($EditClaimData) ? $EditClaimData->entitle_ltc == "N" ? "checked" : "" : ""}}/>
 																<label for="rad_entitle_LTC_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
 															</div>
 														</div>
 													</div>
-<<<<<<< Updated upstream
-=======
 												</div>
 												<div class="row smclearrow"></div>
 												<div class="row smclearrow"></div>
@@ -243,8 +255,7 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 											<div class="row smclearrow"></div>
 											<fieldset class="fieldbox">
 												<legend class="fieldbox-legend">Concessions Details</legend>
-												<div class="fieldbox-div">
->>>>>>> Stashed changes
+												<div class="fieldbox-div {{ $isReadOnly ? 'form-readonly' : '' }}">
 													<div class="row smclearrow"></div>
 													<div class="div4 label label">
 														Whether the concession is to be availed for home town ? <span class="reqindi">*</span>
@@ -252,19 +263,23 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 													<div class="div2 label">
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="rad_visiting_yes" name="rad_visiting" type="radio" value="Y" {{!empty($EditClaimData) ? $EditClaimData->visiting_home == "Y" ? "checked" : "" : ""}}/>
+																<input id="rad_visiting_yes" name="rad_visiting" type="radio" value="Y" 
+																	{{!empty($EditClaimData) ? $EditClaimData->visiting_home == "Y" ? "checked" : "" : ""}}/>
 																<label for="rad_visiting_yes" style="padding:3px 0px; width:100%"> &nbsp;Yes</label>
 															</div>
 														</div>
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="rad_visiting_no" name="rad_visiting" type="radio" value="N" {{!empty($EditClaimData) ? $EditClaimData->visiting_home == "N" ? "checked" : "" : ""}}/>
+																<input id="rad_visiting_no" name="rad_visiting" type="radio" value="N" 
+																	{{!empty($EditClaimData) ? $EditClaimData->visiting_home == "N" ? "checked" : "" : ""}}/>
 																<label for="rad_visiting_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
 															</div>
 														</div>
 													</div>
 													<div class="div3 label YearLtc hide">Block for Which LTC is to be availed Year </div> 
-													<div class="div3 YearLtc hide"><input type="text" name="year_ltc"  id="year_ltc" class="tboxsmclass" value="{{!empty($EditClaimData) ? $EditClaimData->year_ltc ? $EditClaimData->year_ltc : '' : ''}}"></div>
+													<div class="div3 YearLtc hide"><input type="text" name="year_ltc"  id="year_ltc" class="tboxsmclass" 
+														value="{{!empty($EditClaimData) ? $EditClaimData->year_ltc ? $EditClaimData->year_ltc : '' : ''}}">
+													</div>
 													<div class="row smclearrow"></div>
 													<div id="visiting_home"></div>
 												   <div class="div4 label label">
@@ -273,53 +288,54 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 													<div class="div2 label">
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="rad_india_yes" name="rad_india" type="radio" value="Y" {{!empty($EditClaimData) ? $EditClaimData->visiting_india == "Y" ? "checked" : "" : ""}}/>
+																<input id="rad_india_yes" name="rad_india" type="radio" value="Y" 
+																	{{!empty($EditClaimData) ? $EditClaimData->visiting_india == "Y" ? "checked" : "" : ""}}/>
 																<label for="rad_india_yes" style="padding:3px 0px; width:100%"> &nbsp;Yes</label>
 															</div>
 														</div>
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="rad_india_no" name="rad_india" type="radio" value="N" {{!empty($EditClaimData) ? $EditClaimData->visiting_india == "N" ? "checked" : "" : ""}}/>
+																<input id="rad_india_no" name="rad_india" type="radio" value="N" 
+																	{{!empty($EditClaimData) ? $EditClaimData->visiting_india == "N" ? "checked" : "" : ""}}/>
 																<label for="rad_india_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
 															</div>
 														</div>
 													</div>
 													<div class="div3 label Place hide">Block for which to be availed.</div> 
-													<div class="div3 Place hide"><input type="text" name="place_visited"  id="place_visited" class="tboxsmclass" value="{{!empty($EditClaimData) ? $EditClaimData->place_visited ? $EditClaimData->place_visited : '' : ''}}"></div>
-													<div class="row smclearrow"></div>
-<<<<<<< Updated upstream
-												    <div id="Visiting-hometown"></div>
-                                                     <div class="div4 label label">
-														Leave Enhancement for 10 days of EL<span class="reqindi">*</span>
+													<div class="div3 Place hide">
+														<input type="text" name="place_visited"  id="place_visited" class="tboxsmclass" 
+														value="{{!empty($EditClaimData) ? $EditClaimData->place_visited ? $EditClaimData->place_visited : '' : ''}}">
 													</div>
-                                                    <div class="div2 label">
-=======
+													<div class="row smclearrow"></div>
 													<div id="Visiting-hometown"></div>
 													<div class="row smclearrow"></div>
 													<div class="div4 label label">
 														Leave Enhancement for 10 days of EL<span class="reqindi">*</span>
 													</div>
 													<div class="div2 label">
->>>>>>> Stashed changes
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="leave_enhancement_yes" name="rad_leaveenhance" type="radio" value="Y" {{!empty($EditClaimData) ? $EditClaimData->leave_enhancement == "Y" ? "checked" : "" : ""}}/>
+																<input id="leave_enhancement_yes" name="rad_leaveenhance" type="radio" value="Y" 
+																	{{!empty($EditClaimData) ? $EditClaimData->leave_enhancement == "Y" ? "checked" : "" : ""}}/>
 																<label for="leave_enhancement_yes" style="padding:3px 0px; width:100%"> &nbsp;Yes</label>
 															</div>
 														</div>
 														<div class="div6 no-margin">
 															<div class="inputGroup paddlr2">
-																<input id="leave_enhancement_no" name="rad_leaveenhance" type="radio" value="N" {{!empty($EditClaimData) ? $EditClaimData->leave_enhancement == "N" ? "checked" : "" : ""}}/>
+																<input id="leave_enhancement_no" name="rad_leaveenhance" type="radio" value="N" 
+																	{{!empty($EditClaimData) ? $EditClaimData->leave_enhancement == "N" ? "checked" : "" : ""}}/>
 																<label for="leave_enhancement_no" style="padding:3px 0px; width:100%"> &nbsp;No</label>
 															</div>
 														</div>
 													</div>
-<<<<<<< Updated upstream
-=======
+													<div class="div3 label ELdays hide">No of EL days</div> 
+													<div class="div3 ELdays hide">
+														<input type="number" name="el_days" id="el_days" class="tboxsmclass" 
+															value="{{!empty($EditClaimData) ? $EditClaimData->el_days ? $EditClaimData->el_days : '' : ''}}">
+													</div>
 													<div class="row smclearrow"></div>
 													<div class="row smclearrow"></div>
 													<div class="row smclearrow"></div>
->>>>>>> Stashed changes
 												</div>
 											</fieldset>
 											<div class="row smclearrow"></div>
@@ -327,7 +343,7 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 											<div class="row smclearrow"></div>
 											<fieldset class="fieldbox">
 												<legend class="fieldbox-legend">Family Details</legend>
-												<div class="fieldbox-div">
+												<div class="fieldbox-div {{ $isReadOnly ? 'form-readonly' : '' }}">
 													<div class="row smclearrow"></div>
 													<div class="row smclearrow"></div>
 													<div class="row smclearrow"></div>
@@ -354,14 +370,21 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 															</tr>
 															@if(isset($data['Familydata']))
 																@foreach($data['Familydata'] as $Familydata)
+																@php
+																	$age = $Familydata->fam_member_dob ? \Carbon\Carbon::parse($Familydata->fam_member_dob)->age: 0;
+																	$relationship = strtolower($Familydata->ShowRelationship($Familydata->fam_relationship_id));
+																	$isAgeRestricted = in_array($relationship, ['son', 'daughter']) && $age > 25;
+																	$isAlreadyUsed = in_array($Familydata->family_det_id, $existingFamilyIds);
+																	$disableCheckbox = $isAgeRestricted || $isAlreadyUsed;
+																@endphp
 																	<tr>
 																		<td>{{ $loop->iteration + 1}}</td>
 																		<td>{{ $Familydata->fam_member_name }}</td>
 																		<td>{{ $Familydata->ShowRelationship($Familydata->fam_relationship_id) }}</td>
-																		<td>{{ $Familydata->fam_member_dob ? \Carbon\Carbon::parse($Familydata->fam_member_dob)->age : '' }}</td>
+																		<td>{{ $age }}</td>
 																		<td>
 																			<input type="checkbox" name="chk_cout_rel[]" id="chk_cout_rel" class="chk_rel" value="{{$Familydata->family_det_id}}"
-																			{{ in_array($Familydata->family_det_id, $selectedFamilyIds ?? []) ? 'checked' : '' }}>
+																			{{ in_array($Familydata->family_det_id, $selectedFamilyIds ?? []) ? 'checked' : '' }} {{ $disableCheckbox ? 'disabled' : '' }}>
 																		</td>
 																	</tr>
 																@endforeach
@@ -414,9 +437,6 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 																	<td><input type="time" name="txt_arraival_time_0" id="txt_arraival_time_0" class="tboxsmclass" value=""></td>
 																	<td><input type="text" name="txt_arraival_from_0" id="txt_arraival_from_0" class="tboxsmclass" value=""></td>
 																	<td><input type="text" name="txt_distance_0" id="txt_distance_0" class="tboxsmclass" value=""></td>
-<<<<<<< Updated upstream
-																	<td><input type="text" name="txt_travel_mode_0" id="txt_travel_mode_0" class="tboxsmclass" value=""></td>
-=======
 																	<td>
 																		<!-- <input type="text" name="txt_travel_mode_0" id="txt_travel_mode_0" class="tboxsmclass" value=""> -->
 																		<select name="cmb_travel_mode_0" id="cmb_travel_mode_0" class="tboxsmclass ChosenInput">
@@ -426,7 +446,6 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 																			<option value="Train">Train</option>
 																		</select>
 																	</td>
->>>>>>> Stashed changes
 																	<td><input type="text" name="txt_accomod_used_0" id="txt_accomod_used_0" class="tboxsmclass" value=""></td>
 																	<td><input type="text" name="txt_no_of_amount_0" id="txt_no_of_amount_0" class="tboxsmclass" value=""></td>
 																	<td><input type="text" name="txt_adv_amount_0" id="txt_adv_amount_0" class="tboxsmclass" value=""></td>
@@ -435,6 +454,7 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 																@if(!empty($LtcAdvData))
     																@foreach($LtcAdvData as $key => $data)
 																		<tr>
+																			<input type="hidden" name="detail_id[]" value="{{ $data->ltc_detail_id ?? '' }}">
 																			<td><input type="text" name="txt_departure_dt[]" id="txt_departure_dt_{{$key+1}}" class="tboxsmclass datepicker" 
 																				value="{{ !empty($data->departure_dt) ? \Carbon\Carbon::parse($data->departure_dt)->format('d/m/Y') : '' }}"></td>
 																			<td><input type="time" name="txt_departure_time[]" id="txt_departure_time_{{$key+1}}" class="tboxsmclass" 
@@ -449,11 +469,7 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 																				value="{{!empty($data->arraival_from) ? $data->arraival_from : ''}}"></td>
 																			<td><input type="text" name="txt_distance[]" id="txt_distance_{{$key+1}}" class="tboxsmclass" 
 																				value="{{!empty($data->distance) ? $data->distance : ''}}"></td>
-<<<<<<< Updated upstream
-																			<td><input type="text" name="txt_travel_mode[]" id="txt_travel_mode_{{$key+1}}" class="tboxsmclass" 
-=======
 																			<td><input type="text" name="cmb_travel_mode[]" id="cmb_travel_mode_{{$key+1}}" class="tboxsmclass" 
->>>>>>> Stashed changes
 																				value="{{!empty($data->travel_mode) ? $data->travel_mode : ''}}"></td>
 																			<td><input type="text" name="txt_accomod_used[]" id="txt_accomod_used_{{$key+1}}" class="tboxsmclass" 
 																				value="{{!empty($data->accomod_used) ? $data->accomod_used : ''}}"></td>
@@ -466,11 +482,51 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 																	@endforeach
 																@endif
 															</tbody>
+															@php
+																$totalAmount = 0;
+																$sanctionedAmount = 0;
+																$balance = 0;
+																$totalClaim = 0;
+																if (!empty($EditClaimData)) {
+																	$totalAmount = $EditClaimData->advance_amount ?? 0;
+																	if ($EditClaimData->is_adv_completed) {
+																		$sanctionedAmount = $EditClaimData->sanctioned_amount ?? 0;
+																		$balance = $totalAmount - $sanctionedAmount;
+																		$totalClaim = $EditClaimData->claim_sanctioned_amount ?? $balance;
+																	}
+																}
+															@endphp
 															<tfoot>
 																<tr>
-																	<td colspan="10" style="text-align:right;"><b>Total</b></td>
+																	<td colspan="10" style="text-align:right;"><b>Total (A) In Rs.</b></td>
 																	<td>
-																		<input type="text" name="total_adv_amount" id="total_adv_amount" class="tboxsmclass" value="{{!empty($EditClaimData) ? $EditClaimData->claim_amount : '' }}" readonly>
+																		<input type="text" name="total_adv_amount" id="total_adv_amount"
+																			class="tboxsmclass" value="{{ $totalAmount }}" readonly>
+																	</td>
+																</tr>
+
+																<tr>
+																	<td colspan="10" style="text-align:right;"><b>Sanctioned Amount (90% of advance request Rs. {{$totalAmount}})(B) Rs.</b>{{$sanctionedAmount}}</td>
+																	<td>
+																		<input type="text" name="sanctioned_amount" id="sanctioned_amount"
+																			class="tboxsmclass" value="{{ $sanctionedAmount }}" readonly>
+																	</td>
+																</tr>
+
+																<!-- <tr>
+																	<td colspan="10" style="text-align:right;"><b>Balance Amount (A) In Rupees</b></td>
+																	<td>
+																		<input type="text" name="balance_amount" id="balance_amount"
+																			class="tboxsmclass" value="{{ $balance }}" readonly>
+																	</td>
+																	<td></td>
+																</tr> -->
+
+																<tr>
+																	<td colspan="10" style="text-align:right;"><b>Total Claim Amount (A-B) In Rs.</b></td>
+																	<td>
+																		<input type="text" name="total_claim_amount" id="total_claim_amount"
+																			class="tboxsmclass" value="{{ $totalClaim }}" readonly>
 																	</td>
 																</tr>
 															</tfoot>
@@ -479,50 +535,6 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 												</div>
 												<div class="row smclearrow"></div>
 												<div class="row smclearrow"></div>
-												<!-- <div class="fieldbox-div">
-													<div class="div4 label label">
-														Visit Travel Mode<span class="reqindi">*</span>
-													</div>
-													<div class="div3 label">
-														<div class="div4 no-margin">
-															<div class="inputGroup paddlr2">
-																<input id="rad_travel_bus" name="rad_travel" type="radio" value="Y"/>
-																<label for="rad_travel_bus" style="padding:3px 0px; width:100%"> &nbsp;Bus</label>
-															</div>
-														</div>
-														<div class="div4 no-margin">
-															<div class="inputGroup paddlr2">
-																<input id="rad_travel_rail" name="rad_travel" type="radio" value="N"/>
-																<label for="rad_travel_rail" style="padding:3px 0px; width:100%"> &nbsp;Rail</label>
-															</div>
-														</div>
-														<div class="div4 no-margin">
-															<div class="inputGroup paddlr2">
-																<input id="rad_travel_train" name="rad_travel" type="radio" value="N"/>
-																<label for="rad_travel_train" style="padding:3px 0px; width:100%"> &nbsp;Train</label>
-															</div>
-														</div>
-													</div>
-													<div class="row smclearrow"></div>
-													<div class="row smclearrow"></div>
-													<div class="div2 label label">
-														LTC Visiting Place<span class="reqindi">*</span>
-													</div>
-													<div class="div2 label">From Place</div>
-													<div class="div1"><input type="text" name="txt_from_place" id="txt_from_place" class="tboxsmclass" value="" ></div>
-													<div class="div2 label">To Place:</div>
-													<div class="div1"><input type="text" name="txt_to_place" id="txt_to_place" class="tboxsmclass" value="" ></div>
-													<div class="row smclearrow"></div>
-													<div class="div2 label label">Probable date of journey<span class="reqindi">*</span></div>
-													<div class="div2 label">From Date:</div>
-													<div class="div1"><input type="text" name="txt_journey_from_date" id="txt_journey_from_date" class="tboxsmclass datepicker" value="" ></div>
-													<div class="div2 label">To Date:</div>
-													<div class="div1"><input type="text" name="txt_journey_to_date" id="txt_journey_to_date" class="tboxsmclass datepicker" value="" ></div>
-													<div class="row smclearrow"></div>
-													<div class="div2 label">About Advance Required</div>
-													<div class="div2"><input type="text" name="txt_adv_amount" id="txt_adv_amount" class="tboxsmclass" value="" ></div>
-													<div class="row smclearrow"></div>
-												</div>  -->
 											</fieldset>
 											
 											<div class="row smclearrow"></div>
@@ -592,6 +604,16 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 		}
     }
 
+	function toggleElDays(value) {
+        if (value === 'Y') {
+            $(".ELdays").removeClass('hide');
+        }else if(value === 'N') {
+            $(".ELdays").addClass('hide');
+        }else{
+			$(".ELdays").addClass('hide');
+		}
+    }
+
     let spouseValue = $("input[name='rad_spouse_employed']:checked").val();
     toggleSpouseLtc(spouseValue);
 
@@ -600,6 +622,9 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 
 	let indiaValue = $("input[name='rad_india']:checked").val();
     toggleIndiaLtc(indiaValue);
+
+	let eldaysValue = $("input[name='rad_leaveenhance']:checked").val();
+    toggleElDays(eldaysValue);
 
     $("input[name='rad_spouse_employed']").change(function () {
         toggleSpouseLtc($(this).val());
@@ -613,6 +638,10 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
         toggleIndiaLtc($(this).val());
     });	
 
+	$("input[name='rad_leaveenhance']").change(function () {
+        toggleElDays($(this).val());
+    });
+
     var TravelIndex = {{ !empty($LtcAdvData) ? (count($LtcAdvData) + 1)  : 1 }};
 	$(document).on('click','#travel_add_record',function(){
 		var DepartureDt 	= $('#txt_departure_dt_0').val();
@@ -622,11 +651,7 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 		var ArrivalTime 	= $('#txt_arraival_time_0').val();
 		var ArrivalFrom 	= $('#txt_arraival_from_0').val();
 		var Distance 		= $('#txt_distance_0').val();
-<<<<<<< Updated upstream
-		var TravelMode 	    = $('#txt_travel_mode_0').val();
-=======
-		var TravelMode 	    = $('#cmb_travel_mode_0 option:selected').val();
->>>>>>> Stashed changes
+		var TravelMode      = $('#cmb_travel_mode_0 option:selected').text();
 		var AccomUsed 	    = $('#txt_accomod_used_0').val();
 		var NoofAmount 	    = $('#txt_no_of_amount_0').val();
 		var AdvAmount 	    = $('#txt_adv_amount_0').val();
@@ -639,11 +664,7 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 		tablestr += '<td><input type="time" name="txt_arraival_time[]" id="txt_arraival_time_'+TravelIndex+'" class="tboxsmclass" value="'+ArrivalTime+'"></td>';
 		tablestr += '<td><input type="text" name="txt_arraival_from[]" id="txt_arraival_from_'+TravelIndex+'" class="tboxsmclass" value="'+ArrivalFrom+'"></td>';
 		tablestr += '<td><input type="text" name="txt_distance[]" id="txt_distance_'+TravelIndex+'" class="tboxsmclass" value="'+Distance+'"></td>';
-<<<<<<< Updated upstream
-		tablestr += '<td><input type="text" name="txt_travel_mode[]" id="txt_travel_mode_'+TravelIndex+'" class="tboxsmclass" value="'+TravelMode+'"></td>';
-=======
 		tablestr += '<td><input type="text" name="cmb_travel_mode[]" id="cmb_travel_mode_'+TravelIndex+'" class="tboxsmclass" value="'+TravelMode+'"></td>';
->>>>>>> Stashed changes
 		tablestr += '<td><input type="text" name="txt_accomod_used[]" id="txt_accomod_used_'+TravelIndex+'" class="tboxsmclass" value="'+AccomUsed+'"></td>';
 		tablestr += '<td><input type="text" name="txt_no_of_amount[]" id="txt_no_of_amount_'+TravelIndex+'" class="tboxsmclass" value="'+NoofAmount+'"></td>';
 		tablestr += '<td><input type="text" name="txt_adv_amount[]" id="txt_adv_amount_'+TravelIndex+'" class="tboxsmclass" value="'+AdvAmount+'"></td>';
@@ -657,11 +678,9 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 		$('#txt_arraival_time_0').val('');
 		$('#txt_arraival_from_0').val('');
 		$('#txt_distance_0').val('');
-<<<<<<< Updated upstream
-		$('#txt_travel_mode_0').val('');
-=======
 		$('#cmb_travel_mode_0').chosen('destroy');
->>>>>>> Stashed changes
+		$('#cmb_travel_mode_0').val('');
+		$('#cmb_travel_mode_0').chosen();
 		$('#txt_accomod_used_0').val('');
 		$('#txt_no_of_amount_0').val('');
 		$('#txt_adv_amount_0').val('');
@@ -670,18 +689,32 @@ $WorkFlowActionData = $data['WorkFlowActionData'] ?? '';
 
 	$(document).on('click','.DeleteRow',function(){
 		$(this).closest("tr").remove();
+		calculateAmount();
 	});
 
 	$(document).on('keyup', '[id^="txt_adv_amount_"]', function() {
-    	let total = 0;
-		$('[id^="txt_adv_amount_"]').each(function() {
+    	calculateAmount();
+	});
+
+	$(document).ready(function () {
+    	calculateAmount();
+	});
+
+	function calculateAmount() {
+		let total = 0;
+		let totalClaim = 0;
+		let sactioned = parseFloat($('#sanctioned_amount').val()) || 0;
+		$('[id^="txt_adv_amount_"]').each(function () {
 			let val = parseFloat($(this).val());
 			if (!isNaN(val)) {
 				total += val;
 			}
 		});
     	$('#total_adv_amount').val(total);
-	});
+		totalClaim = total - sactioned;
+		$('#total_claim_amount').val(totalClaim);
+
+	}
 	
 	$(document).on('click','#Ltcleave-req',function(){
 		BootstrapDialog.alert('Apply your leave and submit the LTC');

@@ -121,6 +121,20 @@ class PurchaseOrder extends Model
             return PurchaseOrder::where('work_order_id', $PoId)->update(['po_issued' => true]);
         }
     }
+    public static function SavesdIssued($PoId, $SdPo)
+    {
+        if (filled($PoId)) {
+            $updateData = [];
+            if (strtoupper($SdPo) === 'SD') {
+                $updateData['sd_received'] = true;
+            }
+            if (strtoupper($SdPo) === 'PG') {
+                $updateData['pg_received'] = true;
+            }
+
+            return PurchaseOrder::where('work_order_id', $PoId)->update($updateData);
+        }
+    }
     public static function showPurchaseOredrIssuedData($request){
         return PurchaseOrder::where('po_issued',true)->where('active',1)->get();
     }
@@ -137,18 +151,57 @@ class PurchaseOrder extends Model
         }
     }
 
-    public static function showSdRecievedData(){
-        return PurchaseOrder::where(function ($query) {
-            $query->where('sd_received', false)->orWhereNull('sd_received');
-        })->where('active', 1)->get();
+    public static function showSdRecievedData($request, $purchaseId)
+    {
+        $query = PurchaseOrder::where('po_issued',true)->where('active', 1);
+        if (filled($purchaseId)) {
+            $query->where(function ($q) {
+                $q->where('sd_received', true)->orWhereNull('sd_received');
+            })->where('work_order_id', $purchaseId);
+        } else {
+            $query->where(function ($q) {
+                $q->where('sd_received', false)->orWhereNull('sd_received');
+            });
+        }
+
+        return $query->get();
     }
 
-    public static function showPoRecievedData(){
-        return PurchaseOrder::where(function ($query) {
-            $query->where('pg_received', false)->orWhereNull('pg_received');
-        })->where('active', 1)->get();
+    public static function showPgRecievedData($request, $purchaseId){
+        $query = PurchaseOrder::where('po_issued',true)->where('active', 1);
+        if (filled($purchaseId)) {
+            $query->where(function ($q) {
+                $q->where('pg_received', true)->orWhereNull('pg_received');
+            })->where('work_order_id', $purchaseId);
+        } else {
+            $query->where(function ($q) {
+                $q->where('pg_received', false)->orWhereNull('pg_received');
+            });
+        }
+
+        return $query->get();
     }
-    
+
+    public static function showSDPGIssuedData($request,$sdrpo){
+        return PurchaseOrder::join('erp_sd_po','erp_sd_po.po_id','=','erp_po_order.work_order_id')
+            ->where(function ($query) use ($sdrpo) {
+                if (strtoupper($sdrpo) === 'SD') {
+                    $query->where('erp_po_order.sd_received', true);
+                }
+                if (strtoupper($sdrpo) === 'PD') {
+                    $query->where('erp_po_order.pg_received', true);
+                }
+            })->where('erp_sd_po.sd_po','=',$sdrpo)->where('erp_po_order.active',1)->get();
+    }
+    public static function GetMatIdBYIndentId($IndentId){
+        return \DB::table('erp_po_order as po')
+        ->join('erp_material_inward_master as mi', 'mi.po_id', '=', 'po.work_order_id')
+        ->where('po.indent_id', $IndentId)
+        ->pluck('mi.master_inward_id');
+    }
+    public static function GetPoIdByIndentId($IndentId){
+        return self::where('active',1)->where('indent_id',$IndentId)->get(); 
+    }
    /*  public function CheckBank($BankArr){
         return BankMaster::select('bank_name')
                     ->whereRaw("REGEXP_REPLACE(REGEXP_REPLACE(bank_name, '[^a-zA-Z0-9]+', '', 'g'), ' ', '', 'g') ILIKE ?", [$BankArr['bank_name']])  

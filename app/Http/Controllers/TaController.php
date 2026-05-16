@@ -106,7 +106,7 @@ class TaController extends Controller
                 $message = "Error : Invalid ICNO & Check your ICNO"; 
             } 
             DB::commit();
-            $message = "TA Expenses Claim deatil Request Form Data Saved Successfully";
+            $message = "TA Expenses Claim deatil Request Form Data Saved ";
             Session::put('ALertMesage', $message);
             return redirect()->route('ta.tada-exp-claim-request');
         }catch (\Exception $e) { dd($e);
@@ -193,7 +193,7 @@ class TaController extends Controller
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                     //dd( $SaveEmployee);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded ";
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();
                     $message = "Error : Sorry transaction not fully completed";

@@ -44,7 +44,9 @@ class AMCPurchaseOrder extends Model
         'appr_auth_role',
         'grand_total',
         'auto_save_common_remarks',
-        'amc_po_total_amt'
+        'amc_po_total_amt',
+        'work_starting_date',
+        'work_completion_date'
     ];
 
     public static function showElectricalAMCPoDetails($AMCPoId){

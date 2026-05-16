@@ -23,8 +23,8 @@
 				<div class="grid_12">
 					<blockquote class="bq1" style="overflow:auto">
 						<div class="container">
-							<div class="row plr">
-								<!-- <div class="div2">&nbsp;</div> -->
+							<div class="row">
+								<div class="div3">&nbsp;</div>
 								<div class="div6">
 								<div class="form-box">	
 									<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="center">Designation Master</div></div></div>
@@ -63,10 +63,11 @@
 											<div class="div9"><input type="text" name="txt_desig_shortname" id="txt_desig_shortname" class="tboxsmclass" value="@if(isset($ShortName)){{$ShortName}}@endif"></div>
 											<div class="row smclearrow"></div>
 																					
-											@php $AddUrl = 'roles.ViewRoleMaster'; @endphp										
+											@php $AddUrl = 'DesignationMaster.ViewDesignationMaster'; @endphp										
 											<div class="row">
 												<div class="div12" align="center">
-													<button type="submit" class="step-btn" name="btn_save" id="btn_save" value="Save">Save</button>
+													<input type="button" class="backbutton" name="btn_view" id="btn_view" value=" Back " onClick="window.location='{{route($AddUrl)}}'" />
+													<input type="submit" class="step-btn" name="btn_save" id="btn_save" value=" Save " />					
 													<input type="hidden" name="hid_desg_id" id="csrf-hid_desg_id" value="@if(isset($DesgId)){{$DesgId}}@endif" />
 													<input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
 												</div>		
@@ -76,42 +77,6 @@
 									</div>										
 								</div>
 								</div>
-								<!--  -->
-								<div class="div6">
-									<div class="table-box">
-										<div class="row"><div class="div12" style="margin-top:0px;"><div class="row table-divhead" align="center">Designation List</div></div></div>
-										<div class="card-body padding-1 ChartCard" id="CourseChart">
-											<div class="divrowbox innerdiv pt-2">
-																		
-												<div class="row smclearrow"></div>                                                                                											
-												<table class="table-bordered table1" width="99%" align="center" id="dataTable">
-													<thead>
-														<tr class="note heading">
-															<th  style="text-align:center">SNo.</th>
-														    <th  style="text-align:center">Designation Name</th>
-															<th  style="text-align:center">Designation Short Name</th>
-															<th  style="text-align:center">Action</th>
-														</tr>
-													</thead>
-													<tbody>
-													@if(isset($data['DesignationData']))
-														@foreach($data['DesignationData'] as $DesignationData)
-															<tr>
-																<td align="center">{{ $loop->iteration }} </td>
-																<td align="left">{{ $DesignationData->designation_name}}</td>
-																<td align="left">{{ $DesignationData->designation_short_name}}</td>		
-																<td><button type="button" name="btn_edit" class="btn btn-default tuploadbtn" id="btn_edit" value=" Edit" onclick="window.location='{{ route('DesignationMaster.DesignationMaster',['id'=>encrypt($DesignationData->designation_id)]) }}'"> <i class='fa fa-edit'></i> Edit </button></td>
-														 	</tr>
-														@endforeach
-													@endif
-													</tbody>
-												</table>
-												
-											</div>
-										</div>	
-									</div>									
-								</div>
-								<!--  -->
 							</div>                           
 						</div>
 					</blockquote>

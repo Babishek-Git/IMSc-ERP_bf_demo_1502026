@@ -42,28 +42,31 @@
 								<table id="rm-empTable">
 									<thead>
 										<tr>
-										<th style="width:40px">#</th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">S.No. <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Indent No. <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Indent Description <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Indent Created By <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Indent Date <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
+										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Returned By<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
+										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Remarks <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<th class="rm-sortable" data-col="name"><div class="rm-th-inner">Action<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th>
 										<!-- <th style="width:80px; text-align:center;">Delete</th> -->
 										<!-- <th style="width:80px; text-align:center;" class="rm-sortable" data-col="status"><div class="rm-th-inner">Status <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M7 8l5-5 5 5M7 16l5 5 5-5"/></svg></div></th> -->
 										</tr>
 									</thead>
 									<tbody id="rm-tableBody">
+										@php $Sno = 1;@endphp
 										@if(isset($data['Indentdata']))
 											@foreach($data['Indentdata'] as $Indentdata)
                                                 @if($Indentdata ->to_emp_no == session('WcmsEmpNo'))
                                                     <tr data-name="{{ $Indentdata->emp_no }}" data-status="{{ $Indentdata->active == 1 ? 'active' : 'inactive' }}">
-                                                        <td></td>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $Indentdata->indent_no }}</td>
                                                         <td>{{ $Indentdata->indent_descripton }}</td>
                                                         <td>{{ $Indentdata->emp_name_payslip }}</td>
                                                         <td>{{ Helper::DisplayDateFormat($Indentdata->indent_date) }}</td>
+														<td></td>
+														<td></td>
                                                         <td align="center">
                                                             @if($Indentdata->status == 'SU')
                                                                 <button type="button" name="btn_edit" class="btn btn-default tuploadbtn" id="btn_edit" value="Edit" onclick="window.location='{{ route('indent.indent-creation',['EditId'=>encrypt($Indentdata->indent_id),'page'=>encrypt('EDIT')]) }}'"> <i class='fa fa-edit'></i>Edit</button>
@@ -79,6 +82,7 @@
                                                         </td> -->
                                                         <!-- <td align="center"><label class="rm-toggle"><input type="checkbox" @if($Indentdata->active == 1) checked @endif><span class="rm-slider"></span></label></td> -->
                                                     </tr>
+												@php $Sno ++;@endphp
                                                 @endif
 											@endforeach
 										@endif

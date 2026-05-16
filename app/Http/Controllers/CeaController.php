@@ -104,7 +104,7 @@ class CeaController extends Controller
                         $SaveEmployee= $this->ReimbursementDetail->createCeaReimbursementDetail($SaveDtArr);
                     }
                     DB::commit();
-                    $message = "Reimbursement deatil Request Form Data Saved Successfully";
+                    $message = "Reimbursement deatil Request Form Data Saved";
                     Session::put('ALertMesage', $message);
                 }catch (\Exception $e) { dd($e);
                     DB::rollback();

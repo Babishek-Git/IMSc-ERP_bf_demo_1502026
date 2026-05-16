@@ -83,7 +83,7 @@ class ImscBankController extends Controller
                 $SaveEmployment= $this->rbisanction->CreateRBISanction($SaveData);
             
                 DB::commit();
-                $message = "RBI Sanction Data Saved Successfully";
+                $message = "RBI Sanction Data Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -165,7 +165,7 @@ class ImscBankController extends Controller
                 $SaveEmployment= $this->imscaccount->CreateImscAccount($SaveData);
                 //dd($SaveEmployment);
                 DB::commit();
-                $message = "Imsc Data Saved Successfully";
+                $message = "Imsc Data Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -247,7 +247,7 @@ class ImscBankController extends Controller
                 $SaveEmployment= $this->daeapex->CreateDAEApexSanction($SaveData);
                 //dd($SaveEmployment);
                 DB::commit();
-                $message = "DAE Apex Saved Successfully";
+                $message = "DAE Apex Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

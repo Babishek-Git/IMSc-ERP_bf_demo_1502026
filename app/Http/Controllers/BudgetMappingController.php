@@ -80,7 +80,7 @@ class BudgetMappingController extends Controller
                     $this->ObjectHeadGiaMapping->CreateObjectHeadGiaMapping($SaveArr);
                 }
                 DB::commit();
-                $message = "GIA - Object Head mapping saved successfully"; 
+                $message = "GIA - Object Head mapping saved"; 
             
             } catch (Exception $e) { //dd($e);
                 $message = "Error : GIA - Object Head mapping not saved. Please try again"; 
@@ -173,7 +173,7 @@ class BudgetMappingController extends Controller
                     $this->ObjectHeadLedgerGroupMapping->CreateOBHledgerGroupMapping(NULL,$SaveArr,NULL);
                 }
                 DB::commit();
-                $message = "Ledger - Object Head mapping saved successfully"; 
+                $message = "Ledger - Object Head mapping saved"; 
             
             } catch (Exception $e) {  dd($e);
                 $message = "Error : Ledger - Object Head mapping not saved. Please try again"; 

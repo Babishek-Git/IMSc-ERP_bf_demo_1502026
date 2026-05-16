@@ -81,7 +81,7 @@ class DaeSanctionController extends Controller
                 $SaveEmployment= $this->budgetsanction->CreateBudgetSanction($SaveData);
             
                 DB::commit();
-                $message = "DAE Sanction Data Saved Successfully";
+                $message = "DAE Sanction Data Saved";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

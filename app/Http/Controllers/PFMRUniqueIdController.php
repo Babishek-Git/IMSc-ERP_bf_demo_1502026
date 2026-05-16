@@ -39,7 +39,7 @@ class PFMRUniqueIdController extends Controller
                         $SaveEmployee = $this->employee->UpdateEmployee($SaveData,$EmpIcno);
                     }
                     DB::commit();
-                    $message = "PFMR Insurance Details Saved Successfully";
+                    $message = "PFMR Insurance Details Saved ";
                 }
                 catch (\Exception $e) { dd($e);
                 DB::rollback();

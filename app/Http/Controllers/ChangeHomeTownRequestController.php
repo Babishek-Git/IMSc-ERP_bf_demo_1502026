@@ -150,7 +150,7 @@ class ChangeHomeTownRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr); 
                 }
                 DB::commit();
-                $message = "Home Town Update Request Form Data Saved Successfully";
+                $message = "Home Town Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -328,7 +328,7 @@ class ChangeHomeTownRequestController extends Controller
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                     //dd( $SaveEmployee);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();

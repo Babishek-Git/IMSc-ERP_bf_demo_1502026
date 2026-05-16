@@ -118,7 +118,7 @@ class LicenceFeeWaterChargeController extends Controller
                     $SaveFees= $this->Fees->createLicenceFeeWaterCharge($SaveData);
                 }
                 DB::commit();
-                $message = "Licence Fee Water Tariff  Data Saved Successfully";
+                $message = "Licence Fee Water Tariff  Data Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

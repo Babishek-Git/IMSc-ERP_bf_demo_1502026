@@ -67,7 +67,7 @@ class EmploymentTypeController extends Controller
                 $SaveEmployment= $this->employmenttype->createEmploymentType($SaveData);
             
                 DB::commit();
-                $message = "Employment Type Data Saved Successfully";
+                $message = "Employment Type Data Saved ";
             }catch (\Exception $e) { 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

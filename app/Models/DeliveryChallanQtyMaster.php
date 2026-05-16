@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use DB;
 class DeliveryChallanQtyMaster extends Model
 {
     use HasFactory;
@@ -56,6 +57,26 @@ class DeliveryChallanQtyMaster extends Model
             )
             ->where('erp_delivery_challan_qty_master.delivery_challan_id',$DelChallanId)
             ->where('erp_delivery_challan_qty_master.active',1)->get();
+        }
+    }
+    public static function GetDeliveryChallanWithDocuments($DeliveryChallanId){
+        if(filled($DeliveryChallanId)){
+            return DB::table('erp_delivery_challan_qty_master as dcm')
+        ->leftJoin(
+            'erp_supp_doc as sdm',
+            'sdm.transaction_id',
+            '=',
+            'dcm.delivery_challan_id'
+        )
+        ->select(
+            'dcm.receipt_no',
+            'dcm.receipt_date',
+            'sdm.sup_doc_id'
+        )
+        ->where('dcm.delivery_challan_id', $DeliveryChallanId)
+        ->where('sdm.module_code', 'MAT_INWARD')
+        ->where('sdm.module_sub_code', 'DEL_CHALLAN')
+        ->get();
         }
     }
 }

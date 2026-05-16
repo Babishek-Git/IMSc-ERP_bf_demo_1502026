@@ -194,7 +194,7 @@ class ChangeBankDetailRequestController extends Controller
                     $SaveEmployee = $this->ChangeRequest->CreateChangeRequest($SaveArr); 
                 }
                 DB::commit();
-                $message = "Bank Details Update Request Form Data Saved Successfully";
+                $message = "Bank Details Update Request Form Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

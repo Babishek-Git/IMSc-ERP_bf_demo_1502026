@@ -5,11 +5,8 @@
 $RegEmpData = $data['RegEmpData'];
 $EmpGroupId = $RegEmpData->employee_group_type;
 $EmpPay     = $data['paydetail'];
-<<<<<<< Updated upstream
-=======
 $selectedPay     = $data['selectedPay'] ?? [];
 
->>>>>>> Stashed changes
 @endphp
 <style>
     .checkbox{
@@ -160,7 +157,7 @@ $selectedPay     = $data['selectedPay'] ?? [];
                                                                 <option value="">------ Select ------</option>
                                                                 @if(isset($data['PayLevelData']))
                                                                 @foreach($data['PayLevelData'] as $PayLevelDt)
-                                                                    <option value="{{$PayLevelDt->pay_level}}" {{ isset($EmpPay->pay_level) && $EmpPay->pay_level == $PayLevelDt->pay_level ? 'selected' : '' }}>{{$PayLevelDt->pay_level}}</option>
+                                                                    <option value="{{$PayLevelDt->pay_level}}" {{ isset($EmpPay->pay_level) && $EmpPay->pay_level == $PayLevelDt->pay_level ? 'selected' : '' }}>{{$PayLevelDt->pay_level_name}}</option>
                                                                 @endforeach
                                                                 @endif
                                                             </select>
@@ -217,15 +214,11 @@ $selectedPay     = $data['selectedPay'] ?? [];
                                                                         }
                                                                         @endphp
                                                                         <input type="checkbox" class="{{$payComponents->component_code}}{{ $ChActiveClass }} PayComponent" data-code="{{$payComponents->component_code}}" name="ch_pay_components[{{$payComponents->component_id}}]" id="{{$payComponents->component_id}}" 
-<<<<<<< Updated upstream
-                                                                            value="{{$payComponents->component_code}}" {{ $CheckedStr }}>
-=======
                                                                             value="{{$payComponents->component_code}}" {{ $CheckedStr }} 
                                                                              @if(isset($selectedPay) && in_array($payComponents->component_id, $selectedPay)) checked="checked" @endif>
    
                                                                             
 
->>>>>>> Stashed changes
                                                                         <label for="{{$payComponents->component_id}}">
                                                                             <span class="checkbox">
                                                                                 <div class="checkbox-front">?</div>

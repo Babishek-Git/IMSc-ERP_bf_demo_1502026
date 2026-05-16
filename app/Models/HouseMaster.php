@@ -25,7 +25,8 @@ class HouseMaster extends Model
         'updated_by',
         'alloted_on',
         'vacated_on',
-        'is-hostel'
+        'is-hostel',
+        'charge_month'
     ];
     public function ShowHouseMaster($request,$EmpNo)
     {

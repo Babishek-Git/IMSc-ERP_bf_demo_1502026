@@ -59,7 +59,7 @@ class LocationController extends Controller
                 $SaveData['created_by'] = session('WcmsEmpNo');
                 $SaveLocation = $this->location->createLocationMaster($SaveData);
                 DB::commit();
-                $message = "Location Master  Data Saved Successfully";
+                $message = "Location Master  Data Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

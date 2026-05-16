@@ -65,6 +65,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/export-employee-pdf', 'EmployeeController@ExportEmployeePdf')->name('employee.export-employee-pdf');
 				Route::match(array('GET'),'/get-fellowship-amount', 'EmployeeController@getFellowshipAmount')->name('employee.get-fellowship-amount');
 				Route::match(array('GET'),'/get-fellowship-by-experience', 'EmployeeController@getByExperience')->name('employee.get-fellowship-by-experience');
+
 			});
 			Route::group(['prefix' => 'fellowship-rate'], function() { 
 				Route::match(array('GET','POST'),'/fellowship-rate', 'FelowshipRateController@FelowshipRate')->name('fellowship-rate.fellowship-rate');
@@ -158,6 +159,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('POST'),'/GetBankData', 'BankController@GetBankData')->name('bank.GetBankData');
 				Route::match(array('GET','POST'),'/RBISanction', 'BankController@RBISanction')->name('bank.rbi-sanction');
 				Route::match(array('GET','POST'),'/ImscAccountEntry', 'BankController@ImscAccountEntry')->name('bank.imsc-account-entry');
+				Route::match(array('GET','POST'),'/ViewBankMaster', 'BankController@BankMasterView')->name('bank.ViewBankMaster');
+				Route::match(array('GET','POST'),'/ViewBankBranchList', 'BankController@BankBranchList')->name('bank.ViewBankBranchList');
 			});
 			Route::group(['prefix' => 'budget-allocation'], function() { 
 				Route::match(array('GET','POST'),'/budget-sanction', 'BudgetSanactionController@BudgetSanction')->name('budget.sanction-entry');
@@ -166,7 +169,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/budget-claim', 'BudgetSanactionController@BudgetClaim')->name('budget.budget-claim-entry');
 				Route::match(array('GET','POST'),'/budget-received', 'BudgetSanactionController@BudgetRecived')->name('budget.budget-received-entry');
 				Route::match(array('GET','POST'),'/budget-balance', 'BudgetSanactionController@BudgetBalance')->name('budget.balance-entry');
+				Route::match(array('GET','POST'),'/budget-balance-view', 'BudgetSanactionController@BudgetBalanceView')->name('budget.balance-view');
 			});
+			Route::group(['prefix' => 'project-budget-sanction'], function() { 
+                Route::match(array('GET','POST'),'/project-budget-sanction-initiate', 'ProjectBudgetSanctionController@ProjectBudgetSanctionInitiate')->name('budget.project-budget-sanction-initiate');
+                Route::match(array('GET','POST'),'/project-budget-sanction', 'ProjectBudgetSanctionController@ProjectBudgetSanction')->name('budget.project-sanction-entry');
+                Route::match(array('GET','POST'),'/sub-project-budget-sanction', 'ProjectBudgetSanctionController@SubProjectBudgetSanction')->name('budget.sub-project-sanction-entry');
+                Route::match(array('GET','POST'),'/project-budget-sanction-finance-year', 'ProjectBudgetSanctionController@ProjectBudgetSanctionFinanceYear')->name('budget.project-sanction-entry-fy');
+                Route::match(array('GET','POST'),'/sub-project-budget-sanction-finance-year', 'ProjectBudgetSanctionController@SubProjectBudgetSanctionFinanceYear')->name('budget.sub-project-sanction-entry-fy');
+            });
+			Route::group(['prefix' => 'budget-reports'], function() { 
+                Route::match(array('GET','POST'),'/budget-reports', 'BudgetReportsController@BudgetReportsInitiate')->name('budget-reports.budget-reports');
+                Route::match(array('GET','POST'),'/apex-project-object-head-consolidated', 'BudgetReportsController@ApexProjectObjectHeadConsolidated')->name('budget-reports.apex-project-object-head-consolidated');
+                Route::match(array('GET','POST'),'/sub-project-object-head-consolidated', 'BudgetReportsController@SubProjectObjectHeadConsolidated')->name('budget-reports.sub-project-object-head-consolidated');
+                Route::match(array('GET','POST'),'/revenue-object-head-consolidated', 'BudgetReportsController@RevenueObjectHeadConsolidated')->name('budget-reports.revenue-object-head-consolidated');
+            });
 			Route::group(['prefix' => 'budget-mapping'], function() { 
                 Route::match(array('GET','POST'),'/gia-object-head-mapping', 'BudgetMappingController@GiaObjectHeadMapping')->name('budget-mapping.gia-object-head-mapping');
                 Route::match(array('GET','POST'),'/object-head-ledger-mapping', 'BudgetMappingController@LedgerObjectHeadMapping')->name('budget-mapping.object-head-ledger-mapping');
@@ -240,7 +257,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 			});
 			Route::group(['prefix' => 'DesignationMaster'], function() {
 				Route::match(array('GET','POST'),'/DesignationMaster', 'DesignationMasterController@DesignationMaster')->name('DesignationMaster.DesignationMaster');
-			});
+				Route::match(array('GET','POST'),'/ViewDesignationMaster', 'DesignationMasterController@ViewDesignationMaster')->name('DesignationMaster.ViewDesignationMaster');
+
+				});
 
 			Route::group(['prefix' => 'SendMail'], function() {
 
@@ -292,6 +311,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
 			Route::group(['prefix' => 'EbTrariffMaster'], function() {
 				Route::match(array('GET','POST'),'/EBTariffCharge', 'EBChargeController@EBCharge')->name('EbTrariffMaster.EBTariffMaster');
+				Route::match(array('GET','POST'),'/get-employee-details', 'EBChargeController@getEmployeeDetails')->name('EbTrariffMaster.get-employee-details');
 			});
 			Route::group(['prefix' => 'HouseMaster'], function() {
 				Route::match(array('GET','POST'),'/HouseMaster', 'HouseMasterController@HouseMaster')->name('HouseMaster.HouseMaster');
@@ -329,8 +349,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 			Route::group(['prefix' => 'SdAndPO'], function() {
 				Route::match(array('GET','POST'),'/sd-entry', 'SdAndPgEntryController@SDentyForm')->name('sdpo-entry.sd-entry');
 				Route::match(array('GET','POST'),'/pg-entry', 'SdAndPgEntryController@POentyForm')->name('sdpo-entry.pg-entry');
-				Route::match(array('GET','POST'),'/get-sd-percentage', 'SdAndPgEntryController@getSdPercentage');
+				Route::match(array('GET','POST'),'/get-sd-percentage', 'SdAndPgEntryController@getSdPercentage')->name('SdAndPO.get-sd-percentage');
 				Route::match(array('GET','POST'),'/po-sd-pg', 'SdAndPgEntryController@PoSDPGData')->name('sdpo.po-sd-pg');
+				Route::match(array('GET','POST'),'/sd-view', 'PurchaseOrderController@ViewPurchaseOrderForSD')->name('sdpo-entry.view-sd');
+				Route::match(array('GET','POST'),'/pg-view', 'PurchaseOrderController@ViewPurchaseOrderForPG')->name('sdpo-entry.view-pg');
 			});
 			
 			Route::group(['prefix' => 'change-request'], function() {
@@ -489,8 +511,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('POST'),'/GetIndentConsumableData', 'IndentController@GetIndentConsumableData')->name('indent.GetIndentConsumableData');
 				Route::match(array('POST'),'/GetObjectHeadData', 'IndentController@GetObjectHeadData')->name('indent.GetObjectHeadData');
 				Route::match(array('GET','POST'),'/approved-indent-sanction-list', 'IndentController@SanctionApproval')->name('indent.approved-indent-sanction-list');
-				Route::match(array('GET','POST'),'/sanction-doc-upload', 'IndentController@SanctionDocumentUpload')->name('indent.sanction-document-upload');
+				Route::match(array('GET','POST'),'/sanction-process', 'IndentController@SanctionProcessStatus')->name('indent.sanction-process');
 				Route::match(array('GET','POST'),'/approved-indent-status', 'IndentController@IndentStatusUpdate')->name('indent.approved-indent-status');
+				Route::match(array('GET','POST'),'/sanction-doc-upload', 'IndentController@SanctionDocumentUpload')->name('indent.sanction-document-upload');
 				Route::match(array('GET','POST'),'/DownloadFile', 'IndentController@DownloadFile')->name('indent.sanction-document-download');
 				Route::match(array('GET','POST'),'/sanction-SupportingDoc', 'IndentController@SancationSupportingDoc')->name('indent.sanction-SupportingDoc');
 			});
@@ -500,6 +523,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/get-transaction-data', 'VouchersController@GetTransactionData')->name('Voucher.get-transaction-data');
 				Route::match(array('GET','POST'),'/get-transaction-mapping-data', 'VouchersController@GetTransactionMappingData')->name('Voucher.get-transaction-mapping-data');
 				Route::match(array('GET'),'/get-paydata-ledger-group', 'VouchersController@GetLegderGroupPayData')->name('Voucher.get-paydata-ledger-group');
+				Route::match(array('GET','POST'),'/voucher-view-list', 'VouchersController@VoucherViewList')->name('Voucher.voucher-view-list');
 			});
 			Route::group(['prefix' => 'payment'], function() { 
 				Route::match(array('GET','POST'),'/salary-payment-creation-list', 'SalaryPaymentController@SalaryPaymentCreationList')->name('payment.salary-payment-creation-list');
@@ -559,9 +583,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 				Route::match(array('GET','POST'),'/Material', 'MaterialInwardController@MaterialInwardCreation')->name('material.material-inward-creation');
 				Route::match(array('GET','POST'),'/MaterialInwardSubmission', 'MaterialInwardController@MaterialInwardSubmission')->name('material.material-inward-submission');
 				Route::match(array('GET','POST'),'/MaterialInwardPaymentSubmission', 'MaterialInwardController@MaterialInwardPaymentSubmission')->name('material.material-inward-payment-submission');
-                Route::match(array('GET','POST'),'/MaterialInwardPendingPaymentList', 'MaterialInwardController@MaterialInwardPendingPaymentList')->name('material.material-inward-pending-payment');
-                Route::match(array('GET','POST'),'/MaterialInwardDeliveryChallanUpload', 'MaterialInwardController@MaterialInwardDeliveryChallanUpload')->name('material.material-inward-delivery-Challan-upload');
+				Route::match(array('GET','POST'),'/MaterialInwardDeliveryChallanUpload', 'MaterialInwardController@MaterialInwardDeliveryChallanUpload')->name('material.material-inward-delivery-Challan-upload');
                 Route::match(array('GET','POST'),'/MaterialInwardDeliveryChallanQty', 'MaterialInwardController@MaterialInwardDeliveryChallanQty')->name('material.material-inward-delivery-Challan-qty');
+
+			});
+			Route::group(['prefix' => 'Material-pending-payement'], function() {
+                Route::match(array('GET','POST'),'/MaterialInwardPendingPaymentList', 'MaterialInwardPendingPaymentController@MaterialInwardPendingPaymentList')->name('material.material-inward-pending-payment');
+                Route::match(array('GET','POST'),'/MaterialInwardPendingPaymentSubmit', 'MaterialInwardPendingPaymentController@MaterialInwardPendingPaymentSubmit')->name('material.material-inward-pending-payment-submission');
 			});
 			Route::group(['prefix' => 'register'], function() {
 				Route::match(array('GET','POST'),'/registerlibrary', 'AMCLibraryRegisterController@AMCLibraryRegister')->name('register.amc-library-register');

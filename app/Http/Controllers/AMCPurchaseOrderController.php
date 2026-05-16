@@ -56,7 +56,7 @@ class AMCPurchaseOrderController extends Controller
             if($FROMPage == 'SUBMIT'){
                 $SubmitAMCPOApplication = $this->AMCPurchaseOrderMaster->SubmitApplication($EditAMCPoId);
                 if($SubmitAMCPOApplication == TRUE){
-                    $message = 'AMC Purchase Order submitted successfully.';
+                    $message = 'AMC Purchase Order submitted ';
                     return redirect()->route('amc-purchase-order.amc-purchase-order-submission')->with('ALertMesage', $message);
                 }else{
                     $message = 'AMC Purchase Order Details could not be submitted';
@@ -93,7 +93,7 @@ class AMCPurchaseOrderController extends Controller
                 $FROMPage           = decrypt($request->page);
                 $DeleteAmcPoDetails = $this->AMCPurchaseOrderMaster->DeletAMCPOData($AMCPoId);
                 if($DeleteAmcPoDetails == TRUE){
-                    $message = 'AMC Purchase Order Details Deleted Successfully';
+                    $message = 'AMC Purchase Order Details Deleted';
                     return redirect()->route('amc-purchase-order.amc-purchase-order-submission')->with('ALertMesage', $message);
                 }else{
                     $message = 'Sorry, try again ....!';
@@ -161,6 +161,10 @@ class AMCPurchaseOrderController extends Controller
         $GrandTotal           =  $request->txt_total_amout;
         $PoEditId             =  $request->hid_amc_po_id;
         $TotalAmcPoAmt        =  $request->hidden_total_po_amt;
+        $WrkDuration          =  $request->txt_work_duration;
+        $WrkMode              =  $request->cmb_work_duration;
+        $WrkStartDate         =  $request->txt_start_date;
+        $WrkEndDate           =  $request->txt_end_date;
         $LocationStr          = "LOC";
         $LocationCount        = 1;
         $FinalLocationIdArray = [];
@@ -194,7 +198,10 @@ class AMCPurchaseOrderController extends Controller
             $SaveData['location_id']    = $FinalLocationJsonData;
             $SaveData['bill_pay_mode']  = $BillPayMode;
             $SaveData['grand_total']    = $GrandTotal;
-            $SaveData['amc_po_total_amt'] = $TotalAmcPoAmt;
+            $SaveData['work_duration']        = $WrkDuration;
+            $SaveData['work_duration_mode']   = $WrkMode;
+            $SaveData['work_starting_date']   = $WrkStartDate;
+            $SaveData['work_completion_date'] = $WrkEndDate;
             $SaveData['active']         = 1;
             if(filled($PoEditId)){
                 $SaveData['created_at']         = NOW();
@@ -244,10 +251,10 @@ class AMCPurchaseOrderController extends Controller
             Session::put('ALertMesage', $message);
         }
         if(filled($PoEditId)){
-            $message   = 'Purchase Order Details Update Successfully';
+            $message   = 'Purchase Order Details Update';
             return redirect()->route('amc-purchase-order.amc-purchase-order-submission')->with('ALertMesage', $message);
         }else{
-            $message   = 'AMC Purchase Order Details Saved Successfully';
+            $message   = 'AMC Purchase Order Details Saved';
             return redirect()->route('amc-purchase-order.amc-purchase-order-creation')->with('ALertMesage', $message);
         }
     }

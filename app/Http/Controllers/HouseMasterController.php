@@ -97,7 +97,7 @@ class HouseMasterController extends Controller
                 $SaveHouse= $this->house->createHouseMaster($SaveData);
             
                 DB::commit();
-                $message = "House Master Data Saved Successfully";
+                $message = "House Master Data Saved ";
             }catch (\Exception $e) { dd($e);end;
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -178,7 +178,7 @@ class HouseMasterController extends Controller
                 $SaveHouse= $this->house->updateHouseMaster($SaveData,$HousList);
             
                 DB::commit();
-                $message = "House Master Data Saved Successfully";
+                $message = "House Master Data Saved ";
             }catch (\Exception $e) { dd($e);end;
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -252,7 +252,7 @@ class HouseMasterController extends Controller
                 $SaveHouse= $this->house->updateHouseMaster($SaveData,$EmpNo);
                 }
                 DB::commit();
-                $message = "House Master Data Saved Successfully";
+                $message = "House Master Data Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

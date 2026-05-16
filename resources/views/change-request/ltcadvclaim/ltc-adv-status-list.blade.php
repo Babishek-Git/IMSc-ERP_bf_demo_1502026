@@ -44,86 +44,93 @@ $MaxWorkMoveDataArr = $data['MaxWorkMoveDetails'] ?? [];
 										</tr>
 									</thead>
 									<tbody id="rm-tableBody">
+										@php $Sno = 1; @endphp
 										@if(isset($data['LTCData']))
 											@foreach($data['LTCData'] as $LTCData)
-												<tr data-name="{{ $LTCData->emp_no }}" data-status="{{ $LTCData->active == 1 ? 'active' : 'inactive' }}">
-													<td>{{ $loop->iteration }}</td>
-													<td>{{ $LTCData->emp_no }}</td>
-													<td>{{ $EmpDataArr[$LTCData->emp_no] ?? '' }}</td>
-													<td>LTC Advance Request</td>
-													@php
-													$LtcAdvstatus = $LTCData->status;
-													$FromEmpNo    = $LTCData->from_emp_no;
-													$FromRole     = $LTCData->from_role;
-													$ToEmpNo      = $LTCData->to_emp_no;
-													$ToRole       = $LTCData->to_role;
-
-													$FromEmpName = $EmpDataArr[$FromEmpNo] ?? '';
-													$ToEmpName   = $EmpDataArr[$ToEmpNo] ?? '';
-													$MaxWorkData = $MaxWorkMoveDataArr[$LTCData->ltc_advance_id] ?? '';
-													if(filled($MaxWorkData)){
-														$SentOnStr = \Carbon\Carbon::parse($MaxWorkData)->format('d/m/Y H:i:s A');
-													}else{
-														$SentOnStr ='';
-													}
-													@endphp
-													<td style="text-align:center" align="left">
+												@if($LTCData->created_by == session('WcmsEmpNo'))
+													<tr data-name="{{ $LTCData->emp_no }}" data-status="{{ $LTCData->active == 1 ? 'active' : 'inactive' }}">
+														<td>{{ $Sno }}</td>
+														<td>{{ $LTCData->emp_no }}</td>
+														<td>{{ $EmpDataArr[$LTCData->emp_no] ?? '' }}</td>
+														<td>LTC Advance Request</td>
 														@php
-															if(isset($LtcAdvstatus)){
-																if($LtcAdvstatus == 'approved'){
-																	//echo '<span style="font-size:12px;" >LTC Advance Request Freezed </span>';
-																	echo '<span class="blink" style="font-size:12px; color:green;">LTC Advance Request Freezed</span>';
-																}else if($LtcAdvstatus == "SU" || $LtcAdvstatus=='pending' && $ToRole == ''){
-																	if(isset($FromRole)){
-																		if(isset($RoleDataArr[$FromRole])){
-																			$Roles = $RoleDataArr[$FromRole];
-																			if(isset($Roles)){
-																				if(isset($FromEmpName)){
-																					$EmpNameStr = '('.$FromEmpName.')';
-																				}else{
-																					$EmpNameStr = '';
-																				}
-																				echo '<span class="blink" style="font-size:12px;"><span style="color:red;">'.$Roles.'</span><br>'.$EmpNameStr.'</span>';
-																			}
-																		}
+														$LtcAdvstatus = $LTCData->status;
+														$FromEmpNo    = $LTCData->from_emp_no;
+														$FromRole     = $LTCData->from_role;
+														$ToEmpNo      = $LTCData->to_emp_no;
+														$ToRole       = $LTCData->to_role;
 
-																	}
-																}else if($LtcAdvstatus == "submitted" || $LtcAdvstatus  =='recommended'){
-																	if(isset($ToRole)){
-																		if(isset($RoleDataArr[$ToRole])){
-																			$Roles = $RoleDataArr[$ToRole];
-																			if(isset($Roles)){
-																				if(isset($ToEmpName)){
-																					$ToEmpNameStr = '('.$ToEmpName.')';
-																				}else{
-																					$ToEmpNameStr = '';
-																				}
-																				echo '<span class="blink" style="font-size:12px;"><span style="color:red;">'.$Roles.'</span><br>'.$ToEmpNameStr.'</span>';
-																			}
-																		}
-																	}
-																}else if($LtcAdvstatus == "rejected"){
-																	if(isset($FromRole)){
-																		if(isset($RoleDataArr[$FromRole])){
-																			$RejRoles = $RoleDataArr[$FromRole];
-																			if(isset($RejRoles)){
-																				if(isset($FromEmpName)){
-																					$RejEmpName = '('.$FromEmpName.')';
-																				}else{
-																					$RejEmpName = '';
-																				}
-																				echo '<span  style="font-size:12px;"><span style="color:red;"> Indent Declined by '.$RejRoles.'</span><br>'.$RejEmpName.'</span>';
-																			}
-																		}
-																	}
-																}	
-															}
+														$FromEmpName = $EmpDataArr[$FromEmpNo] ?? '';
+														$ToEmpName   = $EmpDataArr[$ToEmpNo] ?? '';
+														$MaxWorkData = $MaxWorkMoveDataArr[$LTCData->ltc_advance_id] ?? '';
+														if(filled($MaxWorkData)){
+															$SentOnStr = \Carbon\Carbon::parse($MaxWorkData)->format('d/m/Y H:i:s A');
+														}else{
+															$SentOnStr ='';
+														}
 														@endphp
-													</td>
-													<td class="col" align="center">
-														<button type="button" onclick="window.location='{{ route('ltc-adv.ltc-adv-status-list', ['id'=>encrypt($LTCData->ltc_advance_id),'modulecode'=>encrypt('LTCADV')])}}'" class="btn btn-default tuploadbtn" title="Click here to View" style="cursor: pointer;"><i class="fa fa-hand-o-right"></i> View Detailed Status</button>
-													</td>
-												</tr>
+														<td style="text-align:center" align="left">
+															@php
+																if(isset($LtcAdvstatus)){
+																	if($LtcAdvstatus == 'approved'){
+																		//echo '<span style="font-size:12px;" >LTC Advance Request Freezed </span>';
+																		echo '<span class="blink" style="font-size:12px; color:green;">LTC Advance Request Freezed</span>';
+																	}else if($LtcAdvstatus == "SU" || $LtcAdvstatus=='pending' && $ToRole == ''){
+																		if(isset($FromRole)){
+																			if(isset($RoleDataArr[$FromRole])){
+																				$Roles = $RoleDataArr[$FromRole];
+																				if(isset($Roles)){
+																					if(isset($FromEmpName)){
+																						$EmpNameStr = '('.$FromEmpName.')';
+																					}else{
+																						$EmpNameStr = '';
+																					}
+																					echo '<span class="blink" style="font-size:12px;"><span style="color:red;">'.$Roles.'</span><br>'.$EmpNameStr.'</span>';
+																				}
+																			}
+																		}else{
+																			echo '<span class="blink indent-status-value" >Not yet submitted</span>';
+																		}
+																	}else if($LtcAdvstatus == "submitted" || $LtcAdvstatus  =='recommended'){
+																		if(isset($ToRole)){
+																			if(isset($RoleDataArr[$ToRole])){
+																				$Roles = $RoleDataArr[$ToRole];
+																				if(isset($Roles)){
+																					if(isset($ToEmpName)){
+																						$ToEmpNameStr = '('.$ToEmpName.')';
+																					}else{
+																						$ToEmpNameStr = '';
+																					}
+																					echo '<span class="blink" style="font-size:12px;"><span style="color:red;">'.$Roles.'</span><br>'.$ToEmpNameStr.'</span>';
+																				}
+																			}
+																		}
+																	}else if($LtcAdvstatus == "rejected"){
+																		if(isset($FromRole)){
+																			if(isset($RoleDataArr[$FromRole])){
+																				$RejRoles = $RoleDataArr[$FromRole];
+																				if(isset($RejRoles)){
+																					if(isset($FromEmpName)){
+																						$RejEmpName = '('.$FromEmpName.')';
+																					}else{
+																						$RejEmpName = '';
+																					}
+																					echo '<span  style="font-size:12px;"><span style="color:red;"> Indent Declined by '.$RejRoles.'</span><br>'.$RejEmpName.'</span>';
+																				}
+																			}
+																		}
+																	}else{
+																		echo '<span class="blink indent-status-value" >Not yet submitted</span>';
+																	}	
+																}
+															@endphp
+														</td>
+														<td class="col" align="center">
+															<button type="button" onclick="window.location='{{ route('ltc-adv.ltc-adv-status-list', ['id'=>encrypt($LTCData->ltc_advance_id),'modulecode'=>encrypt('LTCADV')])}}'" class="btn btn-default tuploadbtn" title="Click here to View" style="cursor: pointer;"><i class="fa fa-hand-o-right"></i> View Detailed Status</button>
+														</td>
+													</tr>
+													@php $Sno++; @endphp
+												@endif
 											@endforeach
 										@endif
 									</tbody>

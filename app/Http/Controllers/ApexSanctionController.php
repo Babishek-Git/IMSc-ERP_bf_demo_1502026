@@ -82,7 +82,7 @@ class ApexSanctionController extends Controller
                 $SaveEmployment= $this->budgetsanction->CreateBudgetSanction($SaveData);
             
                 DB::commit();
-                $message = "APEX Sanction Data Saved Successfully";
+                $message = "APEX Sanction Data Saved";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

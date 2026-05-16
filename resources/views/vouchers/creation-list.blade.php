@@ -83,19 +83,6 @@ $ApplyBy = $ApplyBy ?? NULL;
 										<tr style="border-bottom:2px solid #045261" data-name="oh-{{ $Payment->payment_id }}" data-status="{{ $Payment->active == 1 ? 'active' : 'inactive' }}">
 											<td colspan="8">
 											@php
-<<<<<<< Updated upstream
-											if(isset($PaymentObjectHeadList)){
-												if(isset($PaymentObjectHeadList[$Payment->payment_id])){
-													$PayementOHData = $PaymentObjectHeadList[$Payment->payment_id];
-													if(filled($PayementOHData)){
-														foreach($PayementOHData as $PaymentObjectHead){ 
-															$ObjectHeadId = $PaymentObjectHead->pluck('object_head_id')->first();
-															$ObjectHeadSubCataId = $PaymentObjectHead->pluck('object_head_sub_cata_id')->first();
-															$LedgerId = $PaymentObjectHead->pluck('ledger_id')->first();
-															$LedgerGroupId = $PaymentObjectHead->pluck('ledger_group_id')->first();
-															$GiaId = $PaymentObjectHead->pluck('gia_id')->first();
-															$ProjectId = $PaymentObjectHead->pluck('project_id')->first();
-=======
 											if(isset($PaymentObjectHeadList)){ 
 												if(isset($PaymentObjectHeadList[$Payment->payment_id])){
 													$PayementOHData = $PaymentObjectHeadList[$Payment->payment_id];
@@ -107,7 +94,6 @@ $ApplyBy = $ApplyBy ?? NULL;
 															$LedgerGroupId = $PaymentObjectHead->ledger_group_id;
 															$GiaId = $PaymentObjectHead->gia_id;
 															$ProjectId = $PaymentObjectHead->project_id;
->>>>>>> Stashed changes
 															
 															if(isset($ObjectHeadList)){
 																if(isset($ObjectHeadList[$ObjectHeadId])){
@@ -240,39 +226,6 @@ $("body").on("click", "#btnSave", function () {
 	if(KillEvent == 0){
 		let VoucherCnt = 0;
 		$(".VoucherTable tbody tr").each(function () {
-<<<<<<< Updated upstream
-			let VoucherNo = $(this).find(".VoucherNo").val().trim();
-			let VoucherDt = $(this).find(".VoucherDt").val().trim();
-			let VoucherAmt = $(this).find(".VoucherAmt").val().trim();
-
-			if(VoucherNo !== "" && VoucherDt !== "" && VoucherAmt !== ""){
-				VoucherCnt++;
-			}
-			if(VoucherCnt == 0){
-				BootstrapDialog.alert("Please enter atleast one voucher record to proceed");
-				event.preventDefault();
-				event.returnValue = false;
-			}else{
-				event.preventDefault();
-				BootstrapDialog.confirm({
-					title: 'Confirmation Message',
-					message: 'Are you sure want to save ?',
-					closable: false, // <-- Default value is false
-					draggable: false, // <-- Default value is false
-					btnCancelLabel: 'Cancel', // <-- Default value is 'Cancel',
-					btnOKLabel: 'Ok', // <-- Default value is 'OK',
-					callback: function(result) {
-						if(result){
-							KillEvent = 1;
-							$("#btnSave").trigger( "click" );
-						}else {
-							KillEvent = 0;
-						}
-					}
-				});
-			}
-		});
-=======
 			let VoucherNo  = $(this).find(".VoucherNo").val()  || "";
 			let VoucherDt  = $(this).find(".VoucherDt").val()  || "";
 			let VoucherAmt = $(this).find(".VoucherAmt").val() || "";
@@ -311,7 +264,6 @@ $("body").on("click", "#btnSave", function () {
 			});
 		}
 		
->>>>>>> Stashed changes
 	}
 });
 

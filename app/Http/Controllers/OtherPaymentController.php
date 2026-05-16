@@ -22,6 +22,7 @@ use App\Models\EmployeePayBank;
 use App\Models\work_flow_modules;
 use App\Models\Ledger;
 use App\Models\LedgerGroup;
+use App\Models\SequenceNo;
 use Exception;
 use Helper;
 use Session;
@@ -49,6 +50,7 @@ class OtherPaymentController extends Controller
         $this->WorkFlowModule = new work_flow_modules();
         $this->Ledger       = new Ledger();
         $this->LedgerGroup  = new LedgerGroup();
+        $this->SequenceNo = new SequenceNo();
         $this->TransactionMappService = $TransactionMappService;
     }
 
@@ -70,11 +72,7 @@ class OtherPaymentController extends Controller
             try { 
                 $ProcessMode = decrypt($request->txt_process_mode);  
                 $PaymentId = decrypt($request->txt_payment_id);
-<<<<<<< Updated upstream
-                $ObjectHeadLedgerMapId = $request->txt_oh_ledger_map_id;
-=======
                 $ObjectHeadLedgerMapId = decrypt($request->txt_oh_ledger_map_id);
->>>>>>> Stashed changes
             }catch (\Illuminate\Contracts\Encryption\DecryptException $e) { 
                 $message = 'Invalid Access'; 
                 Session::put('ALertMesage', $message); 
@@ -107,12 +105,21 @@ class OtherPaymentController extends Controller
 
             DB::beginTransaction();
             try {
+                $SeqIdData = Helper::GetAutoSequenceNo('BILL',$PaymentId,NULL); 
+                $SeqId = $SeqIdData->seqid; 
+                $SeqNoData = $this->SequenceNo->ShowSequenceNoBySeqId($SeqId); 
+                $BillProcessNo = NULL; 
+                if(filled($SeqNoData)){
+                    $SeqNo           = collect($SeqNoData)->pluck('sequence_no')->first();
+                    $FinYear         = collect($SeqNoData)->pluck('fin_year')->first();   
+                    $BillProcessNo  = "IMSc/"."BILL/OTHER/".$SeqNo."/".$FinYear;
+                }
                 $UpdateArr['gross_amount']      = $GrossAmount;
                 $UpdateArr['recovery_amount']   = $TotalDeduction;
                 $UpdateArr['net_amount']        = $NetAmount;
                 $UpdateArr['status']            = 'pending';
                 $UpdateArr['payment_to']        = 'EMPLOYEE';
-                $UpdateArr['bill_no']           = $BillNo;
+                $UpdateArr['bill_no']           = $BillProcessNo;
                 $UpdateArr['bill_date']         = $BillDate;
                 $UpdateArr['bank_id']           = $EmpBankId;
                 $UpdateArr['bank_name']         = $EmpBankName;
@@ -137,11 +144,7 @@ class OtherPaymentController extends Controller
                 $SaveArr['payment_oh_amount']   = $ExpenditureAmt;
                 $SaveArr['active']              = 1;
                 $SaveArr['created_at']          = NOW();
-<<<<<<< Updated upstream
-                $SaveArr['created_by']          = session('WcmsEmpNo');
-=======
                 $SaveArr['created_by']          = session('WcmsEmpNo'); 
->>>>>>> Stashed changes
                 $this->PaymentObjectHead->CreatePaymentObjectHead($SaveArr);
 
                 $RecoveryCodeList               = $request->input('txt_recovery');
@@ -168,7 +171,7 @@ class OtherPaymentController extends Controller
                 }
 
                 DB::commit();
-                $message = "Payment data saved successfully"; 
+                $message = "Payment data saved successfully. <br/>Bill Processing No. is : ".$BillProcessNo; 
             }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error : Payment data not saved. Please try again"; 
             }
@@ -289,7 +292,7 @@ class OtherPaymentController extends Controller
                 $SaveEmployment= $this->budgetsanction->CreateBudgetSanction($SaveData);
             
                 DB::commit();
-                $message = "DAE Sanction Data Saved Successfully";
+                $message = "DAE Sanction Data Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

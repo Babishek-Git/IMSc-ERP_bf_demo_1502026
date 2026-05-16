@@ -22,6 +22,9 @@ use App\Models\ContractorDetail;
 use App\Models\ContractorGST;
 use App\Models\Ledger;
 use App\Models\LedgerGroup;
+use App\Models\ProjectMaster;
+use App\Models\SequenceNo;
+use App\Models\MaterialUnit;
 use Exception;
 use Helper;
 use Session;
@@ -52,9 +55,14 @@ class BillPaymentController extends Controller
         $this->ContractorGST = new ContractorGST();
         $this->Ledger       = new Ledger();
         $this->LedgerGroup  = new LedgerGroup();
+        $this->Project  = new ProjectMaster();
+        $this->SequenceNo = new SequenceNo();
+        $this->UnitMaster   = new MaterialUnit();
+
        
         $this->TransactionMappService = $TransactionMappService;
         $this->PaymentService = $PaymentService;
+        
     }
 
     public function BillPaymentCreationList(Request $request){
@@ -102,15 +110,37 @@ class BillPaymentController extends Controller
             if($BillDate != NULL){
                 $BillDate = Helper::DBDateFormat($BillDate);
             }
+            if($ProjectId != NULL){
+                $ProjectGrParData = $this->Project->GetRootParent($ProjectId);
+                $ProjectGrParId = $ProjectGrParData->project_id ?? null;
+            }else{
+                $ProjectGrParId = NULL;
+            }
             DB::beginTransaction();
             try {
+                $SeqIdData = Helper::GetAutoSequenceNo('BILL',$PaymentId,NULL); 
+                $SeqId = $SeqIdData->seqid; 
+                $SeqNoData = $this->SequenceNo->ShowSequenceNoBySeqId($SeqId); 
+                $BillProcessNo = NULL; 
+                if(filled($SeqNoData)){
+                    $SeqNo           = collect($SeqNoData)->pluck('sequence_no')->first();
+                    $FinYear         = collect($SeqNoData)->pluck('fin_year')->first();   
+                    if($ProcessMode == "AMC"){                     
+                        $BillProcessNo  = "IMSc/"."BILL/AMC/".$SeqNo."/".$FinYear; 
+                    }else if($ProcessMode == "PO"){                     
+                        $BillProcessNo  = "IMSc/"."BILL/PO/".$SeqNo."/".$FinYear; 
+                    }else{
+                        $BillProcessNo  = "IMSc/"."BILL/NA/".$SeqNo."/".$FinYear; 
+                    }
+                }
+                //dd($BillProcessNo);
                 $UpdateArr['gross_amount']      = $GrossAmount;
                 $UpdateArr['recovery_amount']   = $TotalDeduction;
                 $UpdateArr['net_amount']        = $NetAmount;
                 $UpdateArr['status']            = 'pending';
                 $UpdateArr['payment_to']        = 'VENDOR';
                 $UpdateArr['pay_vendor_id']     = $VendorId;
-                $UpdateArr['bill_no']           = $BillNo;
+                $UpdateArr['bill_no']           = $BillProcessNo;
                 $UpdateArr['bill_date']         = $BillDate;
                 $UpdateArr['bank_id']           = $VendorBankId;
                 $UpdateArr['bank_name']         = $VendorBankName;
@@ -130,6 +160,7 @@ class BillPaymentController extends Controller
                 $SaveArr['ledger_group_id']     = $LedgerGroupId;
                 $SaveArr['gia_id']              = $GiaId;
                 $SaveArr['project_id']          = $ProjectId;
+                $SaveArr['parent_project_id']   = $ProjectGrParId;
                 $SaveArr['object_head_id']      = $ObjectHeadId;
                 $SaveArr['object_head_sub_cata_id']  = $ObjectHeadSubCataId;
                 $SaveArr['ohl_mapping_id']      = $ObjectHeadLedgerMapId;
@@ -162,7 +193,7 @@ class BillPaymentController extends Controller
                 }
 
                 DB::commit();
-                $message = "Payment data saved successfully"; 
+                $message = "Payment data saved. <br/>Bill Processing No. is : ".$BillProcessNo; 
             }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error : Payment data not saved. Please try again"; 
             }
@@ -189,7 +220,7 @@ class BillPaymentController extends Controller
         }*/
         $LedgerIdList = [];
         if($PoId != NULL){
-            $PoAmcBudgetData = $this->TransactionMappService->GetBudgetDetailsForAmcPo($PoId,$ProcessMode,$ApplicationId);
+            $PoAmcBudgetData = $this->TransactionMappService->GetBudgetDetailsForAmcPo($PoId,$ProcessMode,$ApplicationId); 
             if(filled($PoAmcBudgetData)){
                 if(isset($PoAmcBudgetData['LedgerIdList'])){
                     $LedgerIdList = $PoAmcBudgetData['LedgerIdList'];
@@ -206,7 +237,6 @@ class BillPaymentController extends Controller
         
         $Ledger  = $this->Ledger->ShowOtherThanDeductionLedger(); 
         if(filled($LedgerIdList)){ 
-
             $Ledger = $Ledger->whereIn('ledger_id',$LedgerIdList);
         }
 
@@ -235,9 +265,12 @@ class BillPaymentController extends Controller
                     $MaterialTypeId = $PoPaymentData->pluck('mat_type_id')->first(); 
                 }
             }
-            $VendorBankData = $this->ContractorDetail->ShowContractorBank($VendorId); 
-            $VendorGstData = $this->ContractorGST->ShowContractorGstByContId($VendorId); //dd($PoPaymentData);
-            return view('payment.po-amc-bill.create-po-bill', compact('PoAmcBudgetData','Ledger','DeductionLedger','LedgerGroupList','LedgerData','PoPaymentData','RecoveryData','VendorBankData','VendorGstData','BudgetObjectHeadData','AllObectHead','AllObectHeadSubCataGrpData','ProcessMode'));
+            $VendorBankData      = $this->ContractorDetail->ShowContractorBank($VendorId); 
+            $VendorGstData       = $this->ContractorGST->ShowContractorGstByContId($VendorId); //dd($PoPaymentData);
+            $GetMatInwardDetails = $this->PaymentService->GetMaterialInwardDetailsData($ApplicationId);
+            $ShowMaterialUnit    = $this->UnitMaster->ShowMaterialUnit(NULL);
+            $UnitData            = collect($ShowMaterialUnit)->pluck('uom_name','uom_id')->toArray();
+            return view('payment.po-amc-bill.create-po-bill', compact('PoAmcBudgetData','Ledger','UnitData','GetMatInwardDetails','DeductionLedger','LedgerGroupList','LedgerData','PoPaymentData','RecoveryData','VendorBankData','VendorGstData','BudgetObjectHeadData','AllObectHead','AllObectHeadSubCataGrpData','ProcessMode'));
         }else{
             return redirect()->route('payment.indent-bill-payment-creation-list');
         }
@@ -329,7 +362,7 @@ class BillPaymentController extends Controller
                     }
                 }
                 DB::commit();
-                $message = "Payment data saved successfully"; 
+                $message = "Payment data saved"; 
             }catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error : Payment data not saved. Please try again"; 
             }
@@ -468,7 +501,7 @@ class BillPaymentController extends Controller
                 $SaveEmployment= $this->budgetsanction->CreateBudgetSanction($SaveData);
             
                 DB::commit();
-                $message = "DAE Sanction Data Saved Successfully";
+                $message = "DAE Sanction Data Saved";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

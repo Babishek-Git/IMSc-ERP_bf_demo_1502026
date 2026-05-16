@@ -53,4 +53,9 @@ class PurchaseOrderSoq extends Model
             return self::where('po_id',$PoId)->delete();
         }
     }
+    public static function GetPoSoqData($PoId){
+        if(filled($PoId)){
+            return self::whereIn('po_id',$PoId)->where('active',1)->get();
+        }
+    }
 }

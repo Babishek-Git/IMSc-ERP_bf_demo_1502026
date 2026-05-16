@@ -48,7 +48,8 @@ class Payment extends Model
         'pay_emp_group_type',
         'voucher_no',
         'voucher_dt',
-        'voucher_amt'
+        'voucher_amt',
+        'is_final_bill'
     ];
     public static function CreatePayment($SaveData){
         return self::create($SaveData);
@@ -110,7 +111,19 @@ class Payment extends Model
     public function ShowPaymentForVoucherCreate(){
         return self::where('active',1)->where('status','pending')->whereNull('voucher_no')->whereNull('voucher_dt')->whereNull('voucher_amt')->get();
     }
-    public static function ShowPendingPayment(){
+    public static function ShowCompletedPayment(){
        return self::where('active',1)->whereNotNull('voucher_no')->whereNotNull('voucher_dt')->whereNotNull('voucher_amt')->get();
     }
+    public static function GetCompletedPaymentsWithoutFinalBill(){
+      return self::where('active',1)
+            ->whereNotNull('voucher_no')
+            ->whereNotNull('voucher_dt')
+            ->whereNotNull('voucher_amt')
+            ->where(function($query){
+                $query->whereNull('is_final_bill')
+                    ->orWhere('is_final_bill', false);
+            })
+            ->get();
+    }
+    
 }

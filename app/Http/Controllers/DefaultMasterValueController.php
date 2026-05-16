@@ -99,7 +99,7 @@ class DefaultMasterValueController extends Controller
                 
             
                 DB::commit();
-                $message = " Default Master  Data Saved Successfully";
+                $message = " Default Master  Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

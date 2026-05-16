@@ -16,7 +16,7 @@ class DesignationMasterController extends Controller
             $this->Designation  = new DesignationMaster();
             $this->Group  = new EmployeeGroupMaster();
     }
-     public function DesignationMaster(Request $request)
+    public function DesignationMaster(Request $request)
     {
      if(isset($request->btn_save))
         {
@@ -86,7 +86,7 @@ class DesignationMasterController extends Controller
                 }
                             
                 DB::commit();
-                $message = "Designation  Data Saved Successfully";
+                $message = "Designation  Data Saved";
             }catch (\Exception $e) {
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -113,5 +113,10 @@ class DesignationMasterController extends Controller
         $GroupData = $this->Group->ShowEmployeeGroup(NULL);
         $EmpGroupData = $this->Designation->ShowDesignationWithGroup(NULL);
         return view('designation-master.designation-master')->with('data', compact('DesignationData','EditDesignationData','GroupData','EmpGroupData'));
+    }
+    public function ViewDesignationMaster(Request $request)
+    {
+        $DesignationData=$this->Designation->ShowDesignationMaster(NULL);
+        return view('designation-master.view-designationmaster')->with('data', compact('DesignationData'));
     }
 }

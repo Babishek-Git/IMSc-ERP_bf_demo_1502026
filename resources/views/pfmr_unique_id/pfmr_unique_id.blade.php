@@ -12,8 +12,6 @@
 					<blockquote class="bq1" style="overflow:auto">
 						<div class="container">
 							<div class="row">
-<<<<<<< Updated upstream
-=======
 								@php $AddUrl = 'pfmr_unique_id.view-pfmr_unique_id'; @endphp										
 								<div class="row">
 									<div class="div12" align="right">
@@ -23,7 +21,6 @@
 										<input type="hidden" name="hid_roleid" id="hid_roleid" value="@if(isset($data['RoleData'])){{ encrypt($data['RoleData']->roleid) }}@endif" />
 									</div>		
 								</div>
->>>>>>> Stashed changes
 								<div class="div12">
 									<div class="form-box">
 										<div class="row"><div class="div12" style="margin-top:0px;"><div class="row divhead" align="center">PFMR - Employee Entry Form</div></div></div>
@@ -64,20 +61,7 @@
 
                                                 </div>
                                             </div>
-<<<<<<< Updated upstream
-												@php $AddUrl = 'pfmr_unique_id.view-pfmr_unique_id'; @endphp										
-												<div class="row">
-													<div class="div12" align="center">
-														<input type="button" class="backbutton" name="btn_view" id="btn_view" value=" Back " onClick="window.location='{{route($AddUrl)}}'" />
-														<input type="submit" class="step-btn" name="btn_save" id="btn_save" value=" Save " />									
-														<input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
-														<input type="hidden" name="hid_roleid" id="hid_roleid" value="@if(isset($data['RoleData'])){{ encrypt($data['RoleData']->roleid) }}@endif" />
-													</div>		
-												</div>
-												<div class="row smclearrow"></div>  
-=======
 												  
->>>>>>> Stashed changes
 											</div>
 										</div>										
 									</div>

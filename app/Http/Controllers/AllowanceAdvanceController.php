@@ -114,7 +114,7 @@ class AllowanceAdvanceController extends Controller
                 $SaveComponent  = $this->allowance->createAllowanceAdvanceMaster($SaveData);
                 //dd($SaveComponent);
                 DB::commit();
-                $message = "Allowance/Advance Master  Data Saved Successfully";
+                $message = "Allowance/Advance Master  Data Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

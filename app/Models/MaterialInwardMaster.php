@@ -52,7 +52,9 @@ class MaterialInwardMaster extends Model
         'is_completed',
         'receipt_suffix_no',
         'approved_by',
-        'mat_inward_submit'
+        'mat_inward_submit',
+        'delivery_challan_id',
+        'is_pending_payment'
     ];
     public static function ShowMaxReceipNo($request){
         return MaterialInwardMaster::max('receipt_suffix_no');
@@ -151,4 +153,48 @@ class MaterialInwardMaster extends Model
 
         return $data;
     }
+    public static function SubmittedPendingPaymentData(){
+        $RetData = DB::table('erp_material_inward_master as mi')
+        ->join('erp_po_order as po', 'mi.po_id', '=', 'po.work_order_id')
+        ->select(
+            'mi.*',
+            'po.work_name',
+            'po.po_issued',
+            'po.work_order_no',
+            'po.work_order_date',
+            'po.contid'
+        )
+        ->where('mi.active', '1')
+        ->where('po.po_issued', 'true')
+        ->where(function($query) {
+            $query->where('mi.mat_inward_submit', 'true')
+                ->orWhere('mi.is_pending_payment', true);
+        })
+        ->orderBy('mi.master_inward_id', 'DESC')
+        ->get();
+        return $RetData;
+    }
+    // public static function SubmittedPendingPaymentData(){
+    //     $RetData = DB::table('erp_material_inward_master as mi')
+    //         ->join('erp_po_order as po', 'mi.po_id', '=', 'po.work_order_id')
+    //         ->select(
+    //             'mi.*',
+    //             'po.work_name',
+    //             'po.po_issued',
+    //             'po.work_order_no',
+    //             'po.work_order_date',
+    //             'po.contid'
+    //         )
+    //         ->where('mi.active', '1')
+    //         ->where('po.po_issued', 'true')
+    //         ->where('mi.is_pending_payment', true)
+    //         ->where(function($query) {
+    //             $query->whereNull('mi.mat_inward_submit')
+    //                 ->orWhere('mi.mat_inward_submit', false);
+    //         })
+    //         ->orderBy('mi.master_inward_id', 'DESC')
+    //         ->get();
+
+    //     return $RetData;
+    // }
 }

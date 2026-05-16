@@ -134,14 +134,15 @@ class ChangeLTCAdvClaimController extends Controller
             foreach ($LtcAdvData as $travel) {
                 $from       = $travel['departure_dt'] ?? null;
                 $to         = $travel['arraival_dt'] ?? null;
-                $Leaveexits = $this->LeaveApplied->CheckLTCAppliedLeave($from,$to,session('WcmsEmpNo'));
+                $Leaveexits = $this->LeaveApplied->CheckLTCAppliedLeave($from,$to,$EditClaimData->emp_no);
             }
             $selectedFamilyIds = [];
             if (!empty($EditClaimData->family_ids)) {
                 $selectedFamilyIds = explode(',', $EditClaimData->family_ids);
             }
         }
-        if(isset($request->btn_save)){  
+        if(isset($request->btn_save)) {
+
             $EmpNo            = $request->txt_emp_icno;
             $SpouseEmployed   = $request->rad_spouse_employed;
             $EntitledLTC      = $request->rad_entitle_LTC;
@@ -149,136 +150,128 @@ class ChangeLTCAdvClaimController extends Controller
             $YearLTC          = $request->year_ltc;
             $Visitedindia     = $request->rad_india;
             $PlaceVisited     = $request->place_visited;
-            $totalAdvAmount   = $request->total_adv_amount;
+            $totalAdvAmount   = $request->total_adv_amount ?: null;
+            $sanctioned       = $request->total_90_percent ?: null;
             $leaveenhance     = $request->rad_leaveenhance;
+            $ElDays           = $request->el_days;
+
             $checkeFamilydIds = $request->chk_cout_rel ?? [];
             $FamilyIds        = !empty($checkeFamilydIds) ? implode(',', $checkeFamilydIds) : null;
-            $rules = [
-				'EmpNo' => 'required|max:10',
-			];
-			$ValidateData = [
-                'EmpNo'      => $EmpNo,
-			];
-            $Validate = Validator::make($ValidateData, $rules); 
-            $ErrArr = [];
-            if($Validate->fails())
-             {
-                //$date = NULL;
-                $ValidateFields = $Validate->failed();
-                foreach ($ValidateFields as $ValidFieldName => $ValidRules) 
-                {
-                    if($EmpNo == "EmpNo"){
-                        $ErrArr[] = "Error : Invalid Employee No.";
-                    }
+
+            $AdvanceAmountArr = $request->input('txt_adv_amount');
+            $DepatureDtArr    = $request->input('txt_departure_dt');
+            $DepatureTimeArr  = $request->input('txt_departure_time');
+            $DepatureFromArr  = $request->input('txt_departure_from');
+            $ArraivalDtArr    = $request->input('txt_arraival_dt');
+            $ArraivalTimeArr  = $request->input('txt_arraival_time');
+            $ArraivalFromArr  = $request->input('txt_arraival_from');
+            $DistanceArr      = $request->input('txt_distance');
+            $TravelModeArr    = $request->input('cmb_travel_mode');
+            $AccomodUsedArr   = $request->input('txt_accomod_used');
+            $NoOfFaresArr     = $request->input('txt_no_of_amount');
+            $DetailIdsArr     = $request->input('detail_id') ?? [];
+            DB::beginTransaction();
+            try {
+                $SaveArr = [];
+                $SaveArr['emp_no']            = $EmpNo;
+                $SaveArr['spouse_employed']   = $SpouseEmployed;
+                $SaveArr['entitle_ltc']       = $EntitledLTC;
+                $SaveArr['visiting_home']     = $VisitingHome;
+                $SaveArr['year_ltc']          = $YearLTC;
+                $SaveArr['visiting_india']    = $Visitedindia;
+                $SaveArr['place_visited']     = $PlaceVisited;
+                $SaveArr['advance_amount']    = $totalAdvAmount;
+                $SaveArr['sanctioned_amount'] = $sanctioned;
+                $SaveArr['module_code']       = 'LTCADV';
+                $SaveArr['active']            = 1;
+                $SaveArr['family_ids']        = $FamilyIds;
+                $SaveArr['leave_enhancement'] = $leaveenhance;
+                $SaveArr['el_days']           = $ElDays;
+                if ($sanctioned) {
+                    $SaveArr['sanctioned_by'] = session('WcmsEmpNo');
+                    $SaveArr['sanctioned_at'] = now();
                 }
-            }
-            if(filled($ErrArr))
-            {
-                $ErrorStr = implode(",",$ErrArr);
-                Session::put('ALertMesage', $ErrorStr);
-                return redirect()->route('change-request.adv-claim-ltc-request');
-            }
-            $AdvanceAmountArr   = $request->input('txt_adv_amount');
-            if(filled($AdvanceAmountArr)){
-                $DepatureDtArr        = $request->input('txt_departure_dt');
-                $DepatureTimeArr      = $request->input('txt_departure_time');
-                $DepatureFromArr      = $request->input('txt_departure_from');
-                $ArraivalDtArr        = $request->input('txt_arraival_dt');
-                $ArraivalTimeArr      = $request->input('txt_arraival_time');
-                $ArraivalFromArr      = $request->input('txt_arraival_from');
-                $DistanceArr          = $request->input('txt_distance');
-<<<<<<< Updated upstream
-                $TravelModeArr        = $request->input('txt_travel_mode');
-=======
-                $TravelModeArr        = $request->input('cmb_travel_mode');
->>>>>>> Stashed changes
-                $AccomodUsedArr       = $request->input('txt_accomod_used');
-                $NoOfFaresArr         = $request->input('txt_no_of_amount');
-                $ErrArr             = [];
-                DB::beginTransaction();
-                try {
-                    $LtcadvIds = [];
-                    $SaveArr = [];
-                    if(isset($request->id)){ 
-                        $this->LtcAdv->DeleteLtcAdv($EditId);
-                        $this->LtcAdvDetails->DeleteLtcAdvDetails($EditId);
-                    }
-                    $SaveArr['emp_no']           = $EmpNo;
-                    $SaveArr['spouse_employed']  = $SpouseEmployed;
-                    $SaveArr['entitle_ltc']      = $EntitledLTC;
-                    $SaveArr['visiting_home']    = $VisitingHome;
-                    $SaveArr['year_ltc']         = $YearLTC;
-                    $SaveArr['visiting_india']   = $Visitedindia;
-                    $SaveArr['place_visited']    = $PlaceVisited;
-                    $SaveArr['advance_amount']   = $totalAdvAmount;
-                    $SaveArr['status']           = "pending";
-                    $SaveArr['module_code']      = "LTCADV";
-                    $SaveArr['active']           = 1;
-                    $SaveArr['created_at']       = NOW();
-                    $SaveArr['created_by']       = session('WcmsEmpNo');
-                    $SaveArr['family_ids']       = $FamilyIds;
-                    $SaveArr['leave_enhancement']= $leaveenhance;
+                if (!empty($request->id)) {
+                    $EditId = decrypt($request->id);
+                    $this->LtcAdv->updateLtcAdvance($EditId, $SaveArr);
+                    $MasterId = $EditId;
+                }else {
+                    $SaveArr['status']     = 'pending';
+                    $SaveArr['created_at'] = now();
+                    $SaveArr['created_by'] = session('WcmsEmpNo');
                     $SaveLtcAdv = $this->LtcAdv->createLtcAdvances($SaveArr);
-                    foreach ($DepatureDtArr as $key => $DepatureDt) {
-                        $SaveData  = [];
-                        $SaveData['emp_no']         = $request->txt_emp_icno;
-                        $SaveData['departure_dt']   = $DepatureDt ? Helper::DBDateFormat($DepatureDt) : null;
-                        $SaveData['departure_time'] = $DepatureTimeArr[$key] ?? null;
-                        $SaveData['departure_from'] = $DepatureFromArr[$key] ?? null;
-                        $SaveData['arraival_dt']    = !empty($ArraivalDtArr[$key]) ? Helper::DBDateFormat($ArraivalDtArr[$key]) : null;
-                        $SaveData['arraival_time']  = $ArraivalTimeArr[$key] ?? null;
-                        $SaveData['arraival_from']  = $ArraivalFromArr[$key] ?? null;
-                        $SaveData['distance']       = $DistanceArr[$key] ?? null;
-                        $SaveData['travel_mode']    = $TravelModeArr[$key] ?? null;
-                        $SaveData['accomod_used']   = $AccomodUsedArr[$key] ?? null;
-                        $SaveData['no_of_fares']    = $NoOfFaresArr[$key] ?? null;
-                        $SaveData['advance_amount'] = $AdvanceAmountArr[$key] ?? null;
-                        $SaveData['ltc_advance_id'] = $SaveLtcAdv->ltc_advance_id;
-                        $SaveData['active']     = 1;
-                        $SaveData['created_at'] = now();
-                        $SaveData['created_by'] = session('WcmsEmpNo');
+                    $MasterId = $SaveLtcAdv->ltc_advance_id;
+                }
+                $LtcadvIds = [];
+                foreach ($DepatureDtArr as $key => $DepatureDt) {
+                    $SaveData = [];
+                    $SaveData['emp_no']         = $EmpNo;
+                    $SaveData['departure_dt']   = !empty($DepatureDt) ? Helper::DBDateFormat($DepatureDt) : null;
+                    $SaveData['departure_time'] = $DepatureTimeArr[$key] ?? null;
+                    $SaveData['departure_from'] = $DepatureFromArr[$key] ?? null;
+                    $SaveData['arraival_dt']    = !empty($ArraivalDtArr[$key]) ? Helper::DBDateFormat($ArraivalDtArr[$key]) : null;
+                    $SaveData['arraival_time']  = $ArraivalTimeArr[$key] ?? null;
+                    $SaveData['arraival_from']  = $ArraivalFromArr[$key] ?? null;
+                    $SaveData['distance']       = $DistanceArr[$key] ?? null;
+                    $SaveData['travel_mode']    = $TravelModeArr[$key] ?? null;
+                    $SaveData['accomod_used']   = $AccomodUsedArr[$key] ?? null;
+                    $SaveData['no_of_fares']    = $NoOfFaresArr[$key] ?? null;
+                    $SaveData['advance_amount'] = $AdvanceAmountArr[$key] ?? null;
+                    if (!empty($DetailIdsArr[$key])) {
+                        $SaveData['updated_at'] = now();
+                        $SaveData['updated_by'] = session('WcmsEmpNo');
+                        $this->LtcAdvDetails->updateLtcAdvDetails($DetailIdsArr[$key], $SaveData);
+                        $LtcadvIds[] = $DetailIdsArr[$key];
+                    }else {
+                        $SaveData['ltc_advance_id'] = $MasterId;
+                        $SaveData['active']         = 1;
+                        $SaveData['created_at']     = now();
+                        $SaveData['created_by']     = session('WcmsEmpNo');
                         $SaveValues = $this->LtcAdvDetails->CreateLtcAdvDetails($SaveData);
                         $LtcadvIds[] = $SaveValues->ltc_detail_id;
                     }
-                    if($LtcadvIds){
-                        $AdvId        = $SaveLtcAdv->ltc_advance_id;
-                        $LtcadvIds    = implode(',', $LtcadvIds);
-                        $SaveAdvances = $this->LtcAdv->UpdateAdvances($AdvId,$LtcadvIds);
-                    }
-                    DB::commit();
-                    $message = "LTC Advance Details Saved Successfully";
-                    Session::put('ALertMesage', $message); 
+                }
+
+                if (!empty($LtcadvIds)) {
+                    $this->LtcAdv->UpdateAdvances($MasterId, implode(',', $LtcadvIds));
+                }
+                DB::commit();
+                Session::put('ALertMesage', 'LTC Advance Details Saved Successfully');
+                if($EmpNo != session('WcmsEmpNo')){
+                    return redirect()->route('change-request.ltc-adv-change-request-pending-list');
+                }else{
                     return redirect()->route('change-request.ltc-adv-change-request-list');
                 }
-                catch (\Exception $e) { dd($e);
-                    DB::rollback();
-                    $message = "Error : Sorry Details not Saved";
-                    Session::put('ALertMesage', $message); 
-                    return redirect()->route('change-request.ltc-adv-change-request');
-                }
                 
+
+            } catch (\Exception $e) {
+                DB::rollback();
+                dd($e);
+                Session::put('ALertMesage', 'Error: Sorry Details not Saved');
+                return redirect()->route('change-request.ltc-adv-change-request');
             }
         }
-<<<<<<< Updated upstream
-        $Empdata       = $this->Employee->ShowEmployeeBySessionEmpNo();
-        $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
-        $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
-=======
+
         if(isset($request->id)){
             $Empdata       = $this->Employee->ShowEmployees($request,$EditClaimData->emp_no);
             $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EditClaimData->emp_no); 
             $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EditClaimData->emp_no); 
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', $EditClaimData->emp_no)
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
         }else{
             $Empdata       = $this->Employee->ShowEmployeeBySessionEmpNo();
             $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
             $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', session('WcmsEmpNo'))
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
             
         }
->>>>>>> Stashed changes
         $LeaveTypeData = $this->leavetype->ShowLeaveType();
     
         return view('change-request.ltcadvclaim.emp-ltc-adv-change-request')->with('data',compact('Empdata','EditClaimData',
-            'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds'));
+            'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds','existingFamilyIds'));
     } 
 
     public function EmpChangeLTCReqSelfServiceList(){
@@ -322,6 +315,13 @@ class ChangeLTCAdvClaimController extends Controller
                     return redirect()->route('change-request.ltc-adv-change-request-list');
                 }
             }
+            $sanctionedAmt = $request->total_90_percent ?? null;
+
+            if (!empty($sanctionedAmt)) {
+                $advId = decrypt($request->Application);
+                $this->LtcAdv->updateSanctionedAmount($advId, $sanctionedAmt);
+            }
+
             if(($request->SubmitApplication == 'RJ')||($request->SubmitApplication == 'AP')){
                 $WorkFlowData = (object)['TransactionId'=>$TransactionId,'WflowModule'=>$ModuleCode,'WorkFlowMode'=>$WorkFlowMode,'ActualEmpNo'=>NULL,'WorkFlowRemark'=>$WorkFlowRemark,'WorkFlowEmpNo'=>NULL,'WorkFlowRole'=>NULL,'WorkFlowAction'=>$request->SubmitApplication,'RolePosition'=>NULL,'SubModule'=>'LTC_REQ'];
             }else{
@@ -380,14 +380,11 @@ class ChangeLTCAdvClaimController extends Controller
             $selectedFamilyIds = explode(',', $EditClaimData->family_ids);
         }
         $Empdata       = $this->Employee->ShowEmployees($request,$EmpNo);
-<<<<<<< Updated upstream
-        $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
-        $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
-=======
         $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EmpNo); 
         $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EmpNo); 
->>>>>>> Stashed changes
-
+        $existingFamilyIds = $this->LtcAdv->where('emp_no', $EmpNo)
+                            ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                            ])->pluck('family_ids')->toArray();
         $WorkFlowAction = NULL;
         $TargetRoles = $EditClaimData->target_roles;//collect($EditClaimData)->pluck('target_roles')->first() ?? NULL;
         $IsCompleted = $EditClaimData->is_completed;//collect($EditClaimData)->pluck('is_completed')->first();
@@ -403,7 +400,7 @@ class ChangeLTCAdvClaimController extends Controller
         }
         //dd($WorkFlowActionData);
         return view('change-request.ltcadvclaim.emp-ltc-adv-change-request-view')->with('data',compact('ApplicationId','Action','EditClaimData',
-            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds'));  
+            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds','existingFamilyIds'));  
 
     }
 
@@ -429,7 +426,7 @@ class ChangeLTCAdvClaimController extends Controller
             foreach ($LtcAdvData as $travel) {
                 $from       = $travel['departure_dt'] ?? null;
                 $to         = $travel['arraival_dt'] ?? null;
-                $Leaveexits = $this->LeaveApplied->CheckLTCAppliedLeave($from,$to,session('WcmsEmpNo'));
+                $Leaveexits = $this->LeaveApplied->CheckLTCAppliedLeave($from,$to,$EditClaimData->emp_no);
             }
             $selectedFamilyIds = [];
             if (!empty($EditClaimData->family_ids)) {
@@ -444,127 +441,129 @@ class ChangeLTCAdvClaimController extends Controller
             $YearLTC          = $request->year_ltc;
             $Visitedindia     = $request->rad_india;
             $PlaceVisited     = $request->place_visited;
-            $totalAdvAmount   = $request->total_adv_amount;
+            $totalAdvAmount   = $request->total_adv_amount ?: null;
+            $sanctioned       = $request->total_claim_amount ?: null;
             $leaveenhance     = $request->rad_leaveenhance;
+            $ElDays           = $request->el_days;
+
             $checkeFamilydIds = $request->chk_cout_rel ?? [];
             $FamilyIds        = !empty($checkeFamilydIds) ? implode(',', $checkeFamilydIds) : null;
-            $rules = [
-				'EmpNo' => 'required|max:10',
-			];
-			$ValidateData = [
-                'EmpNo'      => $EmpNo,
-			];
-            $Validate = Validator::make($ValidateData, $rules); 
-            $ErrArr = [];
-            if($Validate->fails())
-             {
-                //$date = NULL;
-                $ValidateFields = $Validate->failed();
-                foreach ($ValidateFields as $ValidFieldName => $ValidRules) 
-                {
-                    if($EmpNo == "EmpNo"){
-                        $ErrArr[] = "Error : Invalid Employee No.";
-                    }
+
+            $AdvanceAmountArr = $request->input('txt_adv_amount');
+            $DepatureDtArr    = $request->input('txt_departure_dt');
+            $DepatureTimeArr  = $request->input('txt_departure_time');
+            $DepatureFromArr  = $request->input('txt_departure_from');
+            $ArraivalDtArr    = $request->input('txt_arraival_dt');
+            $ArraivalTimeArr  = $request->input('txt_arraival_time');
+            $ArraivalFromArr  = $request->input('txt_arraival_from');
+            $DistanceArr      = $request->input('txt_distance');
+            $TravelModeArr    = $request->input('cmb_travel_mode');
+            $AccomodUsedArr   = $request->input('txt_accomod_used');
+            $NoOfFaresArr     = $request->input('txt_no_of_amount');
+            $DetailIdsArr     = $request->input('detail_id') ?? [];
+
+            DB::beginTransaction();
+            try {
+                $SaveArr = [];
+                $SaveArr['emp_no']            = $EmpNo;
+                $SaveArr['spouse_employed']   = $SpouseEmployed;
+                $SaveArr['entitle_ltc']       = $EntitledLTC;
+                $SaveArr['visiting_home']     = $VisitingHome;
+                $SaveArr['year_ltc']          = $YearLTC;
+                $SaveArr['visiting_india']    = $Visitedindia;
+                $SaveArr['place_visited']     = $PlaceVisited;
+                $SaveArr['claim_amount']      = $totalAdvAmount;
+                $SaveArr['claim_sanctioned_amount'] = $sanctioned;
+                $SaveArr['module_code']       = 'LTCCLAIM';
+                $SaveArr['is_claim_completed']= false;
+                $SaveArr['is_adv_completed']  = true;
+                $SaveArr['active']            = 1;
+                $SaveArr['family_ids']        = $FamilyIds;
+                $SaveArr['leave_enhancement'] = $leaveenhance;
+                $SaveArr['el_days']            = $ElDays;
+                if ($sanctioned) {
+                    $SaveArr['claim_sanctioned_by'] = session('WcmsEmpNo');
+                    $SaveArr['claim_sanctioned_at'] = now();
                 }
-            }
-            if(filled($ErrArr))
-            {
-                $ErrorStr = implode(",",$ErrArr);
-                Session::put('ALertMesage', $ErrorStr);
-                return redirect()->route('change-request.ltc-settlement-change-request-list');
-            }
-            $AdvanceAmountArr   = $request->input('txt_adv_amount');
-            if(filled($AdvanceAmountArr)){
-                $DepatureDtArr        = $request->input('txt_departure_dt');
-                $DepatureTimeArr      = $request->input('txt_departure_time');
-                $DepatureFromArr      = $request->input('txt_departure_from');
-                $ArraivalDtArr        = $request->input('txt_arraival_dt');
-                $ArraivalTimeArr      = $request->input('txt_arraival_time');
-                $ArraivalFromArr      = $request->input('txt_arraival_from');
-                $DistanceArr          = $request->input('txt_distance');
-<<<<<<< Updated upstream
-                $TravelModeArr        = $request->input('txt_travel_mode');
-=======
-                $TravelModeArr        = $request->input('cmb_travel_mode');
->>>>>>> Stashed changes
-                $AccomodUsedArr       = $request->input('txt_accomod_used');
-                $NoOfFaresArr         = $request->input('txt_no_of_amount');
-                $FamilyIds            = !empty($checkeFamilydIds) ? implode(',', $checkeFamilydIds) : null;
-                $ErrArr  = [];
-                DB::beginTransaction();
-                try {
-                    $LtcadvIds = [];
-                    $SaveArr = [];
-                    if(isset($request->id)){ 
-                        $this->LtcAdv->DeleteLtcAdv($EditId);
-                        $this->LtcAdvDetails->DeleteLtcAdvDetails($EditId);
-                    }
-                    $SaveArr['application_no']      = implode(',', $LtcadvIds);
-                    $SaveArr['emp_no']              = $EmpNo;
-                    $SaveArr['spouse_employed']     = $SpouseEmployed;
-                    $SaveArr['entitle_ltc']         = $EntitledLTC;
-                    $SaveArr['visiting_home']       = $VisitingHome;
-                    $SaveArr['year_ltc']            = $YearLTC;
-                    $SaveArr['visiting_india']      = $Visitedindia;
-                    $SaveArr['place_visited']       = $PlaceVisited;
-                    $SaveArr['claim_amount']        = $totalAdvAmount;
-                    $SaveArr['status']              = "pending";
-                    $SaveArr['module_code']         = "LTCCLAIM";
-                    $SaveArr['is_claim_completed']  = false;
-                    $SaveArr['is_adv_completed']    = true;
-                    $SaveArr['active']              = 1;
-                    $SaveArr['created_at']          = NOW();
-                    $SaveArr['created_by']          = session('WcmsEmpNo');
-                    $SaveArr['family_ids']          = $FamilyIds;
-                    $SaveArr['leave_enhancement']= $leaveenhance;
+                if (!empty($request->id)) {
+                    $EditId = decrypt($request->id);
+                    $SaveArr['status']     = 'submitted';
+                    $this->LtcAdv->updateLtcAdvance($EditId, $SaveArr);
+                    $MasterId = $EditId;
+                }else {
+                    $SaveArr['status']     = 'submitted';
+                    $SaveArr['created_at'] = now();
+                    $SaveArr['created_by'] = session('WcmsEmpNo');
                     $SaveLtcAdv = $this->LtcAdv->createLtcAdvances($SaveArr);
-                    foreach ($DepatureDtArr as $key => $DepatureDt) {
-                        $SaveData  = [];
-                        $SaveData['emp_no']         = $request->txt_emp_icno;
-                        $SaveData['departure_dt']   = $DepatureDt ? Helper::DBDateFormat($DepatureDt) : null;
-                        $SaveData['departure_time'] = $DepatureTimeArr[$key] ?? null;
-                        $SaveData['departure_from'] = $DepatureFromArr[$key] ?? null;
-                        $SaveData['arraival_dt']    = !empty($ArraivalDtArr[$key]) ? Helper::DBDateFormat($ArraivalDtArr[$key]) : null;
-                        $SaveData['arraival_time']  = $ArraivalTimeArr[$key] ?? null;
-                        $SaveData['arraival_from']  = $ArraivalFromArr[$key] ?? null;
-                        $SaveData['distance']       = $DistanceArr[$key] ?? null;
-                        $SaveData['travel_mode']    = $TravelModeArr[$key] ?? null;
-                        $SaveData['accomod_used']   = $AccomodUsedArr[$key] ?? null;
-                        $SaveData['no_of_fares']    = $NoOfFaresArr[$key] ?? null;
-                        $SaveData['advance_amount'] = $AdvanceAmountArr[$key] ?? null;
-                        $SaveData['ltc_advance_id'] = $SaveLtcAdv->ltc_advance_id;
-                        $SaveData['active']     = 1;
-                        $SaveData['created_at'] = now();
-                        $SaveData['created_by'] = session('WcmsEmpNo');
+                    $MasterId = $SaveLtcAdv->ltc_advance_id;
+                }
+                $LtcadvIds = [];
+                foreach ($DepatureDtArr as $key => $DepatureDt) {
+                    $SaveData = [];
+                    $SaveData['emp_no']         = $EmpNo;
+                    $SaveData['departure_dt']   = !empty($DepatureDt) ? Helper::DBDateFormat($DepatureDt) : null;
+                    $SaveData['departure_time'] = $DepatureTimeArr[$key] ?? null;
+                    $SaveData['departure_from'] = $DepatureFromArr[$key] ?? null;
+                    $SaveData['arraival_dt']    = !empty($ArraivalDtArr[$key]) ? Helper::DBDateFormat($ArraivalDtArr[$key]) : null;
+                    $SaveData['arraival_time']  = $ArraivalTimeArr[$key] ?? null;
+                    $SaveData['arraival_from']  = $ArraivalFromArr[$key] ?? null;
+                    $SaveData['distance']       = $DistanceArr[$key] ?? null;
+                    $SaveData['travel_mode']    = $TravelModeArr[$key] ?? null;
+                    $SaveData['accomod_used']   = $AccomodUsedArr[$key] ?? null;
+                    $SaveData['no_of_fares']    = $NoOfFaresArr[$key] ?? null;
+                    $SaveData['advance_amount'] = $AdvanceAmountArr[$key] ?? null;
+                    if (!empty($DetailIdsArr[$key])) {
+                        $SaveData['updated_at'] = now();
+                        $SaveData['updated_by'] = session('WcmsEmpNo');
+                        $this->LtcAdvDetails->updateLtcAdvDetails($DetailIdsArr[$key], $SaveData);
+                        $LtcadvIds[] = $DetailIdsArr[$key];
+                    }else {
+                        $SaveData['ltc_advance_id'] = $MasterId;
+                        $SaveData['active']         = 1;
+                        $SaveData['created_at']     = now();
+                        $SaveData['created_by']     = session('WcmsEmpNo');
                         $SaveValues = $this->LtcAdvDetails->CreateLtcAdvDetails($SaveData);
                         $LtcadvIds[] = $SaveValues->ltc_detail_id;
                     }
-                    if($LtcadvIds){
-                        $AdvId        = $SaveLtcAdv->ltc_advance_id;
-                        $LtcadvIds    = implode(',', $LtcadvIds);
-                        $SaveAdvances = $this->LtcAdv->UpdateAdvances($AdvId,$LtcadvIds);
-                    }
-                    DB::commit();
-                    $message = "LTC Final Claim Details Saved Successfully";
-                    Session::put('ALertMesage', $message); 
+                }
+
+                if (!empty($LtcadvIds)) {
+                    $this->LtcAdv->UpdateAdvances($MasterId, implode(',', $LtcadvIds));
+                }
+                DB::commit();
+                Session::put('ALertMesage', 'LTC Advance Details Saved Successfully');
+                if($EmpNo != session('WcmsEmpNo')){
+                    return redirect()->route('change-request.ltc-settlement-change-request-pending-list');
+                }else{
                     return redirect()->route('change-request.ltc-settlement-change-request-list');
                 }
-                catch (\Exception $e) { dd($e);
-                    DB::rollback();
-                    $message = "Error : Sorry Details not Saved";
-                    Session::put('ALertMesage', $message); 
-                    return redirect()->route('change-request.ltc-settlement-change-request-list');
-                }
-                
+
+            } catch (\Exception $e) {
+                DB::rollback();
+                Session::put('ALertMesage', 'Error: Sorry Details not Saved');
+                return redirect()->route('change-request.ltc-adv-change-request');
             }
+
         }
-        $Empdata       = $this->Employee->ShowEmployeeBySessionEmpNo();
-        $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
-        $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
+        if(isset($request->id)){
+            $Empdata       = $this->Employee->ShowEmployees($request,$EditClaimData->emp_no);
+            $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EditClaimData->emp_no); 
+            $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EditClaimData->emp_no); 
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', $EditClaimData->emp_no)
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
+        }else{
+            $Empdata       = $this->Employee->ShowEmployeeBySessionEmpNo();
+            $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
+            $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
+            $existingFamilyIds = $this->LtcAdv->where('emp_no', session('WcmsEmpNo'))
+                                ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                                ])->pluck('family_ids')->toArray();
+        }
         $LeaveTypeData = $this->leavetype->ShowLeaveType(); 
     
         return view('change-request.ltcsettlementclaim.emp-ltc-settlement-claim-request')->with('data',compact('Empdata','EditClaimData',
-        'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds'));
+        'Page','Payleveldata','Familydata','LtcAdvData','LeaveTypeData','Leaveexits','selectedFamilyIds','existingFamilyIds'));
     } 
 
     public function EmpChangeClaimReqSelfServiceList(){
@@ -609,6 +608,12 @@ class ChangeLTCAdvClaimController extends Controller
                     return redirect()->route('change-request.ltc-settlement-change-request-list');
                 }
             }
+            $sanctionedAmt = $request->total_claim_amount ?? null;
+            if (!empty($sanctionedAmt)) {
+                $advId = decrypt($request->Application);
+                $this->LtcAdv->updateClaimSanctionedAmount($advId, $sanctionedAmt);
+            }
+
             if(($request->SubmitApplication == 'RJ')||($request->SubmitApplication == 'AP')){
                 $WorkFlowData = (object)['TransactionId'=>$TransactionId,'WflowModule'=>$ModuleCode,'WorkFlowMode'=>$WorkFlowMode,'ActualEmpNo'=>NULL,'WorkFlowRemark'=>$WorkFlowRemark,'WorkFlowEmpNo'=>NULL,'WorkFlowRole'=>NULL,'WorkFlowAction'=>$request->SubmitApplication,'RolePosition'=>NULL,'SubModule'=>'LTC_CLAIM'];
             }else{
@@ -667,17 +672,14 @@ class ChangeLTCAdvClaimController extends Controller
             $selectedFamilyIds = explode(',', $EditClaimData->family_ids);
         }
         $Empdata       = $this->Employee->ShowEmployees($request,$EmpNo);
-<<<<<<< Updated upstream
-        $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno(session('WcmsEmpNo')); 
-        $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo(session('WcmsEmpNo')); 
-=======
         $Payleveldata  = $this->PayLevel->ShowEmployeePayLevelByEmpno($EmpNo); 
         $Familydata    = $this->familydetails->ShowFamilyDetailsByEmpNo($EmpNo); 
->>>>>>> Stashed changes
-
+        $existingFamilyIds = $this->LtcAdv->where('emp_no', $EmpNo)
+                            ->whereBetween('created_at', [date('Y') . '-01-01 00:00:00',date('Y') . '-12-31 23:59:59'
+                            ])->pluck('family_ids')->toArray();
         $WorkFlowAction = NULL;
         $TargetRoles = $EditClaimData->target_roles;//collect($EditClaimData)->pluck('target_roles')->first() ?? NULL;
-        $IsCompleted = $EditClaimData->is_completed;//collect($EditClaimData)->pluck('is_completed')->first();
+        $IsCompleted = $EditClaimData->is_claim_completed;//collect($EditClaimData)->pluck('is_completed')->first();
         $ApprAuthRole = $EditClaimData->approve_auth_role;//collect($EditClaimData)->pluck('approve_auth_role')->first() ?? NULL;
         $WorkFlowActionData = [];
         if(($IsCompleted == NULL)||($IsCompleted == false)){
@@ -688,9 +690,9 @@ class ChangeLTCAdvClaimController extends Controller
                 $WorkFlowActionData = $this->WorkFlowService->CheckForwardAndBackward('LTCCLAIM',$ApplicationId,$TargetRoles,$ApprAuthRole);
             }
         }
-        //dd($EditClaimData);
+        //dd($IsCompleted);
         return view('change-request.ltcsettlementclaim.emp-ltc-settlement-claim-view')->with('data',compact('ApplicationId','Action','EditClaimData',
-            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds'));  
+            'Page','WorkFlowActionData','LtcAdvData','Empdata','Payleveldata','Familydata','Leaveexits','selectedFamilyIds','existingFamilyIds'));  
     }
     public function checkLtcStatus(){
         $Page        = 'REQ_STATUS'; 

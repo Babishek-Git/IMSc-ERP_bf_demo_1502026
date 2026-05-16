@@ -92,7 +92,7 @@ class ItemController extends Controller
                 $SaveEmployment= $this->ItemMaster->CreateItemMaster($SaveData);
                 //dd($SaveEmployment);
                 DB::commit();
-                $message = "Item Master Data Saved Successfully";
+                $message = "Item Master Data Saved ";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

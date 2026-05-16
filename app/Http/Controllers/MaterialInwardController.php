@@ -66,43 +66,6 @@ class MaterialInwardController extends Controller
         $OutputArr              = array('DeliveryChallanQtyData'=>$DeliveryChallanQtyData,'DeliveryChallanDoc'=>$DeliveryChallanDocData);
         return $OutputArr;
     }
-    public function MaterialInwardPendingPaymentList(Request $request){
-        if(isset($request->EditId)){
-            try{
-                $MatInwardId            = decrypt($request->EditId);
-                $MaterialInwardData     = $this->MaterialInwardMaster->showMaterialInwardData(NULL,$MatInwardId);
-                $PurchaseId             = collect($MaterialInwardData)->pluck('po_id')->first();
-                $Contractordata        = $this->Contractor->ShowContractor();
-                $Empdata               = $this->Employee->ShowEmployees($request,NULL); 
-                $ShowPurchaseOrderData = $this->PurchaseOrder->showPurchaseOredrData(NULL,$PurchaseId); //dd($showPurchaseOredrData);
-                $ShowPoSoqData         = $this->PurchaseOrderSoqDetails->showPurchaseOredrSoqData(NULL,$PurchaseId); //dd($showPurchaseOredrData);
-                $MaxReceiptNo          = $this->MaterialInwardMaster->ShowMaxReceipNo($request);
-                $ShowMaterialUnit      = $this->UnitMaster->ShowMaterialUnit(NULL);
-                $ShowLoacationMasterData   = $this->LocationMaster->ShowLocationMaster();
-                $ShowMaterialInwardData    = $this->MaterialInwardMaster->GetMaterialInwardByPoId($PurchaseId);
-                $GetMaterialId             = collect($ShowMaterialInwardData)->pluck('master_inward_id')->first();
-                $MaterialInwardDetailData  = $this->MaterialInwardDetails->showMaterialInwardDetailsData(NULL,$MatInwardId); 
-                $VendorData                = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
-                $UnitDataArray             = collect($ShowMaterialUnit)->pluck('uom_name', 'uom_id')->toArray();
-                $IndentMasterData          = $this->Indent->ShowIndentDetails($request);
-                return view('material-inward.material-inward-pending-payment-creation')->with('data',compact('IndentMasterData','UnitDataArray','Contractordata','ShowMaterialUnit','ShowMaterialInwardData','MaterialInwardDetailData','ShowPurchaseOrderData','VendorData','Empdata','MaxReceiptNo','ShowPoSoqData','ShowLoacationMasterData'));
-            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-                $message = "Error: Sorry, invalid attempt.";
-            }
-            if(filled($message)){
-                Session::put('ALertMesage', $message);
-                return redirect()->route('material.material-inward-creation');
-            }
-        }
-        $Contractordata           = $this->Contractor->ShowContractor();
-        $showPurchaseOredrData    = $this->PurchaseOrder->showPurchaseOredrIssuedData($request,NULL);
-        $ShowSessionEmpdata       = $this->Employee->ShowEmployeeBySessionEmpNo(); 
-        $SessionEmpSectionId      = collect($ShowSessionEmpdata)->pluck('section_id')->first();
-        $Vocherdata               = $this->PaymentMaster->ShowPendingPayment();
-        $VocherDetails           = collect($Vocherdata)->where('module_code','MAT_INWARD');
-        $ShowMaterialInwardData   = $this->MaterialInwardMaster->showMaterialInwardPendingPaymentData(); 
-        return view('material-inward.material-inward-pending-payment-list')->with('data',compact('SessionEmpSectionId','showPurchaseOredrData','Contractordata','ShowMaterialInwardData','VocherDetails'));
-    }
     public function MaterialInwardCreation(Request $request){
         if($request->SubmitId){
             if(isset($request->SubmitApplication)){
@@ -115,7 +78,7 @@ class MaterialInwardController extends Controller
                 }
                 $SumbitMaterialInWardDetails = $this->MaterialInwardMaster->SumbitMaterialInWardDetails($TransactionId);
                 if($SumbitMaterialInWardDetails == TRUE){
-                    $message = 'Material Inward Submited Successfully';
+                    $message = 'Material Inward Submited ';
                 }else{
                     $message ='Error : Sorry Invalid Attempt';
                 }
@@ -152,7 +115,9 @@ class MaterialInwardController extends Controller
                     }
                 }
                 $InvoicesDocData           = $this->SupportingDocMaster->GetSancationDocData($MatInwardId,'MAT_INWARD');
-                return view('material-inward.material-view-submit')->with('data',compact('MaterialInwardData','InvoicesDocData','IndentCreateName','UnitDataArray','Empdata','showPurchaseOredrData','MaterialInwardDetailData','Contractordata','Empdata','WorkFlowActionData'));
+                $DeliveryChallanId         = collect($MaterialInwardData)->pluck('delivery_challan_id')->first();
+                $DeliveryChallanWithDocs   = $this->DeliveryChallanMaster->GetDeliveryChallanWithDocuments($DeliveryChallanId);
+                return view('material-inward.material-view-submit')->with('data',compact('DeliveryChallanWithDocs','MaterialInwardData','InvoicesDocData','IndentCreateName','UnitDataArray','Empdata','showPurchaseOredrData','MaterialInwardDetailData','Contractordata','Empdata','WorkFlowActionData'));
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt."; dd($e);
             }
@@ -381,6 +346,16 @@ class MaterialInwardController extends Controller
             $VendorData                    = collect($Contractordata)->pluck('name_contractor', 'contid')->toArray();
             $ShowMatrialInwardSubmitData   = $this->MaterialInwardMaster->GetMatInwardSubmitData(NULL,$MatInwardId);
             $MaterialInwardDetailData      = $this->MaterialInwardDetails->showMaterialInwardDetailsData(NULL,$MatInwardId); 
+            $GetPoId                       = collect($ShowMatrialInwardSubmitData)->pluck('po_id')->first();
+            $ShowMaterialInwardData        = $this->MaterialInwardMaster->GetMaterialInwardByPoId($GetPoId);
+            $MasterInwardIds               = collect($ShowMaterialInwardData)->pluck('master_inward_id');
+            $MaterialInwardDetailsData     = $this->MaterialInwardDetails->ShowMaterialInwardData($MasterInwardIds);
+            $TotalAccPerc                  = collect($MaterialInwardDetailsData)
+                                            ->groupBy('item_no')
+                                            ->map(function ($items) {
+                                                return $items->sum('acc_payment_perc');
+                                            })
+                                            ->toArray();
             $ShowMaterialUnit              = $this->UnitMaster->ShowMaterialUnit(NULL);
             $UnitDataArray                 = collect($ShowMaterialUnit)->pluck('uom_name', 'uom_id')->toArray();
             $ShowLoacationMasterData       = $this->LocationMaster->ShowLocationMaster();
@@ -406,7 +381,9 @@ class MaterialInwardController extends Controller
             $InvoicesDocData           = $this->SupportingDocMaster->GetSancationDocData($MatInwardId,'MAT_INWARD');
             $IndentEmpData             = $this->Indent->ShowIndent($request,NULL);
             $IndentCreateEmpName       = collect($IndentEmpData)->pluck('emp_name_payslip','indent_id')->toArray();
-            return view('material-inward.material-inward-payment-submit')->with('data',compact('IndentCreateEmpName','InvoicesDocData','SessionWiseFiledAcessData','ShowMatrialInwardSubmitData','UnitDataArray','FromPage','VendorData','MaterialInwardDetailData','WorkFlowActionData','ShowMaterialUnit','ShowLoacationMasterData'));
+            $DeliveryChallanId         = collect($ShowMatrialInwardSubmitData)->pluck('delivery_challan_id')->first();
+            $DeliveryChallanWithDocs   = $this->DeliveryChallanMaster->GetDeliveryChallanWithDocuments($DeliveryChallanId);
+            return view('material-inward.material-inward-payment-submit')->with('data',compact('IndentCreateEmpName','TotalAccPerc','DeliveryChallanWithDocs','InvoicesDocData','SessionWiseFiledAcessData','ShowMatrialInwardSubmitData','UnitDataArray','FromPage','VendorData','MaterialInwardDetailData','WorkFlowActionData','ShowMaterialUnit','ShowLoacationMasterData'));
         }
     }
     public function MaterialInwardDeliveryChallanUpload(Request $request){
@@ -459,6 +436,8 @@ class MaterialInwardController extends Controller
         $InvoiceDate      = $request->input('txt_invoice_date');
         $ReciptSuffixNo   = $request->input('hid_recipt_suffix_id');
         $InvoiceNosArray  = $request->input('invoice_nos');
+        $DelChallanReciptId   = $request->input('cmb_receipt_no');
+
         $InvoiceStr       = "INV";
         $InvoiceCount     = 1;
         $FinalInvoiceArray = [];
@@ -491,9 +470,9 @@ class MaterialInwardController extends Controller
             $DivisionId = session('EmpDivCode') ?? NULL;
             $SectionId  = session('EmpSecCode') ?? NULL;
 
-            $SaveData['receiptno']            = $RecpNo;
-            $SaveData['receipt_date']         = Helper::DBDateFormat($RecpDate);
-            // $SaveData['invoice_date']         = Helper::DBDateFormat($InvoiceDate);
+            $SaveData['delivery_challan_id']  = $DelChallanReciptId;
+           $SaveData['receipt_date'] = NOW();
+            $SaveData['invoice_date'] = NOW();
             // $SaveData['invoice_no']           = $FinalINvoicesJsonData;
 
             // $SaveData['grn_status']        = $ButtonValue;
@@ -560,7 +539,7 @@ class MaterialInwardController extends Controller
                 }
             }
             DB::commit();
-            $message = "Material Inward Details updated Successfully";
+            $message = "Material Inward Details updated ";
             Session::put('ALertMesage', $message);
             return redirect()->route('material.material-inward-creation');
         }catch (\Exception $e) { dd($e);
@@ -597,6 +576,7 @@ class MaterialInwardController extends Controller
         }
         DB::beginTransaction();
         try {
+            $InvoiceFile       = $request->file('file_upload');
             if($request->hasFile('file_upload')){
                 $InvoiceFile       = $request->file('file_upload');
                 if($ModuleSubCode == 'DEL_CHALLAN'){
@@ -627,7 +607,7 @@ class MaterialInwardController extends Controller
                         $UploadExe++;
                     }
                 }else{
-                    foreach($InvoiceFiles as $FileKey => $InvoiceFile){
+                    foreach($InvoiceFile as $FileKey => $InvoiceFile){
                         $DocDesc       =  $DocSuppDescArr[$FileKey];
                         $DocDate       =  $DocDateArr[$FileKey];
                         $OrgFileName   = $InvoiceFile->getClientOriginalName();
@@ -645,7 +625,8 @@ class MaterialInwardController extends Controller
                             $SaveData['transaction_id']       = $TransactionId;
                             $SaveData['module_code']          = $ModuleCode;
                             $SaveData['doc_desc']             = $DocDesc;
-                            $SaveData['doc_date']             = filled($DocDate) ? Carbon::createFromFormat('d/m/Y', $DocDate)->format('Y-m-d'): null;
+                            $SaveData['doc_date']             = $DocDate;
+                            // $SaveData['doc_date']             = filled($DocDate) ? Carbon::createFromFormat('d/m/Y', $DocDate)->format('Y-m-d'): null;
                             $SaveData['org_file_name']        = $OrgFileName;
                             $SaveData['file_name']            = $FileName;
                             $SaveData['module_sub_code']      = $ModuleSubCode;
@@ -803,7 +784,7 @@ class MaterialInwardController extends Controller
                 }
             }
             DB::commit();
-            $message = "Delivery Challan Details Saved Successfully.";
+            $message = "Delivery Challan Details Saved .";
             return redirect()->route('material.material-inward-delivery-Challan-upload')->with('ALertMesage', $message);
         }catch (\Exception $e) { dd($e);
             DB::rollback();

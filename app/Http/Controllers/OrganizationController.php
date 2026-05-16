@@ -56,9 +56,9 @@ class OrganizationController extends Controller
                     $InsertedData = $this->organization->InsertData($InsertArr);
                     if($InsertedData != NULL)
                     {
-                        $LogMessage = "OrganizationController ||  New Organization Created Successfully  )";
+                        $LogMessage = "OrganizationController ||  New Organization Created   )";
                         Helper::CreateLog($request,$LogMessage);       
-                        $message = ("Success : New Organization Created Successfully!");
+                        $message = ("Success : New Organization Created !");
                     }
                 } 
             }   
@@ -177,9 +177,9 @@ class OrganizationController extends Controller
             }else{
                 $InsertedData = $this->office->CreateOfficeData($OfficeArr);
                 if($InsertedData != NULL){
-                    $LogMessage = "AdminController || New Office Created Successfully, created by ".session('WcmsEmpNo')." ";
+                    $LogMessage = "AdminController || New Office Created , created by ".session('WcmsEmpNo')." ";
                     Helper::CreateLog($request,$LogMessage);                       
-                    $message = "Success : New Office Created Successfully!";
+                    $message = "Success : New Office Created !";
                 }
             }
         }
@@ -221,7 +221,7 @@ class OrganizationController extends Controller
 
                     $UpdateOffice = $this->office->UpdateOfficeList($OfficeArr, $OffId);
                     if($UpdateOffice == true){
-                        $LogMessage = "AdminController || Office Name Updated Successfully, updated by ".session('WcmsEmpNo')." ";
+                        $LogMessage = "AdminController || Office Name Updated , updated by ".session('WcmsEmpNo')." ";
                         Helper::CreateLog($request,$LogMessage);                           
                         $message = ("Office Name Updated Sucessfully!");
                     }

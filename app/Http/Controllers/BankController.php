@@ -74,7 +74,7 @@ class BankController extends Controller
                     if($UpdateBankInstrument == true){
                         $LogMessage = "AdminController || Bank Instrument Updated Sucessfully, updated by ".session('WcmsEmpNo')." )";
                         Helper::CreateLog($request,$LogMessage);       
-                        $message = ("Bank Instrument Updated Sucessfully!");
+                        $message = ("Bank Instrument Updated");
                     }
                     $BankInstrumentData = NULL;
                 }else{  
@@ -103,7 +103,7 @@ class BankController extends Controller
                         {
                             $LogMessage = "AdminController || Bank Instrument Saved Sucessfully, created by ".session('WcmsEmpNo')." )";
                             Helper::CreateLog($request,$LogMessage);       
-                            $message = ("Bank Instrument Saved successfully!");
+                            $message = ("Bank Instrument Saved");
                         }
                     }  
                 }
@@ -188,7 +188,7 @@ class BankController extends Controller
                     if($UpdateBank == true){
                         $LogMessage = "AdminController || Bank Updated Sucessfully, updated by ".session('WcmsEmpNo')." )";
                         Helper::CreateLog($request,$LogMessage);       
-                        $message = ("Bank Updated Sucessfully!");
+                        $message = ("Bank Updated");
                     }
                     $BankData = NULL;
                                   
@@ -213,7 +213,7 @@ class BankController extends Controller
                         if($CreateBankData != NULL){
                             $LogMessage = "AdminController || Bank created successfully, created by ".session('WcmsEmpNo')."";
                             Helper::CreateLog($request,$LogMessage);       
-                            $message = ("Bank Saved successfully");
+                            $message = ("Bank details Saved");
                         }
                     }
                 }
@@ -225,7 +225,11 @@ class BankController extends Controller
         // dd($BankData);
         return view('bank.bank-master')->with('data',compact('BankData', 'BankDataView')) ->with('ALertMesage',$message);
     }
-
+    public function BankMasterView(Request $request)
+    { 
+        $BankDataView = $this->bank->ShowBankList(null);
+        return view('bank.view-bankmaster')->with('data',compact('BankDataView'));
+    }
     public function ValidateBank($request){                     //  Validation part for Bank
         $message = '';
         $Rules = [ 'BANK_REQ' => 'required' ];
@@ -308,7 +312,7 @@ class BankController extends Controller
                         {
                             $LogMessage = "AdminController || Bank Branch Saved successfully, created by ".session('WcmsEmpNo')." )";
                             Helper::CreateLog($request,$LogMessage);       
-                            $message = ("Bank Branch Saved successfully!");
+                            $message = ("Bank Branch Saved");
                         }
                     }  
                 }
@@ -370,7 +374,7 @@ class BankController extends Controller
     }
     public function BankBranchList(Request $request){
         $BankList = $this->bankbranch->ShowBankBranchList(NULL);
-        return view('bank.ViewBankBranchList')->with('data', compact('BankList'));
+        return view('bank.view-bankbranchmaster')->with('data', compact('BankList'));
     }
     public function DeleteBankInstrument(Request $request){
         $BankInstArr = array();
@@ -483,7 +487,7 @@ class BankController extends Controller
                 $SaveEmployment= $this->rbisanction->CreateRBISanction($SaveData);
             
                 DB::commit();
-                $message = "RBI Sanction Data Saved Successfully";
+                $message = "RBI Sanction Data Saved";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -563,7 +567,7 @@ class BankController extends Controller
                 $SaveEmployment= $this->imscaccount->CreateImscAccount($SaveData);
                 //dd($SaveEmployment);
                 DB::commit();
-                $message = "Imsc Data Saved Successfully";
+                $message = "IMSc Data Saved";
             }catch (\Exception $e) {dd($e); 
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";

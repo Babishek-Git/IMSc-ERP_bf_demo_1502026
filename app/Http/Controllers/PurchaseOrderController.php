@@ -74,7 +74,7 @@ class PurchaseOrderController extends Controller
                     if($IsssudePoOrder == TRUE){
                         $TransactionId = $PoId;
                         $SaveBudgetExpData = $this->SaveBudgetExpenditureDetails($request,$TransactionId,$IndentId,$CurrentStage);
-                        $message = 'Purchase Order Issue Successfully';
+                        $message = 'Purchase Order Issued ';
                     }else{
                         $message = 'Sorry, try again ....!';
                     }
@@ -124,7 +124,8 @@ class PurchaseOrderController extends Controller
                     return view('purchase-order.purchase-order_form')->with('data',compact('Contractordata','MaterialCertifySecData','BillpaymodeData','POIndentData','IndentEmpdata','FromPage','ShowMaterialUnit','ShowPoItemDetailsData','ShowPurchaseEditData'));
                 }else{
                     $ContractorDetails  = collect($Contractordata)->pluck('name_contractor','contid')->toArray();
-                    return view('purchase-order.purchase-order-view-submit')->with('data',compact('IndentEmpdata','ContractorDetails','ShowPoItemDetailsData','ShowMaterialUnit','Indentdata','OfficeDetails','ShowPurchaseEditData','FromPage','WorkFlowActionData'));
+                    $BillpaymodeDetais  = collect($BillpaymodeData)->pluck('pay_mode_name','pay_mode_id')->toArray();
+                    return view('purchase-order.purchase-order-view-submit')->with('data',compact('IndentEmpdata','BillpaymodeDetais','ContractorDetails','ShowPoItemDetailsData','ShowMaterialUnit','Indentdata','OfficeDetails','ShowPurchaseEditData','FromPage','WorkFlowActionData'));
                 }
             } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
                 $message = "Error: Sorry, invalid attempt.";
@@ -285,10 +286,10 @@ class PurchaseOrderController extends Controller
             Session::put('ALertMesage', $message);
         }
         if(filled($PoEditId)){
-            $message   = 'Purchase Order Details Update Successfully';
+            $message   = 'Purchase Order Details Updated ';
             return redirect()->route('purchase-order.purchase-order_view')->with('ALertMesage', $message);
         }else{
-            $message   = 'Purchase Order Details Saved Successfully';
+            $message   = 'Purchase Order Details Saved ';
             return redirect()->route('purchase-order.purchase-order_form')->with('ALertMesage', $message);
         }
     }
@@ -337,5 +338,13 @@ class PurchaseOrderController extends Controller
             $message = "Error : Sorry transaction not fully completed";
             Session::put('ALertMesage', $message);
         }
+    }
+    public function ViewPurchaseOrderForSD(Request $request) {
+        $ShowPoItemDetailsData  = $this->PurchaseOrder->showSDPGIssuedData($request,'SD');
+        return view('sdpo-entry.view-sd')->with('data',compact('ShowPoItemDetailsData'));
+    }
+    public function ViewPurchaseOrderForPG(Request $request) {
+        $ShowPoItemDetailsData  = $this->PurchaseOrder->showSDPGIssuedData($request,'PG');
+        return view('sdpo-entry.view-po')->with('data',compact('ShowPoItemDetailsData'));
     }
 }

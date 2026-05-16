@@ -14,6 +14,7 @@ use App\Models\RoleMapping;
 use App\Models\Payment;
 use App\Models\Role;
 use App\Models\LeaveApplicationDt;
+use App\Models\modules;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 //use Exception;
@@ -308,26 +309,28 @@ class WorkFlowProcessService
                 $CurrentData = $ModelClassName::where('ltc_advance_id', $TransactionId)->get();
                 $CurrentJsonData = json_encode($CurrentData);
                 $SaveMovementData['current_data'] = $CurrentJsonData;
-                $this->SaveLtcPayment($TransactionId,$ModelClassName);
                 if($WorkFlowAction == 'AP'){
-                    $SaveApplicationData['advance_or_claim']    = "claim";
-                    $SaveApplicationData['is_claim_completed']  = true;
-                    $SaveApplicationData['target_roles_claim'] = $TargetRoles;
+                    $SaveApplicationData['claim_sanctioned_amount'] = $CurrentData->first()->claim_sanctioned_amount ?? null;
+                    $SaveApplicationData['advance_or_claim']        = "claim";
+                    $SaveApplicationData['is_claim_completed']      = true;
+                    $SaveApplicationData['target_roles_claim']      = $TargetRoles;
+                    $this->SaveLtcPayment($TransactionId,$ModelClassName);
                 }
             }
             $this->SaveWorkFlowMovement($SaveMovementData);
             $this->SaveApplicationData($TransactionId,$ModelClassName,$SaveApplicationData);
+            $messagePerfix     = modules::where('module_code', $WorkFlowModuleCode)->pluck('message_prefix')->filter()->first() ?? '';
             DB::commit();
             if($WorkFlowAction == 'RJ'){
-                $message = "Application returned to the user successfully.";
+                $message = $messagePerfix ." File returned to the user ";
             }else if($WorkFlowAction == 'AP'){
-                $message = "Application approved successfully.";
+                $message = $messagePerfix ." File approved ";
             }else if($WorkFlowAction == 'SU'){
-                $message = "Application submitted successfully.";
+                $message = $messagePerfix ." File submitted ";
             }else if($WorkFlowAction == 'FW'){
-                $message = "Application forwarded / recommended successfully.";
+                $message = $messagePerfix ." File forwarded / recommended ";
             }else{
-                $message = "Work flow data saved successfully.";
+                $message = $messagePerfix ." Work flow data saved ";
             }
         } catch (\Exception $e) { dd($e);
             DB::rollback();
@@ -353,10 +356,10 @@ class WorkFlowProcessService
         $TransactionTable   = $Model->getTable();
         $BankDetailData     = EmployeePayBank::where('emp_no', $ApplicationData->emp_no)->where('is_current', true)->first();
         if($ApplicationData->module_code == 'LTCADV'){
-            $amount = $ApplicationData->advance_amount;
+            $amount = $ApplicationData->sanctioned_amount;
         }
         if($ApplicationData->module_code == 'LTCCLAIM'){
-            $amount = $ApplicationData->claim_amount;
+            $amount = $ApplicationData->claim_sanctioned_amount;
         }
         $InsertArr = [
             'transaction_id'       => $ApplicationData->ltc_advance_id,

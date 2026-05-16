@@ -88,7 +88,7 @@ class ResearchLevelController extends Controller
                     $SaveReseachLevel= $this->research->createResearchLevelMaster($SaveData);
                 // }
                 DB::commit();
-                $message = "Research Master Data Saved Successfully";
+                $message = "Research Master Data Saved ";
             }catch (\Exception $e) {
             //dd($e);
                 DB::rollback();

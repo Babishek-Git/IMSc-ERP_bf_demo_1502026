@@ -22,7 +22,8 @@ class modules extends Model
         'active',
         'menu_type',
         'dp_order',
-        'page_code'
+        'page_code',
+        'message_prefix'
     ];
     public function childs() {
         return $this->hasMany('App\Models\modules','parentid','moduleid') ;

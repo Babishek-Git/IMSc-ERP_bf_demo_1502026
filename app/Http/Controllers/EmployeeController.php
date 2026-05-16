@@ -124,7 +124,7 @@ class EmployeeController extends Controller
                 $this->SaveEmpPanDetails($request);
                 // $this->SaveEmpDocumentDetails($request);
                 $this->SaveEmpPhysicallyChallangeDetails($request);
-                $message = "Employee information saved successfully"; 
+                $message = "Employee information saved"; 
             }else{
                 $message = "Error : Invalid ICNO & Check your ICNO"; 
             }
@@ -402,7 +402,7 @@ class EmployeeController extends Controller
                 }
             }
             DB::commit();
-            $message = "Employee Basic Details Saved Successfully";
+            $message = "Employee Basic Details Saved";
         }catch (\Exception $e) { dd($e);
             DB::rollback();
             $message = "Error : Sorry transaction not fully completed";
@@ -519,7 +519,7 @@ class EmployeeController extends Controller
                 $SaveData['created_by']         = 1; 
                 $SaveEmpBank = $this->EmployeePayBank->createEmployeePayBank($SaveData);
                 DB::commit();
-                $message = "Employee Bank Details Saved Successfully";
+                $message = "Employee Bank Details Saved";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -563,7 +563,7 @@ class EmployeeController extends Controller
                     $SaveValues = $this->EmpEducationalDetails->CreateEmpEducationDetails($SaveData); 
                 }
                 DB::commit();
-                $message = "Educational Details Saved Successfully";
+                $message = "Educational Details Saved";
             }
             catch (\Exception $e) { dd($e);
                 DB::rollback();
@@ -597,7 +597,7 @@ class EmployeeController extends Controller
                 $SaveData['phy_challange_perc'] = $EmpPhyHandicappPerc;
                 $SaveEmpDiablityArr = $this->Employee->UpdateEmployee($SaveData,$EmpIcno);
                 DB::commit();
-                $message = "Employee Physically Challange Details Saved Successfully";
+                $message = "Employee Physically Challange Details Saved ";
             }catch (\Exception $e) { dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -746,7 +746,7 @@ class EmployeeController extends Controller
                     $SaveData['created_by']             = session('WcmsEmpNo');
                     $SaveEmployee= $this->EmpDocuments->createDocuments($SaveData);
                     DB::commit();
-                    $message = "Document Uploaded Successfully";
+                    $message = "Document Uploaded ";
                     
                 }catch (\Exception $e){ dd($e); 
                     DB::rollback();
@@ -1114,7 +1114,6 @@ class EmployeeController extends Controller
         }
         return view('employee.CreatePay')->with('data',compact('RegEmpData','PayLevelData','payComponents','employeeGroupMaster',
         'desiginationList','categoryList','paydetail','UIConfigs','menuCodes','selectedPay'));
-<<<<<<< Updated upstream
     }
     public function ViewEmployeeList(Request $request)
     { 
@@ -1205,97 +1204,4 @@ class EmployeeController extends Controller
             'amount' => $record->fellowship_amount ?? 0
         ]);
     }
-
-=======
-    }
-    public function ViewEmployeeList(Request $request)
-    { 
-        $Empdata = $this->Employee->ShowEmployees(null,null);
-        return view('employee.view-employee-list')->with('data',compact('Empdata'));; 
-    }
-   public function ViewProfile(Request $request)
-    { 
-        $componentFilterArr = array("DEDU","EARN");
-        $payComponents      = PayComponent::withType()->active()
-                                ->whereHas('componentType', function ($q) use ($componentFilterArr) {
-                                $q->whereIn('component_type_code', $componentFilterArr);
-                            })
-                            ->get();  
-        $Empdata = $this->Employee->ShowEmployeeBySessionEmpNo();
-        $EmpNo = $Empdata->pluck('emp_no')->first(); 
-        $EditEmpBasicData     = $this->Employee->ShowEmployees($request,$EmpNo); 
-        $EditEmpBankData      = $this->EmployeePayBank->employeePayBank($EmpNo); 
-        $EditEmpEducationData = $this->EmpEducationalDetails->ShowEmployeeEducation($EmpNo);
-        $EditEmpFamliyData    = $this->empfamilydetails->ShowFamilyDetails($request,$EmpNo); 
-        $EditEmpInsuranceData = $this->insurance->ShowEmployeeInsurance($EmpNo);
-        $EditLicEmpInsuranceData = collect($EditEmpInsuranceData)->where('policy_for','LIC');
-        $EditPliEmpInsuranceData = collect($EditEmpInsuranceData)->where('policy_for','PLI');
-        //dd($EditPliEmpInsuranceData);
-        $EmpGroupId = $EditEmpBasicData->pluck('employee_group_type')->first();
-       
-        $employeeGroupMaster= $this->EmployeeGroupMaster->ShowEmployeeGroup($EmpGroupId); 
-        $officeList         = $this->Office->ShowOfficeWithGroup('G',$EmpGroupId); 
-        //dd($officeList);  
-        $desiginationList   = $this->desigination->ShowDesignationWithGroup($EmpGroupId);  
-        $categoryList       = $this->Category->ShowEmployeeCategory(NULL);
-        $showGrandParent    = $this->organization->ShowGrandParent($request); 
-        $employeeSalute     = $this->EmployeeSalute->ShowSalute(NULL);
-        $PayLevelData       = $this->PayLevel->getActive(NULL);
-        //$RelationShipData   = $this->EmpRelationshipMaster->ShowRelatonship(NULL); 
-        $DependentData      = $this->DependentMaster->ShowDependent(NULL);
-        $EmpInsurData       = $this->insurance->ShowEmployeeInsurance(NULL);
-        $IfscData           = $this->BankBranchMaster->ShowAllIfsc();
-        $HouseMaster        = $this->HouseMaster->ShowVacantHouse(); 
-        $ProjectMaster      = $this->ProjectMaster->ShowAllParentChild(NULL);
-        $employeeMaritalStatus  = $this->EmployeeMaritalStatus->ShowMaritalStatus(NULL); 
-        $fieldLabelLists    = $this->FormFieldLabel->getAllFieldLabel($EmpGroupId);
-        $UIConfigs          = $this->UIConfig->getAllUIConfig($EmpGroupId);
-        $menuCodes          = $UIConfigs->pluck('menu_module_code')->toArray();
-        $VisitorCatagory    = $this->VisitorCatagory->ShowVisitorCatagory();
-        $FacultyLists       = $this->Employee->ShowEmployeeNames();
-        $PdfLists           = $this->EmpPdfList->ShowPdflist(NULL);
-        return view('employee.view-profile')->with('data',compact('officeList','desiginationList','showGrandParent',
-            'categoryList','employeeSalute','employeeMaritalStatus','employeeGroupMaster','payComponents','PayLevelData',
-            'DependentData','EmpInsurData','IfscData','HouseMaster','ProjectMaster','fieldLabelLists',
-            'menuCodes','VisitorCatagory','FacultyLists','EditEmpBasicData','EditEmpBankData','EditEmpEducationData',
-            'EditEmpFamliyData','EditLicEmpInsuranceData','EditPliEmpInsuranceData','PdfLists')); 
-        
-    }
-
-    public function ExportEmployeePdf(Request $request)
-    { 
-        $EmpData = $this->Employee->ShowEmployees(null,null); 
-        $data = ['EmpData'=>$EmpData];
-        $pdf = PDF::loadView('employee.export-employee-pdf', $data);
-        return $pdf->download('Employee_List.pdf');
-    }
-
-    public function getFellowshipAmount(Request $request)
-    {
-        $years = Carbon::createFromFormat('d/m/Y', $request->date_of_joining)->diffInYears(Carbon::now());
-        $record = FellowshipCategoryName::where('group_id', $request->group_id)
-            ->where('period_of_year', $years)
-            ->where('fellowship_category_code', $request->code)
-            ->where('active', 1)
-            ->first();
-        return response()->json([
-            'amount' => $record->fellowship_amount ?? 0
-        ]);
-    }
-
-    public function getByExperience(Request $request)
-    {
-        $period = (int)$request->experience;
-
-        $record = FellowshipCategoryName::where('group_id', $request->group_id)
-            ->where('period_of_year', $period)
-            ->where('fellowship_category_code', $request->code)
-            ->where('active', 1)
-            ->first();
-
-        return response()->json([
-            'amount' => $record->fellowship_amount ?? 0
-        ]);
-    }
->>>>>>> Stashed changes
 }

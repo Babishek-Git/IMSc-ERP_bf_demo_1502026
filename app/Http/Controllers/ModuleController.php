@@ -63,9 +63,9 @@ class ModuleController extends Controller
                 $InsertedData = $InsertData->InsertData($InsertArr);
                 if($InsertedData != NULL)
                 {
-                    $LogMessage = "ModuleController || New Menu Created Successfully )";
+                    $LogMessage = "ModuleController || New Menu Created  )";
                     Helper::CreateLog($request,$LogMessage);       
-                    $message = ("New Menu Created Successfully!");
+                    $message = ("New Menu Created !");
                 }
             }   
         }  

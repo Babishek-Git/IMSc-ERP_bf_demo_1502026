@@ -78,7 +78,7 @@ class ProjectMasterController extends Controller
                 $SaveProject= $this->ProjectStaff->createProjectHead($SaveData);
                             
                 DB::commit();
-                $message = "Project Head Master Data Saved Successfully";
+                $message = "Project Head Master Data Saved ";
             }catch (\Exception $e) {dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -173,7 +173,7 @@ class ProjectMasterController extends Controller
                     $SaveProject= $this->Subproject->createSubProjectMaster($SaveData);
                 }            
                 DB::commit();
-                $message = " SubProject Master Data Saved Successfully";
+                $message = " SubProject Master Data Saved ";
             }catch (\Exception $e) {dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -236,7 +236,7 @@ class ProjectMasterController extends Controller
                 $SaveProject = $this->project->createProjectMaster($SaveData);
                // dd($SaveProject);
                 DB::commit();
-                $message = "Project Creation Data Saved Successfully";
+                $message = "Project Creation Data Saved ";
             }catch (\Exception $e) {dd($e);
                 DB::rollback();
                 $message = "Error : Sorry transaction not fully completed";
@@ -305,7 +305,7 @@ class ProjectMasterController extends Controller
                     }
                 }
             DB::commit();
-            $message = "Project Staff Details Saved Successfully";
+            $message = "Project Staff Details Saved ";
             Session::put('ALertMesage', $message);
             }catch (\Exception $e) { dd($e);
                 DB::rollback();

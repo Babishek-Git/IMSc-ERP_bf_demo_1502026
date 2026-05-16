@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\Unit;
 use App\Models\mail_transaction;
 use App\Models\UploadFileDir;
-use App\Models\seq_no;
+use App\Models\SequenceNo;
 use App\Models\LogDt;
 use App\Models\Holiday;
 use App\Models\Payment;
@@ -26,12 +26,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Helper{
 
-    public static function GetAutoSequenceNo($ModuleCode,$DivisionId,$TransactionId,$SubModuleCode = NULL){
+    public static function GetAutoSequenceNo($ModuleCode,$TransactionId,$SubModuleCode = NULL){
         $FinYear = Helper::GetCurrentFinYear(NULL);
         $DataArr = array();
         $DataArr['module_code']     = $ModuleCode;
         $DataArr['fin_year']        = $FinYear;
-        $DataArr['division_id']     = $DivisionId;
+        //$DataArr['division_id']     = $DivisionId;
         $DataArr['transaction_id']  = $TransactionId;
         $DataArr['active']          = 1;
         $DataArr['created_by']      = session('WcmsEmpNo');
@@ -41,7 +41,7 @@ class Helper{
                 $DataArr['sub_module_code']  = $SubModuleCode;
             }
         }
-        $SeqNoData 	                = seq_no::create($DataArr);
+        $SeqNoData 	                = SequenceNo::create($DataArr);
         return $SeqNoData;
     }
     public static function IND_money_format($money){
@@ -914,7 +914,7 @@ class Helper{
         $Days = Carbon::create($Year, $Month, 1)->daysInMonth;
         return $Days;
     }
-    public static function Forward_Reject_Approve_Button($request,$WorkFlowActionData,$BackUrl,$EditId,$RouteUrl,$ActionStatus,$ModuleCode){
+    public static function Forward_Reject_Approve_Button($request,$SubmitBtnName,$WorkFlowActionData,$BackUrl,$EditId,$RouteUrl,$ActionStatus,$ModuleCode){
         $IsApprove  = $WorkFlowActionData['IsApprove'] ?? NULL;
         $IsNext     = $WorkFlowActionData['IsNext'] ?? NULL;
         $IsPrevious = $WorkFlowActionData['IsPrevious'] ?? NULL;
@@ -946,7 +946,7 @@ class Helper{
             }
             if(($WorkFlowActionData['WorkFlowAction'] ?? null) === 'SU'){
                 $ApndTxt  .= '<div class="btn-group floatr">';
-                $ApndTxt .= '<button type="submit" id="SubmitApplication" name="SubmitApplication" data-flag="SU"  class="btn btn-default btninfo  WorkFlowAction" value="SUBMIT" data-flag="SU"><i class="fa fa-arrow-circle-right pt2"></i> Submit Application </button>';
+                $ApndTxt .= '<button type="submit" id="SubmitApplication" name="SubmitApplication" data-flag="SU"  class="btn btn-default btninfo  WorkFlowAction" value="SUBMIT" data-flag="SU"><i class="fa fa-arrow-circle-right pt2"></i> '.$SubmitBtnName.' </button>';
                 $ApndTxt .= '</div>';
                 // $ApndTxt  .= '<div class="btn-group floatr">';
                 // $ApndTxt .= '<button type="button" class="btn btn-default 	btnprimary"  name="btn_edit" id="btn_edit" value=" Edit "onclick="window.location=\''.route($RouteUrl, ['page' => encrypt('EDIT'), 'EditId' => encrypt($EditId), 'modulecode' => encrypt($ModuleCode)]).'\'" ><i class="fa fa-edit pt2"></i> Edit</button>';
